@@ -103,7 +103,7 @@ const FALLBACK_PAGES: Record<string, PageResponse> = {
     sections: {
       hero: {
         title: null,
-        content: DEFAULT_CONTACT.hero as ContactHeroContent,
+        content: DEFAULT_CONTACT.hero as Record<string, unknown>,
       },
       infos: {
         title: null,

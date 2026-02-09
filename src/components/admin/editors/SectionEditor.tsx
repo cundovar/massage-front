@@ -37,9 +37,9 @@ export function SectionEditor({ token, pageSlug, section, onUpdate }: SectionEdi
           const prices = Array.isArray(offer.prices)
             ? (offer.prices as unknown[]).filter((price) => typeof price === "string" && price.trim().length > 0)
             : [];
-          return { ...offer, prices };
+          return { ...offer, prices } as Record<string, unknown>;
         })
-        .filter((offer) => typeof offer.title === "string" && offer.title.trim().length > 0);
+        .filter((offer) => typeof offer.title === "string" && (offer.title as string).trim().length > 0);
     }
     if ("paragraphs" in next && Array.isArray(next.paragraphs)) {
       next.paragraphs = (next.paragraphs as unknown[]).filter(
