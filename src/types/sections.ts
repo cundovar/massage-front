@@ -11,7 +11,9 @@ export interface HeroContent {
 
 export interface PresentationContent {
   image?: string;
+  title?: string;
   paragraphs: string[];
+  quote?: string;
 }
 
 export interface ApprocheContent {
@@ -19,6 +21,7 @@ export interface ApprocheContent {
   images?: string[];
   bulletsTitle?: string;
   bullets: string[];
+  quote?: string;
 }
 
 export interface SoinsHeroContent {
@@ -30,6 +33,29 @@ export interface SoinCategoryContent {
   image?: string;
   title: string;
   description: string;
+}
+
+export interface TarifsOfferContent {
+  title: string;
+  description: string;
+  prices: string[];
+}
+
+export interface TarifsContent {
+  title: string;
+  subtitle?: string;
+  offers: TarifsOfferContent[];
+}
+
+export interface EntrepriseContent {
+  title: string;
+  subtitle?: string;
+  teamTitle: string;
+  teamBenefits: string[];
+  companyTitle: string;
+  companyBenefits: string[];
+  characteristics: string[];
+  quote: string;
 }
 
 export interface AboutHeroContent {

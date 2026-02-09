@@ -20,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="fr">
       <body className={`${titleFont.variable} ${bodyFont.variable} antialiased`}>
-        <div className="mx-auto max-w-6xl px-5 pb-16 md:px-8">
+        <div className="mx-auto max-w-[90%] px-5 pb-16 md:px-8">
           <header className="glass-panel sticky top-4 z-20 mt-4 rounded-2xl px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <Link href="/" className="text-3xl leading-none" style={{ fontFamily: "var(--font-title)" }}>
@@ -29,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <nav className="flex flex-wrap gap-5 text-sm tracking-wide text-[var(--muted)]" aria-label="Navigation principale">
                 <Link className="hover:text-[var(--text)]" href="/#bienvenue">Bienvenue</Link>
                 <Link className="hover:text-[var(--text)]" href="/#parcours">Parcours</Link>
+                <Link className="hover:text-[var(--text)]" href="/#tarifs">Carte & tarifs</Link>
                 <Link className="hover:text-[var(--text)]" href="/#tarifs">Tarifs</Link>
                 <Link className="hover:text-[var(--text)]" href="/entreprise">Entreprise</Link>
               </nav>
