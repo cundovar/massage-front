@@ -4,14 +4,16 @@ import { Hero } from "@/components/home/Hero";
 import { Presentation } from "@/components/home/Presentation";
 import { Tarifs } from "@/components/home/Tarifs";
 import { getPage, getSectionContent } from "@/lib/api";
-import { DEFAULT_HOME } from "@/lib/defaultContent";
-import type { ApprocheContent, HeroContent, PresentationContent } from "@/lib/api";
+import { DEFAULT_HOME, DEFAULT_SOINS } from "@/lib/defaultContent";
+import type { ApprocheContent, HeroContent, PresentationContent, TarifsContent } from "@/lib/api";
 
 export default async function HomePage() {
   const page = await getPage("home");
+  const soinsPage = await getPage("soins");
   const heroContent = getSectionContent<HeroContent>(page, "hero", DEFAULT_HOME.hero);
   const presentationContent = getSectionContent<PresentationContent>(page, "presentation", DEFAULT_HOME.presentation);
   const approcheContent = getSectionContent<ApprocheContent>(page, "approche", DEFAULT_HOME.approche);
+  const tarifsContent = getSectionContent<TarifsContent>(soinsPage, "tarifs", DEFAULT_SOINS.tarifs);
 
   return (
     <main className="pt-6 md:pt-8">
@@ -19,7 +21,7 @@ export default async function HomePage() {
       <Hero content={heroContent} />
       <Presentation content={presentationContent} />
       <Approche content={approcheContent} />
-      <Tarifs />
+      <Tarifs content={tarifsContent} />
 
       <section className="mt-20 rounded-3xl bg-black px-6 py-12 text-sand-100 md:px-10">
         <div className="text-center">

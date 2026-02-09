@@ -4,6 +4,13 @@ export interface LoginResponse {
   token: string;
 }
 
+export interface RegisterResponse {
+  id: number;
+  email: string;
+  name: string;
+  message?: string;
+}
+
 export interface AdminMeResponse {
   id: number;
   email: string;
@@ -134,6 +141,25 @@ export async function loginAdmin(email: string, password: string): Promise<Login
   }
 
   return (await response.json()) as LoginResponse;
+}
+
+export async function registerAdmin(name: string, email: string, password: string): Promise<RegisterResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null);
+    if (payload) {
+      throw new Error(JSON.stringify(payload));
+    }
+    throw new Error("Erreur d'inscription.");
+  }
+
+  return (await response.json()) as RegisterResponse;
 }
 
 export async function fetchAdminApi<T>(path: string, token: string): Promise<T> {

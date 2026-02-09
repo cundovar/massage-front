@@ -1,4 +1,12 @@
-import { DEFAULT_ABOUT, DEFAULT_CONTACT, DEFAULT_HOME, DEFAULT_MENTIONS, DEFAULT_SOINS, fallbackServices } from "@/lib/defaultContent";
+import {
+  DEFAULT_ABOUT,
+  DEFAULT_CONTACT,
+  DEFAULT_ENTREPRISE,
+  DEFAULT_HOME,
+  DEFAULT_MENTIONS,
+  DEFAULT_SOINS,
+  fallbackServices,
+} from "@/lib/defaultContent";
 import type {
   AboutHeroContent,
   ApprocheContent,
@@ -10,6 +18,8 @@ import type {
   ParcoursContent,
   PresentationContent,
   SoinsHeroContent,
+  TarifsContent,
+  EntrepriseContent,
   SoinCategoryContent,
   ServiceItem,
 } from "@/types";
@@ -113,6 +123,18 @@ const FALLBACK_PAGES: Record<string, PageResponse> = {
       },
     },
   },
+  entreprise: {
+    slug: "entreprise",
+    title: "Entreprise",
+    metaTitle: null,
+    metaDescription: null,
+    sections: {
+      entreprise: {
+        title: DEFAULT_ENTREPRISE.entreprise.title,
+        content: DEFAULT_ENTREPRISE.entreprise,
+      },
+    },
+  },
 };
 
 export async function getServices(): Promise<ServiceItem[]> {
@@ -190,6 +212,8 @@ export type {
   ApprocheContent,
   SoinsHeroContent,
   SoinCategoryContent,
+  TarifsContent,
+  EntrepriseContent,
   AboutHeroContent,
   ParcoursContent,
   FormationsContent,

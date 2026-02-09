@@ -67,7 +67,7 @@ export function Approche({ content }: ApprocheProps) {
             </ul>
           </div>
           <p className="text-xl italic font-semibold text-stone-700">
-            Chaque soin est pense comme une pause pour vous recentrer et vous alleger.
+            {content.quote ?? "Chaque soin est pense comme une pause pour vous recentrer et vous alleger."}
           </p>
         </div>
       </ScrollReveal>

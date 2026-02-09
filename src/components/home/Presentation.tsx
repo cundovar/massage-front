@@ -16,7 +16,7 @@ export function Presentation({ content }: PresentationProps) {
         <div className="js-section-left space-y-6">
           <div className="h-px w-16 bg-amber-500" />
           <h2 className="text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }}>
-            Presentation
+            {content.title ?? "Presentation"}
           </h2>
           {content.paragraphs?.map((paragraph) => (
             <p key={paragraph} className="text-lg leading-loose text-[var(--muted)]">
@@ -24,7 +24,8 @@ export function Presentation({ content }: PresentationProps) {
             </p>
           ))}
           <blockquote className="rounded-r-xl border-l-2 border-amber-500/40 bg-amber-50/60 px-5 py-4 text-xl italic text-stone-800">
-            Je m&apos;adresse a tous ceux qui souhaitent prendre soin d&apos;eux-memes et s&apos;offrir une pause bienveillante.
+            {content.quote ??
+              "Je m'adresse a tous ceux qui souhaitent prendre soin d'eux-memes et s'offrir une pause bienveillante."}
           </blockquote>
         </div>
       </ScrollReveal>
