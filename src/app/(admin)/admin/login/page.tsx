@@ -19,6 +19,8 @@ export default function AdminLoginPage() {
     try {
       const response = await loginAdmin(email, password);
       setTokenInStorage(response.token);
+      // Petit délai pour s'assurer que le token est bien stocké
+      await new Promise((resolve) => setTimeout(resolve, 100));
       router.push("/admin");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion.");
