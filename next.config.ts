@@ -5,7 +5,7 @@ const isDev = process.env.NODE_ENV !== "production";
 const nextConfig: NextConfig = {
   images: {
     unoptimized: isDev,
-    domains: ["127.0.0.1", "localhost", "api.helene-massage.fr"],
+    domains: ["127.0.0.1", "localhost", "api.helene-massage.fr", "massln.varascundo.com"],
     remotePatterns: [
       {
         protocol: "http",
@@ -34,6 +34,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "api.helene-massage.fr",
+        pathname: "/images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "massln.varascundo.com",
         pathname: "/images/**",
       },
     ],
