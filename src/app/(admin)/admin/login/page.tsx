@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { loginAdmin } from "@/lib/api-admin";
 import { setTokenInStorage } from "@/lib/auth";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("admin@helene-massage.fr");
   const [password, setPassword] = useState("ChangeMe123!");
   const [error, setError] = useState<string | null>(null);
@@ -19,9 +17,8 @@ export default function AdminLoginPage() {
     try {
       const response = await loginAdmin(email, password);
       setTokenInStorage(response.token);
-      // Petit délai pour s'assurer que le token est bien stocké
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      router.push("/admin");
+      // Force une navigation complète pour éviter les problèmes de cache
+      window.location.href = "/admin";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion.");
     }
