@@ -1,24 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary-start: #ffce67;
-  --color-primary-end: #f67e54;
-  --gradient-primary: linear-gradient(135deg, #ffce67 0%, #f67e54 100%);
+  /* Gold/Amber Palette */
+  --color-gold-default: #D4AF37;
+  --color-gold-start: #E0B763;
+  --color-gold-end: #D4AF37;
+  --color-gold-light: #FFE7A1;
+  --color-gold-dark: #A3852C;
 
-  --color-white: #ffffff;
-  --color-black: #1a1a1a;
-  --color-gray-50: #fafafa;
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #e5e5e5;
-  --color-gray-400: #a3a3a3;
+  /* Brown Palette */
+  --color-brown-deep: #2C2B2B; /* Fond sombre */
+  --color-brown-darker: #1A1A1A; /* Text primary in dark mode, or general dark */
+
+  /* Sand Palette */
+  --color-sand-light: #FBF8F5; /* Fond clair */
+  --color-sand-warm: #FDFDFD; /* Texte principal clair / Crème claire */
+  --color-sand-taupe: #A09D97; /* Texte secondaire gris chaud / Taupe */
+
+  /* General Colors - updated to use new palette where appropriate */
+  --color-white: var(--color-sand-warm);
+  --color-black: var(--color-brown-darker);
+  --color-gray-50: var(--color-sand-light); /* Or a specific very light sand */
+  --color-gray-100: #f5f5f5; /* Keep if distinct, or map */
+  --color-gray-200: #e5e5e5; /* Keep if distinct, or map */
+  --color-gray-400: var(--color-sand-taupe);
   --color-gray-600: #525252;
   --color-gray-800: #262626;
 
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #525252;
-  --color-text-on-gradient: #ffffff;
-  --color-background: #ffffff;
-  --color-background-alt: #fafafa;
+  --color-text-primary: var(--color-brown-darker); /* Default text color */
+  --color-text-secondary: var(--color-sand-taupe); /* Default secondary text color */
+  --color-text-on-gradient: var(--color-sand-warm); /* Text color on gold gradients */
+  --color-background: var(--color-sand-light); /* Default light mode background */
+  --color-background-alt: var(--color-sand-light); /* Alternate light background */
+
+  --gradient-primary: linear-gradient(135deg, var(--color-gold-start) 0%, var(--color-gold-end) 100%);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -85,9 +100,9 @@ textarea:focus-visible {
 .heading-hero {
   font-family: var(--font-serif), serif;
   font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-weight: 400; /* Keeping normal weight for readability as discussed */
+  line-height: 1.2; /* Slightly increased for more relaxation */
+  letter-spacing: 0; /* Neutralized for 'douces et élégantes' */
 }
 
 .heading-section {

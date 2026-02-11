@@ -6,22 +6,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          start: "#FFCE67",
-          end: "#F67E54",
+        gold: {
+          DEFAULT: "#D4AF37",
+          start: "#E0B763",
+          end: "#D4AF37",
+          light: "#FFE7A1",
+          dark: "#A3852C",
         },
-        orange: {
-          400: "#FB923C",
-          500: "#F97316",
-          600: "#EA580C",
+        brown: {
+          deep: "#2C2B2B",
+          darker: "#1A1A1A",
+        },
+        sand: {
+          light: "#FBF8F5",
+          warm: "#FDFDFD",
+          taupe: "#A09D97",
         },
       },
       fontFamily: {
-        serif: ['"DM Serif Display"', "Georgia", "serif"],
+        serif: ['"Playfair Display"', "Georgia", "serif"],
         sans: ['"Inter"', "system-ui", "sans-serif"],
       },
       backgroundImage: {
-        "gradient-primary": "linear-gradient(135deg, #FFCE67 0%, #F67E54 100%)",
+        "gradient-gold": "linear-gradient(135deg, theme('colors.gold.start') 0%, theme('colors.gold.end') 100%)",
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",
