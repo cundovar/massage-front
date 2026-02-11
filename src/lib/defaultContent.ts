@@ -9,17 +9,17 @@ export const DEFAULT_HOME = {
     siteTitle: "Helene - Massages & Ayurveda",
     slides: [
       {
-        image: "/images/default/hero-1.jpg",
+        image: "/images/23de8feb4ade88d8f7b5489c2b579b31.png",
         title: "Une pause pour vous recentrer",
         subtitle: "Massages ayurvediques • Kobido • Reflexologie • Prenatal",
       },
       {
-        image: "/images/default/hero-2.jpg",
+        image: "/images/2055765cb5db0b45cb5ad72ffc760896.png",
         title: "Retrouvez votre equilibre",
         subtitle: "Reflexologie • Prenatal",
       },
       {
-        image: "/images/default/hero-3.jpg",
+        image: "/images/f9ef984d1a430dcf29cb513a7f8f23be.png",
         title: "Le visage retrouve sa lumiere",
         subtitle: "Kobido & rituels visage",
       },
@@ -27,7 +27,7 @@ export const DEFAULT_HOME = {
   },
   presentation: {
     title: "Presentation",
-    image: "/images/default/presentation.jpg",
+    image: "/images/f9e896faf8c74a694512e750dce0f04b.png",
     paragraphs: [
       "Je vous accueille dans un cadre calme et chaleureux.",
       "Chaque seance est adaptee a vos besoins du moment.",
@@ -36,7 +36,7 @@ export const DEFAULT_HOME = {
   },
   approche: {
     title: "Approche",
-    images: ["/images/default/approche.jpg"],
+    images: ["/images/4c01cbdb38d346d772a4e38c1cb3e535.png"],
     bulletsTitle: "Ce qui guide mes mains :",
     bullets: [
       "Un entretien prealable.",
@@ -50,7 +50,7 @@ export const DEFAULT_HOME = {
 export const DEFAULT_SOINS = {
   hero: {
     title: "Soins & Massages",
-    image: "/images/default/soins-hero.jpg",
+    image: "/images/23de8feb4ade88d8f7b5489c2b579b31.png",
   },
   intro: {
     paragraphs: [
@@ -103,17 +103,17 @@ export const DEFAULT_SOINS = {
 export const DEFAULT_ABOUT = {
   hero: {
     title: "A propos",
-    image: "/images/default/about-hero.jpg",
+    image: "/images/f9ef984d1a430dcf29cb513a7f8f23be.png",
   },
   parcours: {
-    image: "/images/default/helene-portrait.jpg",
+    image: "/images/f9e896faf8c74a694512e750dce0f04b.png",
     paragraphs: [
       "Passionnee par le bien-etre, je pratique des massages inspires de l Ayurveda.",
       "Mon objectif: vous aider a retrouver apaisement et energie.",
     ],
   },
   formations: {
-    images: ["/images/default/certif-1.jpg", "/images/default/certif-2.jpg"],
+    images: ["/images/2055765cb5db0b45cb5ad72ffc760896.png", "/images/4c01cbdb38d346d772a4e38c1cb3e535.png"],
     items: [
       { year: "2020", title: "Certification Ayurveda" },
       { year: "2022", title: "Formation Kobido" },
@@ -127,7 +127,7 @@ export const DEFAULT_ABOUT = {
 export const DEFAULT_CONTACT = {
   hero: {
     title: "Contact",
-    image: "/images/default/contact-hero.jpg",
+    image: "/images/23de8feb4ade88d8f7b5489c2b579b31.png",
   },
   infos: {
     address: { street: "123 Rue du Bien-Etre", city: "75011 Paris" },
