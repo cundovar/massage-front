@@ -137,7 +137,7 @@ const FALLBACK_PAGES: Record<string, PageResponse> = {
   },
 };
 
-export async function getServices(): Promise<ServiceItem[]> {
+export async function fetchServices(): Promise<ServiceItem[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/services`, { cache: "no-store" });
 
@@ -152,7 +152,7 @@ export async function getServices(): Promise<ServiceItem[]> {
   }
 }
 
-export async function getPage(slug: string): Promise<PageResponse> {
+export async function fetchPage(slug: string): Promise<PageResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/pages/${slug}`, { cache: "no-store" });
 

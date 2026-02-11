@@ -1,69 +1,39 @@
-import Image from "next/image";
-import { ScrollReveal } from "@/components/animations/ScrollReveal";
-import { getImageUrl, getPage, getSectionContent } from "@/lib/api";
+import { ContactCTA } from "@/components/sections/ContactCTA";
+import { ContactForm } from "@/components/sections/ContactForm";
+import { ContactInfo } from "@/components/sections/ContactInfo";
+import { HeroCompact } from "@/components/sections/HeroCompact";
+import { getImageUrl, fetchPage, getSectionContent } from "@/lib/api";
 import { DEFAULT_CONTACT } from "@/lib/defaultContent";
 import type { ContactHeroContent, ContactInfosContent } from "@/lib/api";
 
 export default async function ContactPage() {
-  const page = await getPage("contact");
+  const page = await fetchPage("contact");
   const heroContent = getSectionContent<ContactHeroContent>(page, "hero", DEFAULT_CONTACT.hero);
   const infosContent = getSectionContent<ContactInfosContent>(page, "infos", DEFAULT_CONTACT.infos);
   const heroImageUrl = getImageUrl(heroContent.image);
 
   return (
-    <main className="pt-12">
-      <section className="glass-panel relative overflow-hidden rounded-3xl px-6 py-12 md:px-10">
-        {heroImageUrl ? (
-          <div className="absolute inset-0">
-            <Image
-              src={heroImageUrl}
-              alt={heroContent.title}
-              fill
-              className="object-cover"
-              sizes="100vw"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/45" />
-          </div>
-        ) : null}
-        <div className="relative z-10">
-          <div className="decor-line" />
-          <h1
-            className={`mt-5 text-5xl font-extralight md:text-6xl ${heroImageUrl ? "text-sand-100" : ""}`}
-            style={{ fontFamily: "var(--font-title)" }}
-          >
-            {heroContent.title}
-          </h1>
+    <main className="page-transition">
+      <HeroCompact title={heroContent.title} imageUrl={heroImageUrl} />
+
+      <section className="mx-auto grid max-w-6xl gap-6 px-6 py-16 md:grid-cols-2">
+        <ContactInfo content={infosContent} />
+        <ContactForm />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-20">
+        <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl bg-gray-100">
+          <iframe
+            title="Map"
+            className="h-full w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.999457739055!2d2.3509873!3d48.856614!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66fdf2e4b5f3b%3A0x2b6f8e3c4a5b2f1b!2sParis!5e0!3m2!1sfr!2sfr!4v1710000000000"
+          />
         </div>
       </section>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-2">
-        <ScrollReveal>
-          <section className="glass-panel rounded-2xl p-6" aria-label="Informations pratiques">
-            <h2 className="text-2xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
-              Informations pratiques
-            </h2>
-            <p className="mt-4 text-[var(--muted)]">{infosContent.address.street}</p>
-            <p className="text-[var(--muted)]">{infosContent.address.city}</p>
-            <p className="mt-4 text-[var(--muted)]">Tel: {infosContent.phone}</p>
-            <p className="text-[var(--muted)]">Email: {infosContent.email}</p>
-          </section>
-        </ScrollReveal>
-        <ScrollReveal>
-          <section className="glass-panel rounded-2xl p-6" aria-label="Horaires">
-            <h2 className="text-2xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
-              Horaires
-            </h2>
-            <ul className="mt-4 space-y-2 text-[var(--muted)]">
-              {infosContent.hours?.map((row) => (
-                <li key={row.days}>
-                  {row.days}: {row.hours}
-                </li>
-              ))}
-            </ul>
-          </section>
-        </ScrollReveal>
-      </div>
+      <ContactCTA />
     </main>
   );
 }
