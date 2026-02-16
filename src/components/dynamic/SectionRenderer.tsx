@@ -25,20 +25,20 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
 
         switch (section.sectionKey) {
           case "hero":
-            return <GenericHeroSection key={key} content={section.content as { title?: string; subtitle?: string; image?: string }} />;
+            return <GenericHeroSection key={key} content={section.content as unknown as { title?: string; subtitle?: string; image?: string }} />;
           case "presentation":
-            return <Presentation key={key} content={section.content as PresentationContent} />;
+            return <Presentation key={key} content={section.content as unknown as PresentationContent} />;
           case "approche":
-            return <Approche key={key} content={section.content as ApprocheContent} />;
+            return <Approche key={key} content={section.content as unknown as ApprocheContent} />;
           case "tarifs":
-            return <Tarifs key={key} content={section.content as TarifsContent} />;
+            return <Tarifs key={key} content={section.content as unknown as TarifsContent} />;
           case "entreprise":
-            return <MassageAmma key={key} content={section.content as EntrepriseContent} />;
+            return <MassageAmma key={key} content={section.content as unknown as EntrepriseContent} />;
           case "gallery":
-            return <GenericGallerySection key={key} content={section.content as { title?: string; images?: string[] }} />;
+            return <GenericGallerySection key={key} content={section.content as unknown as { title?: string; images?: string[] }} />;
           case "text":
           default:
-            return <GenericTextSection key={key} content={section.content as { title?: string; paragraphs?: string[]; quote?: string }} />;
+            return <GenericTextSection key={key} content={section.content as unknown as { title?: string; paragraphs?: string[]; quote?: string }} />;
         }
       })}
     </>

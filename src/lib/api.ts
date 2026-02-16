@@ -190,7 +190,6 @@ export async function getPage(slug: string, options: { fallback: false }): Promi
 export async function getPage(slug: string, options?: { fallback?: boolean }): Promise<PageResponse | null> {
   const useFallback = options?.fallback ?? true;
 
-export async function fetchPage(slug: string): Promise<PageResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/pages/${slug}`, { cache: "no-store" });
 
@@ -234,8 +233,8 @@ export function getImageUrl(path?: string | null): string | null {
 
 export function mapPageDetail(page: PageDetail): PageResponse {
   const sections: PageResponse["sections"] = {};
-  page.sections.forEach((section) => {
-    sections[section.key] = {
+  Object.entries(page.sections).forEach(([key, section]) => {
+    sections[key] = {
       title: section.title,
       content: section.content,
     };

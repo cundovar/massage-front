@@ -2,12 +2,12 @@ import { ContactCTA } from "@/components/sections/ContactCTA";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { ContactInfo } from "@/components/sections/ContactInfo";
 import { HeroCompact } from "@/components/sections/HeroCompact";
-import { getImageUrl, fetchPage, getSectionContent } from "@/lib/api";
+import { getImageUrl, getPage, getSectionContent } from "@/lib/api";
 import { DEFAULT_CONTACT } from "@/lib/defaultContent";
 import type { ContactHeroContent, ContactInfosContent } from "@/lib/api";
 
 export default async function ContactPage() {
-  const page = await fetchPage("contact");
+  const page = await getPage("contact");
   const heroContent = getSectionContent<ContactHeroContent>(page, "hero", DEFAULT_CONTACT.hero);
   const infosContent = getSectionContent<ContactInfosContent>(page, "infos", DEFAULT_CONTACT.infos);
   const heroImageUrl = getImageUrl(heroContent.image);

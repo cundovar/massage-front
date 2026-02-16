@@ -17,14 +17,16 @@ export function Approche({ content }: ApprocheProps) {
             <h2 className="text-4xl md:text-5xl font-serif mb-6 text-gray-900">
               {bulletsTitle}
             </h2>
-            <ul className="space-y-4 text-gray-600 text-lg leading-relaxed">
-              {bullets.map((bullet, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-orange-500 mr-3 mt-1">✓</span>
-                  <span>{bullet}</span>
-                </li>
-              ))}
-            </ul>
+            {bullets && bullets.length > 0 && (
+              <ul className="space-y-4 text-gray-600 text-lg leading-relaxed">
+                {bullets.map((bullet, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-orange-500 mr-3 mt-1">✓</span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             {quote && (
               <blockquote className="mt-8 pl-6 border-l-4 border-orange-400 italic text-xl text-gray-700">
                 "{quote}"
@@ -33,9 +35,17 @@ export function Approche({ content }: ApprocheProps) {
           </AnimatedSection>
 
           {/* Images */}
-          <AnimatedSection delay={200} className="relative">
-            {/* You can map through images here if needed */}
-          </AnimatedSection>
+          {images && images.length > 0 && (
+            <AnimatedSection delay={200} className="relative">
+              <div className="grid gap-4">
+                {images.map((image, index) => (
+                  <div key={index} className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
+                    {/* Image placeholder */}
+                  </div>
+                ))}
+              </div>
+            </AnimatedSection>
+          )}
         </div>
       </div>
     </section>
