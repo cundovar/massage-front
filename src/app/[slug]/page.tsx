@@ -13,6 +13,8 @@ export async function generateMetadata({ params }: DynamicPageProps) {
   const { slug } = await Promise.resolve(params);
 
   if (DEDICATED_ROUTES.has(slug)) {
+
+    
     return {};
   }
 
