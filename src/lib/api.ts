@@ -7,6 +7,7 @@ import {
   DEFAULT_SOINS,
   fallbackServices,
 } from "@/lib/defaultContent";
+import type { NavigationResponse } from "@/types/navigation";
 import type {
   AboutHeroContent,
   ApprocheContent,
@@ -37,6 +38,16 @@ interface PageResponse {
   metaDescription: string | null;
   sections: Record<string, { title: string | null; content: Record<string, unknown> }>;
 }
+
+const FALLBACK_NAVIGATION: NavigationResponse = {
+  items: [
+    { slug: "home", title: "Accueil", path: "/" },
+    { slug: "soins", title: "Carte & tarifs", path: "/soins" },
+    { slug: "entreprise", title: "Entreprise", path: "/entreprise" },
+    { slug: "about", title: "A propos", path: "/a-propos" },
+    { slug: "contact", title: "Contact", path: "/contact" },
+  ],
+};
 
 const FALLBACK_PAGES: Record<string, PageResponse> = {
   home: {
@@ -152,16 +163,49 @@ export async function fetchServices(): Promise<ServiceItem[]> {
   }
 }
 
+export async function getNavigation(): Promise<NavigationResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/navigation`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!response.ok) {
+      return FALLBACK_NAVIGATION;
+    }
+
+    const data = (await response.json()) as NavigationResponse;
+    if (!Array.isArray(data.items)) {
+      return FALLBACK_NAVIGATION;
+    }
+
+    return data;
+  } catch {
+    return FALLBACK_NAVIGATION;
+  }
+}
+
+export async function getPage(slug: string): Promise<PageResponse>;
+export async function getPage(slug: string, options: { fallback: true }): Promise<PageResponse>;
+export async function getPage(slug: string, options: { fallback: false }): Promise<PageResponse | null>;
+export async function getPage(slug: string, options?: { fallback?: boolean }): Promise<PageResponse | null> {
+  const useFallback = options?.fallback ?? true;
+
 export async function fetchPage(slug: string): Promise<PageResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/pages/${slug}`, { cache: "no-store" });
 
     if (!response.ok) {
+      if (!useFallback) {
+        return null;
+      }
       return FALLBACK_PAGES[slug] ?? FALLBACK_PAGES.home;
     }
 
     return (await response.json()) as PageResponse;
   } catch {
+    if (!useFallback) {
+      return null;
+    }
     return FALLBACK_PAGES[slug] ?? FALLBACK_PAGES.home;
   }
 }

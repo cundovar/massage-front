@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { getImageUrl } from "@/lib/api";
@@ -20,7 +22,7 @@ export function Hero({ content }: HeroProps) {
   const firstSlide = slides[0];
 
   return (
-    <section className="glass-panel relative min-h-[82vh] overflow-hidden rounded-3xl px-6 py-16 md:px-12 md:py-20">
+    <section className="glass-panel relative min-h-screen w-full overflow-hidden rounded-3xl px-6 md:px-12">
       <div className="absolute inset-0">
         {slides.map((slide, index) => {
           const imageUrl = getImageUrl(slide.image);
@@ -50,19 +52,17 @@ export function Hero({ content }: HeroProps) {
       </div>
 
       <div className="js-hero-content relative z-10 mx-auto flex min-h-[65vh] max-w-4xl flex-col items-center justify-center text-center text-sand-100">
-        <div className="h-px w-24 bg-amber-500" />
-        <h1 className="mt-6 text-5xl font-extralight leading-[0.95] text-sand-100 md:text-7xl" style={{ fontFamily: "var(--font-title)" }}>
+        <div className="h-px w-24 bg-gold-default" />
+        <h1 className="mt-6 text-5xl font-extralight leading-[0.95] text-sand-warm md:text-7xl font-serif">
           {content.siteTitle ?? "Les Massages d'Helene"}
         </h1>
-        <p className="mt-5 text-xl text-sand-100/90 md:text-3xl">
+        <p className="mt-5 text-xl text-sand-warm/90 md:text-3xl">
           {firstSlide?.title ?? "Pause ayurvedique"}
         </p>
-        {firstSlide?.subtitle && (
-          <p className="mt-7 max-w-2xl text-lg text-sand-100/80">{firstSlide.subtitle}</p>
-        )}
+        {firstSlide?.subtitle && <p className="mt-7 max-w-2xl text-lg text-sand-warm/80">{firstSlide.subtitle}</p>}
         <Link
-          href="#tarifs"
-          className="mt-10 inline-flex rounded-full bg-amber-500 px-7 py-3 text-sm font-semibold tracking-[0.1em] text-black uppercase hover:bg-amber-600"
+          href="/soins"
+          className="mt-10 inline-flex rounded-full bg-gold-default px-7 py-3 text-sm font-semibold tracking-[0.1em] text-brown-darker uppercase hover:bg-gold-dark"
         >
           Decouvrir la carte
         </Link>

@@ -102,6 +102,45 @@ export async function fetchPages(token: string): Promise<PageListItem[]> {
   return data.items;
 }
 
+export interface CreatePagePayload {
+  slug: string;
+  title: string;
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+export async function createPage(token: string, payload: CreatePagePayload): Promise<PageListItem> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(error?.error ?? "Erreur lors de la creation");
+  }
+
+  return (await response.json()) as PageListItem;
+}
+
+export async function deletePage(token: string, slug: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages/${slug}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(error?.error ?? "Erreur lors de la suppression");
+  }
+}
+
 export async function fetchPage(token: string, slug: string): Promise<PageDetail> {
   return fetchAdminApi<PageDetail>(`/api/admin/pages/${slug}`, token);
 }
