@@ -9,9 +9,10 @@ gsap.registerPlugin(ScrollTrigger);
 interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
+  delay?: number;
 }
 
-export function ScrollReveal({ children, className }: ScrollRevealProps) {
+export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
@@ -30,6 +31,7 @@ export function ScrollReveal({ children, className }: ScrollRevealProps) {
           y: 0,
           scale: 1,
           duration: 0.8,
+          delay,
           ease: "power2.out",
           scrollTrigger: {
             trigger: element,
@@ -43,7 +45,7 @@ export function ScrollReveal({ children, className }: ScrollRevealProps) {
     return () => {
       context.revert();
     };
-  }, []);
+  }, [delay]);
 
   return (
     <div ref={containerRef} className={className}>

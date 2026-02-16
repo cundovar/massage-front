@@ -19,23 +19,6 @@ export function AdminHeader() {
   const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-10 border-b border-[var(--bo-line)] bg-white/90 px-5 py-4 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between">
-        <h1 className="text-xl font-semibold">{titleFromPath(pathname)}</h1>
-        <div className="flex items-center gap-3">
-          <NotificationBadge count={0} />
-          <button
-            type="button"
-            className="rounded-md border border-stone-300 px-3 py-1 text-sm"
-            onClick={() => {
-              clearTokenFromStorage();
-              router.push("/admin/login");
-            }}
-          >
-            Deconnexion
-          </button>
-        </div>
-      </div>
-    </header>
+  <></>
   );
 }

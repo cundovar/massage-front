@@ -95,8 +95,18 @@ export default function AdminPagesPage() {
 
   return (
     <section className="bo-card p-6">
-      <p className="bo-label">Pages</p>
-      <h2 className="mt-2 text-2xl font-semibold">Gestion des pages</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="bo-label">Pages</p>
+          <h2 className="mt-2 text-2xl font-semibold">Gestion des pages</h2>
+        </div>
+        <Link
+          href="/admin/pages/new"
+          className="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
+        >
+          Nouvelle page
+        </Link>
+      </div>
       {content}
     </section>
   );
