@@ -30,6 +30,9 @@ export const metadata: Metadata = {
   description: "Site vitrine de massages ayurvediques et bien-etre.",
 };
 
+
+
+
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const navigation = await getNavigation();
 
