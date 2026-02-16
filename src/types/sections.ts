@@ -1,117 +1,85 @@
-export interface SlideContent {
-  image: string;
-  title?: string;
+// types/sections.ts - Types pour le contenu des sections
+
+// ===== HERO =====
+export interface HeroSlide {
+  title: string;
   subtitle?: string;
+  image: string;
 }
 
 export interface HeroContent {
   siteTitle?: string;
-  slides: SlideContent[];
+  slides: HeroSlide[];
 }
 
+// ===== PRESENTATION =====
 export interface PresentationContent {
-  image?: string;
-  title?: string;
+  title: string;
   paragraphs: string[];
   quote?: string;
+  image?: string;
 }
 
+// ===== APPROCHE =====
 export interface ApprocheContent {
-  image?: string;
-  images?: string[];
+  images: string[];
   bulletsTitle?: string;
   bullets: string[];
   quote?: string;
 }
 
-export interface SoinsHeroContent {
-  image?: string;
-  title: string;
-}
-
-export interface SoinCategoryContent {
-  image?: string;
+// ===== TARIFS =====
+export interface TarifOffer {
   title: string;
   description: string;
-}
-
-export interface TarifsOfferContent {
-  title: string;
-  description: string;
-  prices: string[];
+  prices: string[]; // Ex: ["1h · 80€", "1h30 · 100€"]
 }
 
 export interface TarifsContent {
   title: string;
   subtitle?: string;
-  offers: TarifsOfferContent[];
+  offers: TarifOffer[];
 }
 
+// ===== CONTACT INFOS =====
+export interface ContactInfosContent {
+  address: {
+    street: string;
+    city: string;
+  };
+  phone: string;
+  email: string;
+  hours?: Array<{
+    days: string;
+    hours: string;
+  }>;
+}
+
+// ===== ENTREPRISE =====
 export interface EntrepriseContent {
   title: string;
   subtitle?: string;
-  teamTitle: string;
+  teamTitle?: string;
   teamBenefits: string[];
-  companyTitle: string;
+  companyTitle?: string;
   companyBenefits: string[];
   characteristics: string[];
-  quote: string;
+  quote?: string;
 }
 
-export interface AboutHeroContent {
-  image?: string;
-  title: string;
-}
-
-export interface ParcoursContent {
-  image?: string;
-  paragraphs: string[];
-}
-
-export interface FormationsContent {
-  images?: string[];
-  items: { year: string; title: string }[];
-}
-
-export interface ContactHeroContent {
-  image?: string;
-  title: string;
-}
-
-export interface ContactInfosContent {
-  address: { street: string; city: string };
-  phone: string;
-  email: string;
-  hours?: { days: string; hours: string }[];
-}
-
-export interface PageSection {
+// ===== SECTION GÉNÉRIQUE =====
+export interface PageSection<T = Record<string, unknown>> {
   key: string;
   title: string | null;
-  content: Record<string, unknown>;
+  content: T;
   sortOrder: number;
-  updatedAt: string;
 }
 
+// ===== PAGE =====
 export interface PageDetail {
-  id: number;
   slug: string;
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
-  sections: PageSection[];
-  updatedAt: string;
-}
-
-export interface MediaItem {
-  id: number;
-  filename: string;
-  path: string;
-  originalName: string;
-  alt: string | null;
-  mimeType: string;
-  sizeBytes: number;
-  width: number | null;
-  height: number | null;
-  uploadedAt: string;
+  sections: Record<string, PageSection>;
 }
