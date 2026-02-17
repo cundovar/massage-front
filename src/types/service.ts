@@ -15,7 +15,15 @@ export interface Service {
   updatedAt: string;
 }
 
-export type ServiceItem = Service;
+export interface ServiceItem {
+  id: number;
+  category: string;
+  name: string;
+  description: string;
+  prices: ServicePrice[];
+  highlight: boolean;
+  sortOrder: number;
+}
 
 export interface ServiceFormData {
   category: string;
