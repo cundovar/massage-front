@@ -113,6 +113,7 @@ export interface EntrepriseContent {
 // ===== SECTION GÉNÉRIQUE =====
 export interface PageSection<T = Record<string, unknown>> {
   key: string;
+  type?: string;
   title: string | null;
   content: T;
   sortOrder: number;

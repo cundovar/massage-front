@@ -1,7 +1,7 @@
 import { getPage, fetchServices, getSectionContent } from "@/lib/api";
-import { Hero } from "@/components/sections/Hero";
-import { Presentation } from "@/components/sections/Presentation";
-import { Approche } from "@/components/sections/Approche";
+import { Hero } from "@/components/home/Hero";
+import { Presentation } from "@/components/home/Presentation";
+import { Approche } from "@/components/home/Approche";
 import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { DEFAULT_HOME } from "@/lib/defaultContent";

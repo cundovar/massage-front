@@ -1,3 +1,5 @@
+import type { SiteSettings } from "@/types/settings";
+import type { Service, ServiceFormData } from "@/types/service";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 export interface LoginResponse {
@@ -72,11 +74,14 @@ export async function deleteMedia(token: string, id: number): Promise<void> {
 
 export interface PageSection {
   key: string;
+  type: SectionType;
   title: string | null;
   content: Record<string, unknown>;
   sortOrder: number;
   updatedAt: string;
 }
+
+export type SectionType = "hero" | "text" | "image" | "quote" | "presentation" | "approche" | "tarifs" | "entreprise" | string;
 
 export interface PageDetail {
   id: number;
@@ -84,6 +89,9 @@ export interface PageDetail {
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
+  showInNav: boolean;
+  navOrder: number;
+  navTitle: string | null;
   sections: PageSection[];
   updatedAt: string;
 }
@@ -141,8 +149,199 @@ export async function deletePage(token: string, slug: string): Promise<void> {
   }
 }
 
+export async function fetchServices(token: string): Promise<Service[]> {
+  const data = await fetchAdminApi<{ items: Service[] }>("/api/admin/services", token);
+  return data.items;
+}
+
+export async function fetchService(token: string, id: number): Promise<Service> {
+  return fetchAdminApi<Service>(`/api/admin/services/${id}`, token);
+}
+
+export async function createService(token: string, payload: ServiceFormData): Promise<Service> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/services`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string; errors?: Record<string, string> } | null;
+    const firstError = data?.errors ? Object.values(data.errors)[0] : null;
+    throw new Error(firstError ?? data?.error ?? "Failed to create service");
+  }
+
+  return (await response.json()) as Service;
+}
+
+export async function updateService(token: string, id: number, payload: Partial<ServiceFormData>): Promise<Service> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/services/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string; errors?: Record<string, string> } | null;
+    const firstError = data?.errors ? Object.values(data.errors)[0] : null;
+    throw new Error(firstError ?? data?.error ?? "Failed to update service");
+  }
+
+  return (await response.json()) as Service;
+}
+
+export async function deleteService(token: string, id: number): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/services/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "Failed to delete service");
+  }
+}
+
+export async function reorderServices(token: string, orderedIds: number[]): Promise<void> {
+  await Promise.all(
+    orderedIds.map((id, index) =>
+      updateService(token, id, { sortOrder: index }),
+    ),
+  );
+}
+
 export async function fetchPage(token: string, slug: string): Promise<PageDetail> {
   return fetchAdminApi<PageDetail>(`/api/admin/pages/${slug}`, token);
+}
+
+export interface CreateSectionPayload {
+  key: string;
+  type: "text" | "image" | "quote" | "hero";
+  title?: string;
+}
+
+export interface UpdatePagePayload {
+  title?: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  showInNav?: boolean;
+  navOrder?: number;
+  navTitle?: string | null;
+}
+
+export async function createSection(token: string, pageSlug: string, payload: CreateSectionPayload): Promise<PageSection> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages/${pageSlug}/sections`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "Failed to create section");
+  }
+
+  return (await response.json()) as PageSection;
+}
+
+export async function deleteSection(token: string, pageSlug: string, sectionKey: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages/${pageSlug}/sections/${sectionKey}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "Failed to delete section");
+  }
+}
+
+export async function updatePage(token: string, pageSlug: string, payload: UpdatePagePayload): Promise<PageDetail> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages/${pageSlug}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "Failed to update page");
+  }
+
+  return (await response.json()) as PageDetail;
+}
+
+export async function fetchSettings(token: string): Promise<SiteSettings> {
+  return fetchAdminApi<SiteSettings>("/api/admin/settings", token);
+}
+
+export async function updateSettings(token: string, payload: Partial<SiteSettings>): Promise<SiteSettings> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string; errors?: Record<string, string> } | null;
+    const firstError = data?.errors ? Object.values(data.errors)[0] : null;
+    throw new Error(firstError ?? data?.error ?? "Failed to update settings");
+  }
+
+  return (await response.json()) as SiteSettings;
+}
+
+async function uploadSettingsAsset(token: string, endpoint: "/logo" | "/favicon", file: File): Promise<{ path: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE_URL}/api/admin/settings${endpoint}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { errors?: { file?: string } } | null;
+    throw new Error(data?.errors?.file ?? "Upload failed");
+  }
+
+  return (await response.json()) as { path: string };
+}
+
+export async function uploadLogo(token: string, file: File): Promise<{ path: string }> {
+  return uploadSettingsAsset(token, "/logo", file);
+}
+
+export async function uploadFavicon(token: string, file: File): Promise<{ path: string }> {
+  return uploadSettingsAsset(token, "/favicon", file);
 }
 
 export async function updateSection(
