@@ -59,6 +59,70 @@ const FALLBACK_SETTINGS: PublicSettings = {
   footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
 };
 
+function normalizeSettingsPayload(raw: unknown): PublicSettings {
+  if (!raw || typeof raw !== "object") {
+    return FALLBACK_SETTINGS;
+  }
+
+  const data = raw as Record<string, unknown>;
+
+  // New API shape: { general, contact, hours, ... }
+  if (data.general && typeof data.general === "object") {
+    const merged = {
+      ...FALLBACK_SETTINGS,
+      ...data,
+      general: { ...FALLBACK_SETTINGS.general, ...(data.general as Record<string, unknown>) },
+      contact: { ...FALLBACK_SETTINGS.contact, ...(data.contact as Record<string, unknown>) },
+      hours: { ...FALLBACK_SETTINGS.hours, ...(data.hours as Record<string, unknown>) },
+      social: { ...FALLBACK_SETTINGS.social, ...(data.social as Record<string, unknown>) },
+      booking: { ...FALLBACK_SETTINGS.booking, ...(data.booking as Record<string, unknown>) },
+      appearance: { ...FALLBACK_SETTINGS.appearance, ...(data.appearance as Record<string, unknown>) },
+      footer: { ...FALLBACK_SETTINGS.footer, ...(data.footer as Record<string, unknown>) },
+    } as PublicSettings;
+
+    return merged;
+  }
+
+  // Legacy API shape compatibility
+  return {
+    general: {
+      siteName: typeof data.siteName === "string" ? data.siteName : FALLBACK_SETTINGS.general.siteName,
+      logo: typeof data.logo === "string" ? data.logo : null,
+      favicon: null,
+      defaultMetaDescription:
+        typeof data.tagline === "string" && data.tagline.trim().length > 0
+          ? data.tagline
+          : FALLBACK_SETTINGS.general.defaultMetaDescription,
+    },
+    contact: {
+      address:
+        data.address && typeof data.address === "object"
+          ? {
+              street: String((data.address as Record<string, unknown>).street ?? ""),
+              postalCode: String((data.address as Record<string, unknown>).postalCode ?? ""),
+              city: String((data.address as Record<string, unknown>).city ?? ""),
+            }
+          : FALLBACK_SETTINGS.contact.address,
+      phone: typeof data.contactPhone === "string" ? data.contactPhone : FALLBACK_SETTINGS.contact.phone,
+      email: typeof data.contactEmail === "string" ? data.contactEmail : FALLBACK_SETTINGS.contact.email,
+      googleMapsUrl: null,
+      googleMapsEmbed: null,
+    },
+    hours: FALLBACK_SETTINGS.hours,
+    social:
+      data.socialLinks && typeof data.socialLinks === "object"
+        ? {
+            instagram: ((data.socialLinks as Record<string, unknown>).instagram as string | null) ?? null,
+            facebook: ((data.socialLinks as Record<string, unknown>).facebook as string | null) ?? null,
+            linkedin: ((data.socialLinks as Record<string, unknown>).linkedin as string | null) ?? null,
+          }
+        : FALLBACK_SETTINGS.social,
+    booking: FALLBACK_SETTINGS.booking,
+    appearance: FALLBACK_SETTINGS.appearance,
+    footer: FALLBACK_SETTINGS.footer,
+  };
+}
+
 interface PageResponse {
   slug: string;
   title: string;
@@ -220,8 +284,8 @@ export async function getSettings(): Promise<PublicSettings> {
     if (!response.ok) {
       return FALLBACK_SETTINGS;
     }
-    const data = (await response.json()) as PublicSettings;
-    return data;
+    const data = (await response.json()) as unknown;
+    return normalizeSettingsPayload(data);
   } catch {
     return FALLBACK_SETTINGS;
   }
