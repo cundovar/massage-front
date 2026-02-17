@@ -19,7 +19,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text-primary)]">
       <Header />
-      <main className="pt-20 md:pt-24">{children}</main>
+      <main className="pr-20 pl-20">{children}</main>
       <Footer />
     </div>
   );

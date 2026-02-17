@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
-import { fetchPages, type PageListItem } from "@/lib/api-admin";
+import { deletePage, fetchPages, type PageListItem } from "@/lib/api-admin";
 
 function formatDate(value: string): string {
   const date = new Date(value);
@@ -22,6 +22,7 @@ export default function AdminPagesPage() {
   const [pages, setPages] = useState<PageListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -54,6 +55,28 @@ export default function AdminPagesPage() {
       .finally(() => setLoading(false));
   }, [router, token]);
 
+  const handleDeletePage = useCallback(async (slug: string) => {
+    if (!token) return;
+
+    const confirmed = window.confirm(`Supprimer la page "${slug}" ?`);
+    if (!confirmed) return;
+
+    setDeletingSlug(slug);
+    setError(null);
+    try {
+      await deletePage(token, slug);
+      setPages((prev) => prev.filter((page) => page.slug !== slug));
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Impossible de supprimer la page.");
+      }
+    } finally {
+      setDeletingSlug(null);
+    }
+  }, [token]);
+
   const content = useMemo(() => {
     if (loading || !mounted || !token) {
       return <p>Chargement...</p>;
@@ -70,28 +93,41 @@ export default function AdminPagesPage() {
     return (
       <div className="mt-6 space-y-3">
         {pages.map((page) => (
-          <Link
+          <div
             key={page.id}
-            href={`/admin/pages/${page.slug}`}
             className="block rounded-lg border border-[var(--bo-line)] bg-white/80 p-4 transition hover:-translate-y-0.5 hover:shadow-sm"
           >
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-lg font-semibold">{page.title}</p>
                 <p className="text-sm text-[var(--bo-muted)]">/{page.slug}</p>
               </div>
-              <p className="text-xs text-[var(--bo-muted)]">
-                Modifie le {formatDate(page.updatedAt)}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs text-[var(--bo-muted)]">Modifie le {formatDate(page.updatedAt)}</p>
+                <Link
+                  href={`/admin/pages/${page.slug}`}
+                  className="rounded-md border border-amber-200 px-3 py-1 text-xs text-amber-700 hover:bg-amber-50"
+                >
+                  Modifier
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void handleDeletePage(page.slug)}
+                  disabled={deletingSlug === page.slug}
+                  className="rounded-md border border-rose-200 px-3 py-1 text-xs text-rose-700 hover:bg-rose-50 disabled:opacity-60"
+                >
+                  {deletingSlug === page.slug ? "Suppression..." : "Supprimer"}
+                </button>
+              </div>
             </div>
             {page.metaDescription ? (
               <p className="mt-2 text-sm text-[var(--bo-muted)]">{page.metaDescription}</p>
             ) : null}
-          </Link>
+          </div>
         ))}
       </div>
     );
-  }, [error, loading, mounted, pages, token]);
+  }, [deletingSlug, error, handleDeletePage, loading, mounted, pages, token]);
 
   return (
     <section className="bo-card p-6">

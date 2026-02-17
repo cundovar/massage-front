@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { HeroCompact } from "@/components/sections/HeroCompact";
 import { ContactCTA } from "@/components/sections/ContactCTA";
-import { getImageUrl, fetchPage, getSectionContent } from "@/lib/api";
+import { getImageUrl, getPage, getSectionContent } from "@/lib/api";
 import { DEFAULT_ABOUT } from "@/lib/defaultContent";
 import type { AboutHeroContent, FormationsContent, ParcoursContent } from "@/lib/api";
 
 export default async function AboutPage() {
-  const page = await fetchPage("about");
+  const page = await getPage("about");
   const heroContent = getSectionContent<AboutHeroContent>(page, "hero", DEFAULT_ABOUT.hero);
   const parcoursContent = getSectionContent<ParcoursContent>(page, "parcours", DEFAULT_ABOUT.parcours);
   const formationsContent = getSectionContent<FormationsContent>(page, "formations", DEFAULT_ABOUT.formations);

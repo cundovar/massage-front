@@ -9,9 +9,10 @@ interface SectionEditorProps {
   pageSlug: string;
   section: PageSection;
   onUpdate: (section: PageSection) => void;
+  onDelete: () => void;
 }
 
-export function SectionEditor({ token, pageSlug, section, onUpdate }: SectionEditorProps) {
+export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: SectionEditorProps) {
   const [content, setContent] = useState<Record<string, unknown>>(section.content);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,24 +84,155 @@ export function SectionEditor({ token, pageSlug, section, onUpdate }: SectionEdi
   const entrepriseCharacteristics = Array.isArray(content.characteristics) ? (content.characteristics as string[]) : [];
   const entrepriseTeamBenefits = Array.isArray(content.teamBenefits) ? (content.teamBenefits as string[]) : [];
   const entrepriseCompanyBenefits = Array.isArray(content.companyBenefits) ? (content.companyBenefits as string[]) : [];
+  const isGenericSection = section.type === "text" || section.type === "image" || section.type === "quote";
+
+  function renderGenericEditor() {
+    switch (section.type) {
+      case "text":
+        return (
+          <div className="space-y-4 rounded-lg border border-stone-200 p-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-600">Titre</label>
+              <input
+                type="text"
+                value={(content.title as string | undefined) ?? ""}
+                onChange={(event) => updateContent("title", event.target.value)}
+                className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+              />
+            </div>
+            <MediaPicker
+              token={token}
+              value={(content.image as string | null) ?? null}
+              onChange={(path) => updateContent("image", path)}
+              label="Image (optionnelle)"
+            />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <label className="block text-sm font-medium text-stone-600">Paragraphes</label>
+                <button
+                  type="button"
+                  onClick={() => updateContent("paragraphs", [...paragraphsList, ""])}
+                  className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
+                >
+                  Ajouter un paragraphe
+                </button>
+              </div>
+              {paragraphsList.length === 0 ? (
+                <p className="text-sm text-stone-500">Aucun paragraphe pour le moment.</p>
+              ) : (
+                paragraphsList.map((paragraph, index) => (
+                  <div key={`${section.key}-text-paragraph-${index}`} className="flex items-start gap-2">
+                    <textarea
+                      rows={2}
+                      value={paragraph}
+                      onChange={(event) => {
+                        const next = [...paragraphsList];
+                        next[index] = event.target.value;
+                        updateContent("paragraphs", next);
+                      }}
+                      className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateContent("paragraphs", paragraphsList.filter((_, i) => i !== index))}
+                      className="mt-1 rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
+      case "image":
+        return (
+          <div className="space-y-4 rounded-lg border border-stone-200 p-4">
+            <MediaPicker
+              token={token}
+              value={(content.image as string | null) ?? null}
+              onChange={(path) => updateContent("image", path)}
+              label="Image"
+            />
+            <div>
+              <label className="block text-sm font-medium text-stone-600">Texte alternatif</label>
+              <input
+                type="text"
+                value={(content.alt as string | undefined) ?? ""}
+                onChange={(event) => updateContent("alt", event.target.value)}
+                className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-600">Légende (optionnelle)</label>
+              <input
+                type="text"
+                value={(content.caption as string | undefined) ?? ""}
+                onChange={(event) => updateContent("caption", event.target.value)}
+                className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        );
+      case "quote":
+        return (
+          <div className="space-y-4 rounded-lg border border-stone-200 p-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-600">Citation</label>
+              <textarea
+                rows={3}
+                value={(content.text as string | undefined) ?? ""}
+                onChange={(event) => updateContent("text", event.target.value)}
+                className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-600">Auteur (optionnel)</label>
+              <input
+                type="text"
+                value={(content.author as string | undefined) ?? ""}
+                onChange={(event) => updateContent("author", event.target.value)}
+                className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  }
 
   return (
     <section className="bo-card space-y-4 p-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{section.key}</h3>
-        <button
-          type="button"
-          onClick={handleSave}
-          className="rounded-md bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600"
-          disabled={saving}
-        >
-          {saving ? "Enregistrement..." : "Enregistrer"}
-        </button>
+        <h3 className="text-lg font-semibold">
+          {section.title ?? section.key} ({section.type})
+        </h3>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleSave}
+            className="rounded-md bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600"
+            disabled={saving}
+          >
+            {saving ? "Enregistrement..." : "Enregistrer"}
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="rounded-md bg-rose-600 px-4 py-2 text-sm text-white hover:bg-rose-700"
+          >
+            Supprimer
+          </button>
+        </div>
       </div>
 
       {error ? <p className="text-sm text-rose-600">{error}</p> : null}
       {success ? <p className="text-sm text-emerald-600">Sauvegarde reussie.</p> : null}
+      {isGenericSection ? renderGenericEditor() : null}
 
+      {!isGenericSection ? (
+        <>
       {"image" in content || section.key === "presentation" ? (
         <MediaPicker
           token={token}
@@ -670,6 +802,8 @@ export function SectionEditor({ token, pageSlug, section, onUpdate }: SectionEdi
             ))}
           </div>
         </div>
+      ) : null}
+        </>
       ) : null}
     </section>
   );

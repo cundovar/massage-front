@@ -22,9 +22,11 @@ export interface PresentationContent {
 
 // ===== APPROCHE =====
 export interface ApprocheContent {
-  images: string[];
+  title?: string;
+  images?: string[];
+  image?: string;
   bulletsTitle?: string;
-  bullets: string[];
+  bullets?: string[];
   quote?: string;
 }
 
@@ -55,6 +57,47 @@ export interface ContactInfosContent {
   }>;
 }
 
+// ===== ABOUT =====
+export interface AboutHeroContent {
+  title: string;
+  image?: string;
+}
+
+export interface ParcoursContent {
+  image?: string;
+  paragraphs: string[];
+}
+
+export interface FormationsContent {
+  images?: string[];
+  items?: Array<{
+    year: string;
+    title: string;
+  }>;
+}
+
+// ===== SOINS =====
+export interface SoinsHeroContent {
+  title: string;
+  image?: string;
+}
+
+export interface SoinCategoryContent {
+  name: string;
+  description: string;
+  services: Array<{
+    name: string;
+    duration: string;
+    price: number;
+  }>;
+}
+
+// ===== CONTACT =====
+export interface ContactHeroContent {
+  title: string;
+  image?: string;
+}
+
 // ===== ENTREPRISE =====
 export interface EntrepriseContent {
   title: string;
@@ -70,6 +113,7 @@ export interface EntrepriseContent {
 // ===== SECTION GÉNÉRIQUE =====
 export interface PageSection<T = Record<string, unknown>> {
   key: string;
+  type?: string;
   title: string | null;
   content: T;
   sortOrder: number;

@@ -1,12 +1,12 @@
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { HeroCompact } from "@/components/sections/HeroCompact";
 import { ServiceSelector } from "@/components/sections/ServiceSelector";
-import { getImageUrl, fetchPage, getSectionContent } from "@/lib/api";
+import { getImageUrl, getPage, getSectionContent } from "@/lib/api";
 import { DEFAULT_SOINS } from "@/lib/defaultContent";
 import type { SoinsHeroContent, TarifsContent } from "@/lib/api";
 
 export default async function SoinsPage() {
-  const page = await fetchPage("soins");
+  const page = await getPage("soins");
   const heroContent = getSectionContent<SoinsHeroContent>(page, "hero", DEFAULT_SOINS.hero);
   const introContent = getSectionContent<{ paragraphs?: string[] }>(page, "intro", DEFAULT_SOINS.intro);
   const tarifsContent = getSectionContent<TarifsContent>(page, "tarifs", DEFAULT_SOINS.tarifs);

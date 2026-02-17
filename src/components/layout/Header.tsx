@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { getImageUrl } from "@/lib/api";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import type { NavItem } from "@/types/navigation";
+import type { PublicSettings } from "@/types/settings";
 
 interface HeaderProps {
   initialNavItems?: NavItem[];
@@ -18,10 +20,41 @@ const FALLBACK_NAV: NavItem[] = [
   { slug: "contact", title: "Contact", path: "/contact" },
 ];
 
+const FALLBACK_SETTINGS: PublicSettings = {
+  general: {
+    siteName: "Helene Massage & Ayurveda",
+    logo: null,
+    favicon: null,
+    defaultMetaDescription: "Massages ayurvediques, reflexologie et Kobido a Paris.",
+  },
+  contact: {
+    address: { street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
+    phone: "06 12 34 56 78",
+    email: "contact@helene-massage.fr",
+    googleMapsUrl: null,
+    googleMapsEmbed: null,
+  },
+  hours: {
+    schedule: [
+      { days: "Lundi - Vendredi", hours: "10h - 20h" },
+      { days: "Samedi", hours: "10h - 18h" },
+    ],
+    closedMessage: "Ferme le dimanche",
+  },
+  social: { instagram: null, facebook: null, linkedin: null },
+  booking: {
+    minDelayHours: 24,
+    confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h.",
+  },
+  appearance: { primaryColor: "#D4A574", darkModeDefault: false },
+  footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
+};
+
 export function Header({ initialNavItems }: HeaderProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>(initialNavItems?.length ? initialNavItems : FALLBACK_NAV);
+  const [settings, setSettings] = useState<PublicSettings>(FALLBACK_SETTINGS);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,7 +73,21 @@ export function Header({ initialNavItems }: HeaderProps) {
       }
     }
 
+    async function refreshSettings() {
+      try {
+        const response = await fetch(`${baseUrl}/api/settings`, { cache: "no-store" });
+        if (!response.ok) return;
+        const data = (await response.json()) as PublicSettings;
+        if (!cancelled && data?.general?.siteName) {
+          setSettings(data);
+        }
+      } catch {
+        // Keep fallback settings
+      }
+    }
+
     void refreshNavigation();
+    void refreshSettings();
 
     return () => {
       cancelled = true;
@@ -59,10 +106,14 @@ export function Header({ initialNavItems }: HeaderProps) {
   };
 
   return (
-    <header className="glass-panel fixed left-4 right-4 top-4 z-50 rounded-2xl px-4 py-3 md:left-8 md:right-8">
+    <header className="glass-panel bg-amber-300 left-4 right-4 top-4 z-50 fixed rounded-2xl px-4 py-3 md:left-8 md:right-8">
       <div className="container mx-auto flex flex-wrap items-center justify-between gap-4">
-        <Link href="/" onClick={() => setIsMenuOpen(false)} className="text-3xl leading-none font-serif text-brown-darker">
-          Helene
+        <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
+          {settings.general.logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt={settings.general.siteName} className="h-9 w-auto rounded-sm" />
+          ) : null}
+          <span>{settings.general.siteName || "Helene"}</span>
         </Link>
 
         <nav className="hidden flex-1 flex-wrap gap-1 text-sm tracking-wide md:flex" aria-label="Navigation principale">
@@ -128,61 +179,6 @@ export function Header({ initialNavItems }: HeaderProps) {
             ))}
           </div>
         </nav>
-      </div>
-    </header>
-  );
-}
-import { useState, useEffect } from "react";
-import Link from "next/link";
-
-export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <header className={`
-      fixed top-0 left-0 right-0 z-50
-      transition-all duration-300
-      ${isScrolled
-        ? "bg-white/95 backdrop-blur-md shadow-sm"
-        : "bg-transparent"
-      }
-    `}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="text-2xl font-serif">
-          Hélène
-        </Link>
-
-        {/* Navigation Desktop */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/soins" className="hover:text-orange-500 transition">Soins</Link>
-          <Link href="/a-propos" className="hover:text-orange-500 transition">À propos</Link>
-          <Link href="/contact" className="hover:text-orange-500 transition">Contact</Link>
-        </nav>
-
-        {/* CTA */}
-        <Link
-          href="/contact"
-          className="hidden md:inline-flex px-6 py-2 bg-gradient-to-r from-[#FFCE67] to-[#F67E54] text-white rounded-full hover:shadow-lg transition"
-        >
-          Réserver
-        </Link>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <span className="sr-only">Menu</span>
-          {/* Hamburger icon */}
-        </button>
       </div>
     </header>
   );

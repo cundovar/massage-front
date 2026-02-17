@@ -8,6 +8,7 @@ import {
   fallbackServices,
 } from "@/lib/defaultContent";
 import type { NavigationResponse } from "@/types/navigation";
+import type { PublicSettings } from "@/types/settings";
 import type {
   AboutHeroContent,
   ApprocheContent,
@@ -31,12 +32,39 @@ interface ServicesResponse {
   items: ServiceItem[];
 }
 
+const FALLBACK_SETTINGS: PublicSettings = {
+  general: {
+    siteName: "Helene Massage & Ayurveda",
+    logo: null,
+    favicon: null,
+    defaultMetaDescription: "Massages ayurvediques, reflexologie et Kobido a Paris.",
+  },
+  contact: {
+    address: { street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
+    phone: "06 12 34 56 78",
+    email: "contact@helene-massage.fr",
+    googleMapsUrl: null,
+    googleMapsEmbed: null,
+  },
+  hours: {
+    schedule: [
+      { days: "Lundi - Vendredi", hours: "10h - 20h" },
+      { days: "Samedi", hours: "10h - 18h" },
+    ],
+    closedMessage: "Ferme le dimanche",
+  },
+  social: { instagram: null, facebook: null, linkedin: null },
+  booking: { minDelayHours: 24, confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h." },
+  appearance: { primaryColor: "#D4A574", darkModeDefault: false },
+  footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
+};
+
 interface PageResponse {
   slug: string;
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
-  sections: Record<string, { title: string | null; content: Record<string, unknown> }>;
+  sections: Record<string, { type?: string; title: string | null; content: Record<string, unknown> }>;
 }
 
 const FALLBACK_NAVIGATION: NavigationResponse = {
@@ -184,13 +212,27 @@ export async function getNavigation(): Promise<NavigationResponse> {
   }
 }
 
+export async function getSettings(): Promise<PublicSettings> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/settings`, {
+      next: { revalidate: 60 },
+    });
+    if (!response.ok) {
+      return FALLBACK_SETTINGS;
+    }
+    const data = (await response.json()) as PublicSettings;
+    return data;
+  } catch {
+    return FALLBACK_SETTINGS;
+  }
+}
+
 export async function getPage(slug: string): Promise<PageResponse>;
 export async function getPage(slug: string, options: { fallback: true }): Promise<PageResponse>;
 export async function getPage(slug: string, options: { fallback: false }): Promise<PageResponse | null>;
 export async function getPage(slug: string, options?: { fallback?: boolean }): Promise<PageResponse | null> {
   const useFallback = options?.fallback ?? true;
 
-export async function fetchPage(slug: string): Promise<PageResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/pages/${slug}`, { cache: "no-store" });
 
@@ -234,8 +276,9 @@ export function getImageUrl(path?: string | null): string | null {
 
 export function mapPageDetail(page: PageDetail): PageResponse {
   const sections: PageResponse["sections"] = {};
-  page.sections.forEach((section) => {
-    sections[section.key] = {
+  Object.entries(page.sections).forEach(([key, section]) => {
+    sections[key] = {
+      type: section.type,
       title: section.title,
       content: section.content,
     };
@@ -264,4 +307,5 @@ export type {
   ContactHeroContent,
   ContactInfosContent,
   PageResponse,
+  PublicSettings,
 };

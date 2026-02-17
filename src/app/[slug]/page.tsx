@@ -43,6 +43,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
 
   const sections = Object.entries(page.sections).map(([key, section]) => ({
     sectionKey: key,
+    type: section.type,
     title: section.title,
     content: section.content,
   }));
