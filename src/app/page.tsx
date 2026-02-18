@@ -6,6 +6,7 @@ import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { DEFAULT_HOME } from "@/lib/defaultContent";
 import type { HeroContent, PresentationContent, ApprocheContent } from "@/types";
+import { Footer } from "@/components/layout/Footer";
 
 export default async function HomePage() {
   const [page, services] = await Promise.all([
@@ -18,7 +19,7 @@ export default async function HomePage() {
   const approcheContent = getSectionContent<ApprocheContent>(page, "approche", DEFAULT_HOME.approche);
 
   return (
-    <div className="page-transition">
+    <main className="absolute top-0 left-0 right-0 page-transition">
     <div data-animate="section">
         <Hero content={heroContent} />
       </div> 
@@ -32,6 +33,7 @@ export default async function HomePage() {
         <Approche content={approcheContent} />
       </div>
       <ContactCTA />
-    </div>
+      <Footer />
+    </main>
   );
 }
