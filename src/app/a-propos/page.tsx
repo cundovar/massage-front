@@ -20,9 +20,9 @@ export default async function AboutPage() {
     <main className="page-transition">
       <HeroCompact title={heroContent.title} imageUrl={heroImageUrl} />
 
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-2" data-animate="section">
         {parcoursImageUrl ? (
-          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl" data-animate="image">
             <Image
               src={parcoursImageUrl}
               alt="Portrait"
@@ -33,9 +33,9 @@ export default async function AboutPage() {
           </div>
         ) : null}
         <div>
-          <p className="text-orange-500 font-medium mb-4">Parcours</p>
-          <h2 className="heading-section">{parcoursTitle}</h2>
-          <div className="mt-6 space-y-4 text-lg text-gray-600">
+          <p className="text-orange-500 font-medium mb-4" data-animate="text">Parcours</p>
+          <h2 className="heading-section" data-animate="title">{parcoursTitle}</h2>
+          <div className="mt-6 space-y-4 text-lg text-gray-600" data-animate="text">
             {parcoursContent.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
@@ -43,10 +43,10 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-background-alt)] py-20">
+      <section className="bg-[var(--color-background-alt)] py-20" data-animate="section">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="heading-section">{formationsTitle}</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <h2 className="heading-section" data-animate="title">{formationsTitle}</h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2" data-animate="image">
             {formationsContent.images?.map((imagePath) => {
               const imageUrl = getImageUrl(imagePath);
               if (!imageUrl) return null;
@@ -64,7 +64,7 @@ export default async function AboutPage() {
             })}
           </div>
           {formationsContent.items?.length ? (
-            <ul className="mt-6 space-y-2 text-gray-600">
+            <ul className="mt-6 space-y-2 text-gray-600" data-animate="text">
               {formationsContent.items.map((item) => (
                 <li key={`${item.year}-${item.title}`}>
                   <span className="font-medium text-gray-900">{item.year}</span> — {item.title}
@@ -76,8 +76,8 @@ export default async function AboutPage() {
       </section>
 
       {philosophieContent.quote ? (
-        <section className="mx-auto max-w-4xl px-6 py-20">
-          <blockquote className="border-l-4 border-orange-400 pl-6 text-2xl italic text-gray-700">
+        <section className="mx-auto max-w-4xl px-6 py-20" data-animate="section">
+          <blockquote className="border-l-4 border-orange-400 pl-6 text-2xl italic text-gray-700" data-animate="text">
             {philosophieContent.quote}
           </blockquote>
         </section>

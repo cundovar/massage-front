@@ -1,9 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
 import type { ServiceItem } from "@/types";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+import { TransitionLink } from "@/components/transitions/TransitionLink";
 
 interface ServicesPreviewProps {
   services: ServiceItem[];
@@ -11,7 +8,7 @@ interface ServicesPreviewProps {
 
 export function ServicesPreview({ services }: ServicesPreviewProps) {
   return (
-    <section className="py-24 md:py-32 bg-gray-50">
+    <section className="py-24 md:py-32 bg-gray-50" data-animate="section">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Header */}
@@ -19,7 +16,7 @@ export function ServicesPreview({ services }: ServicesPreviewProps) {
           <p className="text-orange-500 font-medium mb-4 uppercase tracking-wide text-sm">
             Mes soins
           </p>
-          <h2 className="text-4xl md:text-5xl font-serif text-gray-900">
+          <h2 data-animate="title" className="text-4xl md:text-5xl font-serif text-gray-900">
             Une gamme de soins<br />pour votre bien-être
           </h2>
         </AnimatedSection>
@@ -70,7 +67,7 @@ export function ServicesPreview({ services }: ServicesPreviewProps) {
                       {service.description}
                     </p>
 
-                    <Link
+                    <TransitionLink
                       href="/soins"
                       className="inline-flex items-center gap-2 text-sm font-medium text-gray-900 group/link"
                     >
@@ -78,7 +75,7 @@ export function ServicesPreview({ services }: ServicesPreviewProps) {
                       <span className="transition-transform group-hover/link:translate-x-1">
                         →
                       </span>
-                    </Link>
+                    </TransitionLink>
                   </div>
 
                 </article>
@@ -89,12 +86,12 @@ export function ServicesPreview({ services }: ServicesPreviewProps) {
 
         {/* CTA */}
         <AnimatedSection delay={500} className="text-center mt-12">
-          <Link
+          <TransitionLink
             href="/soins"
             className="inline-flex px-8 py-4 bg-gradient-to-r from-[#FFCE67] to-[#F67E54] text-white rounded-full font-medium hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300"
           >
             Voir tous les soins
-          </Link>
+          </TransitionLink>
         </AnimatedSection>
 
       </div>

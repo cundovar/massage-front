@@ -33,6 +33,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="fr" className={`${dmSerif.variable} ${inter.variable}`}>
       <body className="font-sans antialiased">
+        {/* Background fixe - ne bouge jamais entre les pages */}
+        <div className="fixed-background" aria-hidden="true" />
+
         <AppShell>{children}</AppShell>
       </body>
     </html>

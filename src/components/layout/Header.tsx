@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@/lib/api";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { NavItem } from "@/types/navigation";
 import type { PublicSettings } from "@/types/settings";
 
@@ -108,17 +108,17 @@ export function Header({ initialNavItems }: HeaderProps) {
   return (
     <header className="glass-panel bg-amber-300 left-4 right-4 top-4 z-50 fixed rounded-2xl px-4 py-3 md:left-8 md:right-8">
       <div className="container mx-auto flex flex-wrap items-center justify-between gap-4">
-        <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
+        <TransitionLink href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
           {settings.general.logo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt={settings.general.siteName} className="h-9 w-auto rounded-sm" />
           ) : null}
           <span>{settings.general.siteName || "Helene"}</span>
-        </Link>
+        </TransitionLink>
 
         <nav className="hidden flex-1 flex-wrap gap-1 text-sm tracking-wide md:flex" aria-label="Navigation principale">
           {navItems.map((item) => (
-            <Link
+            <TransitionLink
               key={item.slug}
               href={item.path}
               className={`rounded-full px-4 py-2 transition-all duration-200 ${
@@ -128,7 +128,7 @@ export function Header({ initialNavItems }: HeaderProps) {
               }`}
             >
               {item.title}
-            </Link>
+            </TransitionLink>
           ))}
         </nav>
 
@@ -164,7 +164,7 @@ export function Header({ initialNavItems }: HeaderProps) {
         <nav className="border-t border-sand-warm/20 pb-2 pt-4" aria-label="Navigation mobile">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
-              <Link
+              <TransitionLink
                 key={item.slug}
                 href={item.path}
                 onClick={() => setIsMenuOpen(false)}
@@ -175,7 +175,7 @@ export function Header({ initialNavItems }: HeaderProps) {
                 }`}
               >
                 {item.title}
-              </Link>
+              </TransitionLink>
             ))}
           </div>
         </nav>

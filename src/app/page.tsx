@@ -18,12 +18,20 @@ export default async function HomePage() {
   const approcheContent = getSectionContent<ApprocheContent>(page, "approche", DEFAULT_HOME.approche);
 
   return (
-    <>
-      <Hero content={heroContent} />
-      <Presentation content={presentationContent} />
-      <ServicesPreview services={services.slice(0, 3)} />
-      <Approche content={approcheContent} />
+    <main className="page-transition">
+      <div data-animate="section">
+        <Hero content={heroContent} />
+      </div>
+      <div data-animate="section">
+        <Presentation content={presentationContent} />
+      </div>
+      <div data-animate="section">
+        <ServicesPreview services={services.slice(0, 3)} />
+      </div>
+      <div data-animate="section">
+        <Approche content={approcheContent} />
+      </div>
       <ContactCTA />
-    </>
+    </main>
   );
 }

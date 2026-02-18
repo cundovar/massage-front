@@ -29,12 +29,12 @@ export default async function ContactPage() {
     <main className="page-transition">
       <HeroCompact title={heroContent.title} imageUrl={heroImageUrl} />
 
-      <section className="mx-auto grid max-w-6xl gap-6 px-6 py-16 md:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl gap-6 px-6 py-16 md:grid-cols-2" data-animate="section">
         <ContactInfo content={infosContent} />
         <ContactForm />
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-20">
+      <section className="mx-auto max-w-6xl px-6 pb-20" data-animate="section">
         <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl bg-gray-100">
           <iframe
             title="Map"

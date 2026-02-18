@@ -8,7 +8,7 @@ interface HeroCompactProps {
 
 export function HeroCompact({ title, subtitle, imageUrl }: HeroCompactProps) {
   return (
-    <section className="relative overflow-hidden bg-white py-20">
+    <section className="relative overflow-hidden bg-white py-20" data-animate="section">
       {imageUrl ? (
         <Image
           src={imageUrl}
@@ -22,9 +22,9 @@ export function HeroCompact({ title, subtitle, imageUrl }: HeroCompactProps) {
       <div className={`absolute inset-0 ${imageUrl ? "bg-black/40" : "bg-gradient-to-r from-[#ffce67]/30 to-[#f67e54]/30"}`} />
 
       <div className={`relative mx-auto max-w-7xl px-6 ${imageUrl ? "text-white" : "text-[var(--color-text-primary)]"}`}>
-        <h1 className="heading-hero">{title}</h1>
+        <h1 data-animate="title" className="heading-hero">{title}</h1>
         {subtitle ? (
-          <p className={`mt-4 text-xl ${imageUrl ? "text-white/90" : "text-gray-700"}`}>{subtitle}</p>
+          <p data-animate="text" className={`mt-4 text-xl ${imageUrl ? "text-white/90" : "text-gray-700"}`}>{subtitle}</p>
         ) : null}
       </div>
     </section>

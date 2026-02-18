@@ -20,8 +20,8 @@ export default async function SoinsPage() {
         imageUrl={heroImageUrl}
       />
       {introContent.paragraphs?.length ? (
-        <section className="mx-auto max-w-4xl px-6 py-16">
-          <div className="space-y-4 text-lg text-gray-600">
+        <section className="mx-auto max-w-4xl px-6 py-16" data-animate="section">
+          <div className="space-y-4 text-lg text-gray-600" data-animate="text">
             {introContent.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}

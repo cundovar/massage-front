@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { TarifsContent } from "@/types";
 
 interface TarifsProps {
@@ -8,14 +8,14 @@ interface TarifsProps {
 
 export function Tarifs({ content }: TarifsProps) {
   return (
-    <section id="tarifs" className="mt-20">
+    <section id="tarifs" className="mt-20" data-animate="section">
       <ScrollReveal>
         <div className="js-tarifs-header mx-auto max-w-3xl text-center">
           <div className="mx-auto h-px w-24 bg-amber-500" />
-          <h2 className="mt-6 text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }}>
+          <h2 data-animate="title" className="mt-6 text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }}>
             {content.title}
           </h2>
-          {content.subtitle ? <p className="mt-5 text-lg text-[var(--muted)]">{content.subtitle}</p> : null}
+          {content.subtitle ? <p data-animate="text" className="mt-5 text-lg text-[var(--muted)]">{content.subtitle}</p> : null}
         </div>
       </ScrollReveal>
 
@@ -38,10 +38,10 @@ export function Tarifs({ content }: TarifsProps) {
       </div>
 
       <div className="mt-12 border-t border-[var(--line)] pt-8 text-center">
-        <p className="text-lg text-[var(--muted)]">Chaque massage commence par un echange pour personnaliser le soin.</p>
-        <Link href="/contact" className="mt-5 inline-flex rounded-full bg-amber-500 px-6 py-3 font-semibold text-black hover:bg-amber-600">
+        <p data-animate="text" className="text-lg text-[var(--muted)]">Chaque massage commence par un echange pour personnaliser le soin.</p>
+        <TransitionLink href="/contact" className="mt-5 inline-flex rounded-full bg-amber-500 px-6 py-3 font-semibold text-black hover:bg-amber-600">
           Me contacter
-        </Link>
+        </TransitionLink>
       </div>
     </section>
   );

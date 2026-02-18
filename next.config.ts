@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV !== "production";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    viewTransition: true,
+  },
   images: {
     unoptimized: isDev,
     domains: ["127.0.0.1", "localhost", "api.helene-massage.fr", "massln.varascundo.com"],
