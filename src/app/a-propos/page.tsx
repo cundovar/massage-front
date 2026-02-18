@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { HeroCompact } from "@/components/sections/HeroCompact";
 import { ContactCTA } from "@/components/sections/ContactCTA";
-import { getImageUrl, getPage, getSectionContent } from "@/lib/api";
+import { getImageUrl, getPage, getSectionContent, getSectionTitle } from "@/lib/api";
 import { DEFAULT_ABOUT } from "@/lib/defaultContent";
 import type { AboutHeroContent, FormationsContent, ParcoursContent } from "@/lib/api";
 
@@ -13,6 +13,8 @@ export default async function AboutPage() {
   const philosophieContent = getSectionContent<{ quote?: string }>(page, "philosophie", DEFAULT_ABOUT.philosophie);
   const heroImageUrl = getImageUrl(heroContent.image);
   const parcoursImageUrl = getImageUrl(parcoursContent.image);
+  const parcoursTitle = getSectionTitle(page, "parcours", "Mon parcours");
+  const formationsTitle = getSectionTitle(page, "formations", "Formations");
 
   return (
     <main className="page-transition">
@@ -32,7 +34,7 @@ export default async function AboutPage() {
         ) : null}
         <div>
           <p className="text-orange-500 font-medium mb-4">Parcours</p>
-          <h2 className="heading-section">Mon parcours</h2>
+          <h2 className="heading-section">{parcoursTitle}</h2>
           <div className="mt-6 space-y-4 text-lg text-gray-600">
             {parcoursContent.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
@@ -43,7 +45,7 @@ export default async function AboutPage() {
 
       <section className="bg-[var(--color-background-alt)] py-20">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="heading-section">Formations</h2>
+          <h2 className="heading-section">{formationsTitle}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             {formationsContent.images?.map((imagePath) => {
               const imageUrl = getImageUrl(imagePath);

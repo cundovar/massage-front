@@ -189,8 +189,12 @@ const FALLBACK_PAGES: Record<string, PageResponse> = {
         content: DEFAULT_ABOUT.hero,
       },
       parcours: {
-        title: null,
+        title: "Mon parcours",
         content: DEFAULT_ABOUT.parcours,
+      },
+      formations: {
+        title: "Formations",
+        content: DEFAULT_ABOUT.formations,
       },
       philosophie: {
         title: null,
@@ -323,6 +327,11 @@ export function getSectionContent<T>(page: PageResponse, key: string, fallback: 
   }
 
   return section.content as T;
+}
+
+export function getSectionTitle(page: PageResponse, key: string, fallback: string): string {
+  const section = page.sections?.[key];
+  return section?.title ?? fallback;
 }
 
 export function getImageUrl(path?: string | null): string | null {
