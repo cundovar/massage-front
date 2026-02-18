@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Alert, Button, Card, Checkbox, FormField, FormSection, Input, Textarea } from "@/components/admin/ui";
 import { CATEGORIES, type Service, type ServiceFormData } from "@/types/service";
 
 interface ServiceFormProps {
@@ -50,99 +51,81 @@ export function ServiceForm({ initialData, isLoading = false, submitLabel = "Enr
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bo-card space-y-6 p-6">
-      <div>
-        <label className="mb-1 block text-sm font-medium">Categorie *</label>
-        <input
-          list="service-categories"
-          className="bo-input"
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-          required
-        />
-        <datalist id="service-categories">
-          {CATEGORIES.map((item) => (
-            <option key={item} value={item} />
-          ))}
-        </datalist>
-      </div>
+    <form onSubmit={handleSubmit}>
+      <Card className="space-y-6">
+        <FormSection title="Informations generales" description="Details du service">
+          <FormField label="Categorie" required>
+            <Input list="service-categories" value={category} onChange={(event) => setCategory(event.target.value)} required />
+            <datalist id="service-categories">
+              {CATEGORIES.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
+          </FormField>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Nom du service *</label>
-        <input className="bo-input" value={name} onChange={(event) => setName(event.target.value)} required />
-      </div>
+          <FormField label="Nom du service" required>
+            <Input value={name} onChange={(event) => setName(event.target.value)} required />
+          </FormField>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Description *</label>
-        <textarea
-          className="bo-input"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          rows={5}
-          required
-        />
-      </div>
+          <FormField label="Description" required>
+            <Textarea value={description} onChange={(event) => setDescription(event.target.value)} rows={5} required />
+          </FormField>
+        </FormSection>
 
-      <div className="space-y-2 rounded-lg border border-stone-200 p-4">
-        <p className="text-sm font-medium">Tarifs</p>
-        {prices.map((price, index) => (
-          <div key={`${price.label}-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-            <input
-              className="bo-input"
-              placeholder="Label (1h, 1h30...)"
-              value={price.label}
-              onChange={(event) => {
-                const next = [...prices];
-                next[index] = { ...next[index], label: event.target.value };
-                setPrices(next);
-              }}
-            />
-            <input
-              className="bo-input"
-              type="number"
-              min={1}
-              placeholder="Prix"
-              value={price.price}
-              onChange={(event) => {
-                const next = [...prices];
-                next[index] = { ...next[index], price: Number(event.target.value || 0) };
-                setPrices(next);
-              }}
-            />
-            <button
-              type="button"
-              className="rounded-md border border-rose-200 px-3 py-2 text-sm text-rose-700 hover:bg-rose-50"
-              onClick={() => setPrices((prev) => prev.filter((_, i) => i !== index))}
-              disabled={prices.length === 1}
-            >
-              Supprimer
-            </button>
+        <FormSection title="Tarification">
+          <div className="space-y-2">
+            {prices.map((price, index) => (
+              <div key={`${price.label}-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
+                <Input
+                  placeholder="Label (1h, 1h30...)"
+                  value={price.label}
+                  onChange={(event) => {
+                    const next = [...prices];
+                    next[index] = { ...next[index], label: event.target.value };
+                    setPrices(next);
+                  }}
+                />
+                <Input
+                  type="number"
+                  min={1}
+                  placeholder="Prix"
+                  value={price.price}
+                  onChange={(event) => {
+                    const next = [...prices];
+                    next[index] = { ...next[index], price: Number(event.target.value || 0) };
+                    setPrices(next);
+                  }}
+                />
+                <Button type="button" variant="danger" size="sm" onClick={() => setPrices((prev) => prev.filter((_, i) => i !== index))} disabled={prices.length === 1}>
+                  Supprimer
+                </Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" onClick={() => setPrices((prev) => [...prev, { label: "", price: 0 }])}>
+              Ajouter un tarif
+            </Button>
           </div>
-        ))}
-        <button
-          type="button"
-          className="rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-700"
-          onClick={() => setPrices((prev) => [...prev, { label: "", price: 0 }])}
-        >
-          Ajouter un tarif
-        </button>
-      </div>
+        </FormSection>
 
-      <label className="inline-flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={highlight} onChange={(event) => setHighlight(event.target.checked)} />
-        Mettre en avant sur la page d&apos;accueil
-      </label>
+        <FormSection title="Options">
+          <Checkbox
+            label="Mettre en avant sur la page d&apos;accueil"
+            checked={highlight}
+            onChange={(event) => setHighlight(event.target.checked)}
+          />
+        </FormSection>
 
-      {error ? <p className="text-sm text-rose-600">{error}</p> : null}
+        {error ? <Alert variant="error">{error}</Alert> : null}
 
-      <div className="flex items-center gap-3">
-        <button type="button" className="rounded-md border border-stone-200 px-4 py-2 text-sm text-stone-700" onClick={onCancel}>
-          Annuler
-        </button>
-        <button type="submit" className="bo-button-primary" disabled={!canSubmit || submitting || isLoading}>
-          {submitting || isLoading ? "Enregistrement..." : submitLabel}
-        </button>
-      </div>
+        <div className="flex items-center gap-3">
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            Annuler
+          </Button>
+          <Button type="submit" disabled={!canSubmit || submitting || isLoading} loading={submitting || isLoading}>
+            {submitLabel}
+          </Button>
+        </div>
+      </Card>
     </form>
   );
 }

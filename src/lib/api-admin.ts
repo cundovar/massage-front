@@ -179,7 +179,8 @@ export async function createService(token: string, payload: ServiceFormData): Pr
 }
 
 export async function updateService(token: string, id: number, payload: Partial<ServiceFormData>): Promise<Service> {
-  const response = await fetch(`${API_BASE_URL}/api/admin/services/${id}`, {
+  const endpoint = `${API_BASE_URL}/api/admin/services/${id}`;
+  let response = await fetch(endpoint, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -187,6 +188,19 @@ export async function updateService(token: string, id: number, payload: Partial<
     },
     body: JSON.stringify(payload),
   });
+
+  // Some production reverse proxies/shared hosts reject PUT with 405.
+  // Retry with POST on the same endpoint, handled server-side as an update fallback.
+  if (response.status === 405) {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  }
 
   if (response.status === 401) throw new Error("UNAUTHORIZED");
   if (!response.ok) {

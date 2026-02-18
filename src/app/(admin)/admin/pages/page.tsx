@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Alert, Button, Card, ConfirmDialog, EmptyState, Spinner } from "@/components/admin/ui";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
 import { deletePage, fetchPages, type PageListItem } from "@/lib/api-admin";
 
@@ -22,7 +23,8 @@ export default function AdminPagesPage() {
   const [pages, setPages] = useState<PageListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
+  const [pageToDelete, setPageToDelete] = useState<PageListItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -55,17 +57,14 @@ export default function AdminPagesPage() {
       .finally(() => setLoading(false));
   }, [router, token]);
 
-  const handleDeletePage = useCallback(async (slug: string) => {
-    if (!token) return;
-
-    const confirmed = window.confirm(`Supprimer la page "${slug}" ?`);
-    if (!confirmed) return;
-
-    setDeletingSlug(slug);
+  const handleDeletePage = useCallback(async () => {
+    if (!token || !pageToDelete) return;
+    setDeleting(true);
     setError(null);
     try {
-      await deletePage(token, slug);
-      setPages((prev) => prev.filter((page) => page.slug !== slug));
+      await deletePage(token, pageToDelete.slug);
+      setPages((prev) => prev.filter((page) => page.slug !== pageToDelete.slug));
+      setPageToDelete(null);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -73,30 +72,43 @@ export default function AdminPagesPage() {
         setError("Impossible de supprimer la page.");
       }
     } finally {
-      setDeletingSlug(null);
+      setDeleting(false);
     }
-  }, [token]);
+  }, [pageToDelete, token]);
 
   const content = useMemo(() => {
     if (loading || !mounted || !token) {
-      return <p>Chargement...</p>;
+      return (
+        <Card>
+          <div className="flex items-center justify-center py-12">
+            <Spinner size="lg" />
+          </div>
+        </Card>
+      );
     }
 
     if (error) {
-      return <p className="text-sm text-rose-600">{error}</p>;
+      return <Alert variant="error">{error}</Alert>;
     }
 
     if (pages.length === 0) {
-      return <p className="text-sm text-[var(--bo-muted)]">Aucune page disponible.</p>;
+      return (
+        <EmptyState
+          title="Aucune page disponible"
+          description="Crée une nouvelle page pour commencer."
+          action={(
+            <Link href="/admin/pages/new">
+              <Button>Nouvelle page</Button>
+            </Link>
+          )}
+        />
+      );
     }
 
     return (
       <div className="mt-6 space-y-3">
         {pages.map((page) => (
-          <div
-            key={page.id}
-            className="block rounded-lg border border-[var(--bo-line)] bg-white/80 p-4 transition hover:-translate-y-0.5 hover:shadow-sm"
-          >
+          <Card key={page.id} padding="sm" className="transition hover:-translate-y-0.5 hover:shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-lg font-semibold">{page.title}</p>
@@ -104,46 +116,45 @@ export default function AdminPagesPage() {
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-xs text-[var(--bo-muted)]">Modifie le {formatDate(page.updatedAt)}</p>
-                <Link
-                  href={`/admin/pages/${page.slug}`}
-                  className="rounded-md border border-amber-200 px-3 py-1 text-xs text-amber-700 hover:bg-amber-50"
-                >
-                  Modifier
+                <Link href={`/admin/pages/${page.slug}`}>
+                  <Button variant="secondary" size="sm">Modifier</Button>
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => void handleDeletePage(page.slug)}
-                  disabled={deletingSlug === page.slug}
-                  className="rounded-md border border-rose-200 px-3 py-1 text-xs text-rose-700 hover:bg-rose-50 disabled:opacity-60"
-                >
-                  {deletingSlug === page.slug ? "Suppression..." : "Supprimer"}
-                </button>
+                <Button type="button" variant="danger" size="sm" onClick={() => setPageToDelete(page)}>
+                  Supprimer
+                </Button>
               </div>
             </div>
             {page.metaDescription ? (
               <p className="mt-2 text-sm text-[var(--bo-muted)]">{page.metaDescription}</p>
             ) : null}
-          </div>
+          </Card>
         ))}
       </div>
     );
-  }, [deletingSlug, error, handleDeletePage, loading, mounted, pages, token]);
+  }, [error, loading, mounted, pages, token]);
 
   return (
-    <section className="bo-card p-6">
+    <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="bo-label">Pages</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Pages</p>
           <h2 className="mt-2 text-2xl font-semibold">Gestion des pages</h2>
         </div>
-        <Link
-          href="/admin/pages/new"
-          className="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
-        >
-          Nouvelle page
+        <Link href="/admin/pages/new">
+          <Button>Nouvelle page</Button>
         </Link>
       </div>
       {content}
-    </section>
+      <ConfirmDialog
+        isOpen={Boolean(pageToDelete)}
+        onClose={() => setPageToDelete(null)}
+        onConfirm={handleDeletePage}
+        title="Supprimer la page ?"
+        message={`Etes-vous sur de vouloir supprimer "${pageToDelete?.title ?? ""}" ?`}
+        confirmLabel="Supprimer"
+        variant="danger"
+        loading={deleting}
+      />
+    </Card>
   );
 }

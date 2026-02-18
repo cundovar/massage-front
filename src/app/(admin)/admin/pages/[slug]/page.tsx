@@ -3,6 +3,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { SectionEditor } from "@/components/admin/editors/SectionEditor";
+import {
+  Alert,
+  Button,
+  Card,
+  Checkbox,
+  ConfirmDialog,
+  FormField,
+  Input,
+  Select,
+  Spinner,
+  Textarea,
+} from "@/components/admin/ui";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
 import {
   createSection,
@@ -28,6 +40,8 @@ export default function AdminPageEditor() {
   const [error, setError] = useState<string | null>(null);
   const [savingPage, setSavingPage] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [sectionToDelete, setSectionToDelete] = useState<PageSection | null>(null);
+  const [deletingSection, setDeletingSection] = useState(false);
   const [newSection, setNewSection] = useState<NewSectionState>({
     key: "",
     type: "text",
@@ -138,108 +152,113 @@ export default function AdminPageEditor() {
     }
   }
 
-  async function handleDeleteSection(section: PageSection) {
+  async function handleDeleteSection() {
+    if (!sectionToDelete) return;
     if (!token || !page) return;
 
-    const ok = window.confirm(`Supprimer la section "${section.title ?? section.key}" ?`);
-    if (!ok) return;
-
+    setDeletingSection(true);
     setError(null);
     try {
-      await deleteSection(token, page.slug, section.key);
+      await deleteSection(token, page.slug, sectionToDelete.key);
       setPage((prev) =>
-        prev ? { ...prev, sections: prev.sections.filter((item) => item.key !== section.key) } : prev,
+        prev ? { ...prev, sections: prev.sections.filter((item) => item.key !== sectionToDelete.key) } : prev,
       );
+      setSectionToDelete(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Impossible de supprimer la section.");
+    } finally {
+      setDeletingSection(false);
     }
   }
 
   if (!mounted || !token || !page) {
-    return <section className="bo-card p-6">Chargement...</section>;
+    return (
+      <Card>
+        <div className="flex items-center justify-center py-12">
+          <Spinner size="lg" />
+        </div>
+      </Card>
+    );
   }
 
   return (
     <section className="space-y-6">
-      <form onSubmit={handlePageSave} className="bo-card space-y-4 p-6">
-        <p className="bo-label">Page</p>
+      <Card>
+        <form onSubmit={handlePageSave} className="space-y-4">
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Page</p>
         <h2 className="text-2xl font-semibold">{page.title}</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium">Titre</label>
-            <input name="title" defaultValue={page.title} className="bo-input" required />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Meta title</label>
-            <input name="metaTitle" defaultValue={page.metaTitle ?? ""} className="bo-input" />
-          </div>
+          <FormField label="Titre" required>
+            <Input name="title" defaultValue={page.title} required />
+          </FormField>
+          <FormField label="Meta title">
+            <Input name="metaTitle" defaultValue={page.metaTitle ?? ""} />
+          </FormField>
         </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium">Meta description</label>
-          <textarea name="metaDescription" defaultValue={page.metaDescription ?? ""} className="bo-input" rows={3} />
-        </div>
+          <FormField label="Meta description">
+            <Textarea name="metaDescription" defaultValue={page.metaDescription ?? ""} rows={3} />
+          </FormField>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <label className="flex items-center gap-2 text-sm">
-            <input name="showInNav" type="checkbox" defaultChecked={page.showInNav} />
-            Afficher dans le menu
-          </label>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Ordre dans le menu</label>
-            <input name="navOrder" type="number" defaultValue={page.navOrder} className="bo-input" />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Titre dans le menu</label>
-            <input name="navTitle" defaultValue={page.navTitle ?? ""} className="bo-input" />
-          </div>
+          <FormField label="Navigation">
+            <Checkbox name="showInNav" defaultChecked={page.showInNav} label="Afficher dans le menu" />
+          </FormField>
+          <FormField label="Ordre dans le menu">
+            <Input name="navOrder" type="number" defaultValue={page.navOrder} />
+          </FormField>
+          <FormField label="Titre dans le menu">
+            <Input name="navTitle" defaultValue={page.navTitle ?? ""} />
+          </FormField>
         </div>
 
-        <button type="submit" className="bo-button-primary" disabled={savingPage}>
-          {savingPage ? "Enregistrement..." : "Enregistrer la page"}
-        </button>
-      </form>
+          <Button type="submit" loading={savingPage}>
+            Enregistrer la page
+          </Button>
+        </form>
+      </Card>
 
-      <div className="bo-card p-6">
+      <Card>
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-lg font-semibold">Sections</h3>
-          <button type="button" className="bo-button-primary" onClick={() => setShowCreateForm((prev) => !prev)}>
-            Ajouter une section
-          </button>
+          <Button type="button" onClick={() => setShowCreateForm((prev) => !prev)}>
+            {showCreateForm ? "Fermer" : "Ajouter une section"}
+          </Button>
         </div>
 
         {showCreateForm ? (
-          <form onSubmit={handleCreateSection} className="mt-4 grid gap-3 rounded-lg border border-stone-200 p-4 md:grid-cols-4">
-            <input
-              className="bo-input"
+          <form
+            onSubmit={handleCreateSection}
+            className="mt-4 grid gap-3 rounded-lg border border-stone-200 bg-white p-4 md:grid-cols-4"
+          >
+            <Input
               placeholder="Cle unique (kebab-case)"
               value={newSection.key}
               onChange={(event) => setNewSection((prev) => ({ ...prev, key: event.target.value }))}
               required
             />
-            <select
-              className="bo-input"
+            <Select
               value={newSection.type}
+              options={[
+                { value: "text", label: "text" },
+                { value: "image", label: "image" },
+                { value: "quote", label: "quote" },
+              ]}
               onChange={(event) => setNewSection((prev) => ({ ...prev, type: event.target.value as NewSectionState["type"] }))}
-            >
-              <option value="text">text</option>
-              <option value="image">image</option>
-              <option value="quote">quote</option>
-            </select>
-            <input
-              className="bo-input"
+            />
+            <Input
               placeholder="Titre (optionnel)"
               value={newSection.title}
               onChange={(event) => setNewSection((prev) => ({ ...prev, title: event.target.value }))}
             />
-            <button type="submit" className="bo-button-primary" disabled={creatingSection}>
-              {creatingSection ? "Creation..." : "Creer"}
-            </button>
+            <Button type="submit" loading={creatingSection}>
+              Creer
+            </Button>
           </form>
         ) : null}
-      </div>
+      </Card>
 
-      {error ? <p className="text-sm text-rose-600">{error}</p> : null}
+      {error ? <Alert variant="error">{error}</Alert> : null}
 
       {sortedSections.map((section) => (
         <SectionEditor
@@ -248,9 +267,20 @@ export default function AdminPageEditor() {
           pageSlug={page.slug}
           section={section}
           onUpdate={handleSectionUpdate}
-          onDelete={() => void handleDeleteSection(section)}
+          onDelete={() => setSectionToDelete(section)}
         />
       ))}
+
+      <ConfirmDialog
+        isOpen={Boolean(sectionToDelete)}
+        onClose={() => setSectionToDelete(null)}
+        onConfirm={handleDeleteSection}
+        title="Supprimer la section ?"
+        message={`Etes-vous sur de vouloir supprimer "${sectionToDelete?.title ?? sectionToDelete?.key ?? ""}" ?`}
+        confirmLabel="Supprimer"
+        loading={deletingSection}
+        variant="danger"
+      />
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { Alert, Button, Card, FormField, Input } from "@/components/admin/ui";
 import { loginAdmin } from "@/lib/api-admin";
 import { setTokenInStorage } from "@/lib/auth";
 
@@ -9,10 +10,12 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState("admin@helene-massage.fr");
   const [password, setPassword] = useState("ChangeMe123!");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
       const response = await loginAdmin(email, password);
@@ -21,30 +24,32 @@ export default function AdminLoginPage() {
       window.location.href = "/admin";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion.");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md items-center px-5">
-      <section className="bo-card w-full p-7">
-        <p className="bo-label">Administration</p>
+      <Card className="w-full">
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Administration</p>
         <h1 className="mt-2 text-2xl font-semibold">Connexion</h1>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4" aria-label="Connexion admin">
-          <div>
-            <label htmlFor="email" className="bo-label">Email</label>
-            <input id="email" type="email" className="bo-input mt-1" value={email} onChange={(event) => setEmail(event.target.value)} required />
-          </div>
-          <div>
-            <label htmlFor="password" className="bo-label">Mot de passe</label>
-            <input id="password" type="password" className="bo-input mt-1" value={password} onChange={(event) => setPassword(event.target.value)} required />
-          </div>
-          {error ? <p className="text-sm text-rose-600">{error}</p> : null}
-          <button type="submit" className="w-full rounded-md bg-amber-500 px-4 py-2 text-white hover:bg-amber-600">Se connecter</button>
+          <FormField label="Email" htmlFor="email">
+            <Input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
+          </FormField>
+          <FormField label="Mot de passe" htmlFor="password">
+            <Input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" />
+          </FormField>
+          {error ? <Alert variant="error">{error}</Alert> : null}
+          <Button type="submit" className="w-full" loading={loading}>
+            Se connecter
+          </Button>
         </form>
         <p className="mt-4 text-sm text-stone-600">
           Pas de compte admin ? <Link href="/register" className="font-medium text-amber-700 hover:text-amber-800">Creer un compte</Link>
         </p>
-      </section>
+      </Card>
     </main>
   );
 }

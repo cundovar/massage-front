@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MediaPicker } from "@/components/admin/media/MediaPicker";
+import { Alert, Button, Card, Input, Textarea } from "@/components/admin/ui";
 import { updateSection, type PageSection } from "@/lib/api-admin";
 
 interface SectionEditorProps {
@@ -93,7 +94,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="space-y-4 rounded-lg border border-stone-200 p-4">
             <div>
               <label className="block text-sm font-medium text-stone-600">Titre</label>
-              <input
+              <Input
                 type="text"
                 value={(content.title as string | undefined) ?? ""}
                 onChange={(event) => updateContent("title", event.target.value)}
@@ -109,20 +110,20 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-4">
                 <label className="block text-sm font-medium text-stone-600">Paragraphes</label>
-                <button
+                <Button
                   type="button"
                   onClick={() => updateContent("paragraphs", [...paragraphsList, ""])}
                   className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
                 >
                   Ajouter un paragraphe
-                </button>
+                </Button>
               </div>
               {paragraphsList.length === 0 ? (
                 <p className="text-sm text-stone-500">Aucun paragraphe pour le moment.</p>
               ) : (
                 paragraphsList.map((paragraph, index) => (
                   <div key={`${section.key}-text-paragraph-${index}`} className="flex items-start gap-2">
-                    <textarea
+                    <Textarea
                       rows={2}
                       value={paragraph}
                       onChange={(event) => {
@@ -132,13 +133,13 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                       }}
                       className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => updateContent("paragraphs", paragraphsList.filter((_, i) => i !== index))}
                       className="mt-1 rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                     >
                       Supprimer
-                    </button>
+                    </Button>
                   </div>
                 ))
               )}
@@ -156,7 +157,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
             />
             <div>
               <label className="block text-sm font-medium text-stone-600">Texte alternatif</label>
-              <input
+              <Input
                 type="text"
                 value={(content.alt as string | undefined) ?? ""}
                 onChange={(event) => updateContent("alt", event.target.value)}
@@ -165,7 +166,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
             </div>
             <div>
               <label className="block text-sm font-medium text-stone-600">Légende (optionnelle)</label>
-              <input
+              <Input
                 type="text"
                 value={(content.caption as string | undefined) ?? ""}
                 onChange={(event) => updateContent("caption", event.target.value)}
@@ -179,7 +180,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="space-y-4 rounded-lg border border-stone-200 p-4">
             <div>
               <label className="block text-sm font-medium text-stone-600">Citation</label>
-              <textarea
+              <Textarea
                 rows={3}
                 value={(content.text as string | undefined) ?? ""}
                 onChange={(event) => updateContent("text", event.target.value)}
@@ -188,7 +189,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
             </div>
             <div>
               <label className="block text-sm font-medium text-stone-600">Auteur (optionnel)</label>
-              <input
+              <Input
                 type="text"
                 value={(content.author as string | undefined) ?? ""}
                 onChange={(event) => updateContent("author", event.target.value)}
@@ -203,32 +204,32 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
   }
 
   return (
-    <section className="bo-card space-y-4 p-6">
+    <Card className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">
           {section.title ?? section.key} ({section.type})
         </h3>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
             onClick={handleSave}
             className="rounded-md bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600"
             disabled={saving}
           >
             {saving ? "Enregistrement..." : "Enregistrer"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={onDelete}
             className="rounded-md bg-rose-600 px-4 py-2 text-sm text-white hover:bg-rose-700"
           >
             Supprimer
-          </button>
+          </Button>
         </div>
       </div>
 
-      {error ? <p className="text-sm text-rose-600">{error}</p> : null}
-      {success ? <p className="text-sm text-emerald-600">Sauvegarde reussie.</p> : null}
+      {error ? <Alert variant="error">{error}</Alert> : null}
+      {success ? <Alert variant="success">Sauvegarde reussie.</Alert> : null}
       {isGenericSection ? renderGenericEditor() : null}
 
       {!isGenericSection ? (
@@ -246,7 +247,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-4">
             <label className="block text-sm font-medium text-stone-600">Images</label>
-            <button
+            <Button
               type="button"
               onClick={() => {
                 const next = Array.isArray(content.images) ? [...content.images] : [...imageList];
@@ -256,7 +257,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
             >
               Ajouter une image
-            </button>
+            </Button>
           </div>
           {imageList.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
@@ -264,7 +265,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                 <div key={`${section.key}-image-${index}`} className="rounded-lg border border-stone-200 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-stone-600">Image {index + 1}</p>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         const next = imageList.filter((_, i) => i !== index);
@@ -273,7 +274,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                       className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                     >
                       Supprimer
-                    </button>
+                    </Button>
                   </div>
                   <MediaPicker
                     token={token}
@@ -298,7 +299,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
         <div className="space-y-4 rounded-lg border border-stone-200 p-4">
           <div>
             <label className="block text-sm font-medium text-stone-600">Titre des points</label>
-            <input
+            <Input
               type="text"
               value={(content.bulletsTitle as string | undefined) ?? ""}
               onChange={(event) => updateContent("bulletsTitle", event.target.value)}
@@ -310,13 +311,13 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-4">
               <label className="block text-sm font-medium text-stone-600">Points</label>
-              <button
+              <Button
                 type="button"
                 onClick={() => updateContent("bullets", [...bulletsList, ""])}
                 className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
               >
                 Ajouter un point
-              </button>
+              </Button>
             </div>
             <div className="space-y-2">
               {bulletsList.length === 0 ? (
@@ -324,7 +325,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               ) : (
                 bulletsList.map((bullet, index) => (
                   <div key={`${section.key}-bullet-${index}`} className="flex items-center gap-2">
-                    <input
+                    <Input
                       type="text"
                       value={bullet}
                       onChange={(event) => {
@@ -335,13 +336,13 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                       className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                       placeholder="Nouveau point"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => updateContent("bullets", bulletsList.filter((_, i) => i !== index))}
                       className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                     >
                       Supprimer
-                    </button>
+                    </Button>
                   </div>
                 ))
               )}
@@ -350,7 +351,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
           <div>
             <label className="block text-sm font-medium text-stone-600">Texte de conclusion</label>
-            <textarea
+            <Textarea
               rows={3}
               value={(content.quote as string | undefined) ?? ""}
               onChange={(event) => updateContent("quote", event.target.value)}
@@ -365,7 +366,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
         <div className="space-y-4 rounded-lg border border-stone-200 p-4">
           <div>
             <label className="block text-sm font-medium text-stone-600">Titre</label>
-            <input
+            <Input
               type="text"
               value={(content.title as string | undefined) ?? ""}
               onChange={(event) => updateContent("title", event.target.value)}
@@ -377,13 +378,13 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-4">
               <label className="block text-sm font-medium text-stone-600">Paragraphes</label>
-              <button
+              <Button
                 type="button"
                 onClick={() => updateContent("paragraphs", [...paragraphsList, ""])}
                 className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
               >
                 Ajouter un paragraphe
-              </button>
+              </Button>
             </div>
             {paragraphsList.length === 0 ? (
               <p className="text-sm text-stone-500">Aucun paragraphe pour le moment.</p>
@@ -391,7 +392,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               <div className="space-y-2">
                 {paragraphsList.map((paragraph, index) => (
                   <div key={`${section.key}-paragraph-${index}`} className="flex items-start gap-2">
-                    <textarea
+                    <Textarea
                       rows={2}
                       value={paragraph}
                       onChange={(event) => {
@@ -402,13 +403,13 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                       className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                       placeholder="Nouveau paragraphe"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => updateContent("paragraphs", paragraphsList.filter((_, i) => i !== index))}
                       className="mt-1 rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                     >
                       Supprimer
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -417,7 +418,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
           <div>
             <label className="block text-sm font-medium text-stone-600">Citation</label>
-            <textarea
+            <Textarea
               rows={3}
               value={(content.quote as string | undefined) ?? ""}
               onChange={(event) => updateContent("quote", event.target.value)}
@@ -432,7 +433,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
         <div className="space-y-4 rounded-lg border border-stone-200 p-4">
           <div>
             <label className="block text-sm font-medium text-stone-600">Titre</label>
-            <input
+            <Input
               type="text"
               value={(content.title as string | undefined) ?? ""}
               onChange={(event) => updateContent("title", event.target.value)}
@@ -443,7 +444,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
           <div>
             <label className="block text-sm font-medium text-stone-600">Sous-titre</label>
-            <textarea
+            <Textarea
               rows={2}
               value={(content.subtitle as string | undefined) ?? ""}
               onChange={(event) => updateContent("subtitle", event.target.value)}
@@ -455,7 +456,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-4">
               <label className="block text-sm font-medium text-stone-600">Offres</label>
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   updateContent("offers", [
@@ -466,7 +467,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                 className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
               >
                 Ajouter une offre
-              </button>
+              </Button>
             </div>
 
             {offersList.length === 0 ? (
@@ -479,19 +480,19 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                     <div key={`${section.key}-offer-${offerIndex}`} className="rounded-lg border border-stone-200 p-4">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-sm font-medium text-stone-600">Offre {offerIndex + 1}</p>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => updateContent("offers", offersList.filter((_, i) => i !== offerIndex))}
                           className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                         >
                           Supprimer
-                        </button>
+                        </Button>
                       </div>
 
                       <div className="mt-3 space-y-3">
                         <div>
                           <label className="block text-xs font-medium text-stone-500">Titre</label>
-                          <input
+                          <Input
                             type="text"
                             value={(offer.title as string | undefined) ?? ""}
                             onChange={(event) => {
@@ -505,7 +506,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
                         <div>
                           <label className="block text-xs font-medium text-stone-500">Description</label>
-                          <textarea
+                          <Textarea
                             rows={2}
                             value={(offer.description as string | undefined) ?? ""}
                             onChange={(event) => {
@@ -520,7 +521,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <label className="block text-xs font-medium text-stone-500">Prix</label>
-                            <button
+                            <Button
                               type="button"
                               onClick={() => {
                                 const next = [...offersList];
@@ -531,14 +532,14 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                               className="rounded-md border border-stone-200 px-2 py-1 text-xs text-stone-700 hover:border-amber-500 hover:text-amber-600"
                             >
                               Ajouter un prix
-                            </button>
+                            </Button>
                           </div>
                           {prices.length === 0 ? (
                             <p className="text-xs text-stone-500">Aucun prix.</p>
                           ) : (
                             prices.map((price, priceIndex) => (
                               <div key={`${section.key}-offer-${offerIndex}-price-${priceIndex}`} className="flex items-center gap-2">
-                                <input
+                                <Input
                                   type="text"
                                   value={price}
                                   onChange={(event) => {
@@ -550,7 +551,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                                   }}
                                   className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                                 />
-                                <button
+                                <Button
                                   type="button"
                                   onClick={() => {
                                     const next = [...offersList];
@@ -561,7 +562,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                                   className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                                 >
                                   Supprimer
-                                </button>
+                                </Button>
                               </div>
                             ))
                           )}
@@ -580,7 +581,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
         <div className="space-y-4 rounded-lg border border-stone-200 p-4">
           <div>
             <label className="block text-sm font-medium text-stone-600">Titre principal</label>
-            <input
+            <Input
               type="text"
               value={(content.title as string | undefined) ?? ""}
               onChange={(event) => updateContent("title", event.target.value)}
@@ -591,7 +592,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
           <div>
             <label className="block text-sm font-medium text-stone-600">Sous-titre</label>
-            <textarea
+            <Textarea
               rows={2}
               value={(content.subtitle as string | undefined) ?? ""}
               onChange={(event) => updateContent("subtitle", event.target.value)}
@@ -603,7 +604,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-3">
               <label className="block text-sm font-medium text-stone-600">Bloc Equipes</label>
-              <input
+              <Input
                 type="text"
                 value={(content.teamTitle as string | undefined) ?? ""}
                 onChange={(event) => updateContent("teamTitle", event.target.value)}
@@ -614,20 +615,20 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-stone-500">Points</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => updateContent("teamBenefits", [...entrepriseTeamBenefits, ""])}
                     className="rounded-md border border-stone-200 px-2 py-1 text-xs text-stone-700 hover:border-amber-500 hover:text-amber-600"
                   >
                     Ajouter
-                  </button>
+                  </Button>
                 </div>
                 {entrepriseTeamBenefits.length === 0 ? (
                   <p className="text-xs text-stone-500">Aucun point.</p>
                 ) : (
                   entrepriseTeamBenefits.map((benefit, index) => (
                     <div key={`entreprise-team-${index}`} className="flex items-center gap-2">
-                      <input
+                      <Input
                         type="text"
                         value={benefit}
                         onChange={(event) => {
@@ -637,7 +638,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                         }}
                         className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={() =>
                           updateContent("teamBenefits", entrepriseTeamBenefits.filter((_, i) => i !== index))
@@ -645,7 +646,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                         className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                       >
                         Supprimer
-                      </button>
+                      </Button>
                     </div>
                   ))
                 )}
@@ -654,7 +655,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
             <div className="space-y-3">
               <label className="block text-sm font-medium text-stone-600">Bloc Entreprise</label>
-              <input
+              <Input
                 type="text"
                 value={(content.companyTitle as string | undefined) ?? ""}
                 onChange={(event) => updateContent("companyTitle", event.target.value)}
@@ -665,20 +666,20 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-stone-500">Points</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => updateContent("companyBenefits", [...entrepriseCompanyBenefits, ""])}
                     className="rounded-md border border-stone-200 px-2 py-1 text-xs text-stone-700 hover:border-amber-500 hover:text-amber-600"
                   >
                     Ajouter
-                  </button>
+                  </Button>
                 </div>
                 {entrepriseCompanyBenefits.length === 0 ? (
                   <p className="text-xs text-stone-500">Aucun point.</p>
                 ) : (
                   entrepriseCompanyBenefits.map((benefit, index) => (
                     <div key={`entreprise-company-${index}`} className="flex items-center gap-2">
-                      <input
+                      <Input
                         type="text"
                         value={benefit}
                         onChange={(event) => {
@@ -688,7 +689,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                         }}
                         className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={() =>
                           updateContent("companyBenefits", entrepriseCompanyBenefits.filter((_, i) => i !== index))
@@ -696,7 +697,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                         className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                       >
                         Supprimer
-                      </button>
+                      </Button>
                     </div>
                   ))
                 )}
@@ -707,20 +708,20 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="block text-sm font-medium text-stone-600">Caracteristiques</label>
-              <button
+              <Button
                 type="button"
                 onClick={() => updateContent("characteristics", [...entrepriseCharacteristics, ""])}
                 className="rounded-md border border-stone-200 px-2 py-1 text-xs text-stone-700 hover:border-amber-500 hover:text-amber-600"
               >
                 Ajouter
-              </button>
+              </Button>
             </div>
             {entrepriseCharacteristics.length === 0 ? (
               <p className="text-xs text-stone-500">Aucune caracteristique.</p>
             ) : (
               entrepriseCharacteristics.map((item, index) => (
                 <div key={`entreprise-characteristic-${index}`} className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="text"
                     value={item}
                     onChange={(event) => {
@@ -730,7 +731,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                     }}
                     className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={() =>
                       updateContent("characteristics", entrepriseCharacteristics.filter((_, i) => i !== index))
@@ -738,7 +739,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                     className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                   >
                     Supprimer
-                  </button>
+                  </Button>
                 </div>
               ))
             )}
@@ -746,7 +747,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
           <div>
             <label className="block text-sm font-medium text-stone-600">Citation</label>
-            <textarea
+            <Textarea
               rows={3}
               value={(content.quote as string | undefined) ?? ""}
               onChange={(event) => updateContent("quote", event.target.value)}
@@ -761,7 +762,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-4">
             <label className="block text-sm font-medium text-stone-600">Slides</label>
-            <button
+            <Button
               type="button"
               onClick={() => {
                 const next = [...(content.slides as Array<Record<string, unknown>>), { image: null }];
@@ -770,14 +771,14 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
             >
               Ajouter une image
-            </button>
+            </Button>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {(content.slides as Array<Record<string, unknown>>).map((slide, index) => (
               <div key={`${section.key}-slide-${index}`} className="rounded-lg border border-stone-200 p-3">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-medium text-stone-600">Slide {index + 1}</p>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       const next = (content.slides as Array<Record<string, unknown>>).filter((_, i) => i !== index);
@@ -786,7 +787,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                     className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
                   >
                     Supprimer
-                  </button>
+                  </Button>
                 </div>
                 <MediaPicker
                   token={token}
@@ -805,6 +806,6 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
       ) : null}
         </>
       ) : null}
-    </section>
+    </Card>
   );
 }

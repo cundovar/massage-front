@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Alert, Badge, Button, Card, ConfirmDialog, EmptyState, IconButton, Spinner } from "@/components/admin/ui";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
 import { deleteService, fetchServices, reorderServices, updateService } from "@/lib/api-admin";
 import type { Service } from "@/types/service";
@@ -14,6 +15,8 @@ export default function AdminServicesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("Toutes");
+  const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -48,14 +51,17 @@ export default function AdminServicesPage() {
     [activeCategory, services],
   );
 
-  async function handleDelete(id: number) {
-    if (!token) return;
-    if (!window.confirm("Supprimer ce service ?")) return;
+  async function confirmDelete() {
+    if (!token || !serviceToDelete) return;
+    setDeleting(true);
     try {
-      await deleteService(token, id);
-      setServices((prev) => prev.filter((item) => item.id !== id));
+      await deleteService(token, serviceToDelete.id);
+      setServices((prev) => prev.filter((item) => item.id !== serviceToDelete.id));
+      setServiceToDelete(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Suppression impossible.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -89,80 +95,119 @@ export default function AdminServicesPage() {
   }
 
   if (loading) {
-    return <section className="bo-card p-6">Chargement...</section>;
+    return (
+      <Card>
+        <div className="flex items-center justify-center py-12">
+          <Spinner size="lg" />
+        </div>
+      </Card>
+    );
   }
 
   return (
-    <section className="bo-card p-6">
+    <Card className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="bo-label">Services</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Services</p>
           <h2 className="mt-2 text-2xl font-semibold">Gestion des services</h2>
         </div>
-        <Link href="/admin/services/new" className="bo-button-primary">
-          Nouveau service
+        <Link href="/admin/services/new">
+          <Button>Nouveau service</Button>
         </Link>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {categories.map((category) => (
-          <button
+          <Button
             key={category}
             type="button"
             onClick={() => setActiveCategory(category)}
-            className={`rounded-md px-3 py-1 text-sm ${activeCategory === category ? "bg-amber-600 text-white" : "border border-stone-200 text-stone-700"}`}
+            variant={activeCategory === category ? "primary" : "secondary"}
+            size="sm"
           >
             {category}
-          </button>
+          </Button>
         ))}
       </div>
 
-      {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
+      {error ? <Alert variant="error">{error}</Alert> : null}
 
-      <div className="mt-6 space-y-3">
+      <div className="space-y-3">
         {filteredServices.map((service) => (
-          <article key={service.id} className="rounded-lg border border-[var(--bo-line)] bg-white/80 p-4">
+          <Card key={service.id} padding="sm">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="space-y-2">
-                <p className="text-lg font-semibold">
-                  {service.highlight ? "★ " : ""}
-                  {service.name}
-                </p>
-                <p className="text-sm text-stone-500">{service.category}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">{service.name}</p>
+                  {service.highlight ? <Badge variant="warning">Mis en avant</Badge> : null}
+                </div>
+                <Badge>{service.category}</Badge>
                 <p className="text-sm text-stone-700">{service.description}</p>
                 <p className="text-sm text-stone-500">
                   {service.prices.map((price) => `${price.label}: ${price.price}€`).join(" · ")}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <button type="button" className="rounded border border-stone-200 px-2 py-1 text-xs" onClick={() => void handleMove(service.id, "up")}>
-                  ↑
-                </button>
-                <button type="button" className="rounded border border-stone-200 px-2 py-1 text-xs" onClick={() => void handleMove(service.id, "down")}>
-                  ↓
-                </button>
-                <button
-                  type="button"
-                  className="rounded border border-amber-200 px-3 py-1 text-xs text-amber-700"
-                  onClick={() => void handleToggleHighlight(service)}
-                >
+                <IconButton
+                  icon={<span aria-hidden="true">↑</span>}
+                  label="Monter"
+                  size="sm"
+                  onClick={() => void handleMove(service.id, "up")}
+                />
+                <IconButton
+                  icon={<span aria-hidden="true">↓</span>}
+                  label="Descendre"
+                  size="sm"
+                  onClick={() => void handleMove(service.id, "down")}
+                />
+                <Button type="button" variant="secondary" size="sm" onClick={() => void handleToggleHighlight(service)}>
                   {service.highlight ? "Retirer highlight" : "Mettre highlight"}
-                </button>
-                <Link href={`/admin/services/${service.id}`} className="rounded border border-stone-200 px-3 py-1 text-xs">
-                  Editer
+                </Button>
+                <Link href={`/admin/services/${service.id}`}>
+                  <Button variant="secondary" size="sm">Editer</Button>
                 </Link>
-                <button
+                <Button
                   type="button"
-                  className="rounded border border-rose-200 px-3 py-1 text-xs text-rose-700"
-                  onClick={() => void handleDelete(service.id)}
+                  variant="danger"
+                  size="sm"
+                  onClick={() => setServiceToDelete(service)}
                 >
                   Supprimer
-                </button>
+                </Button>
               </div>
             </div>
-          </article>
+          </Card>
         ))}
+
+        {filteredServices.length === 0 ? (
+          <EmptyState
+            title="Aucun service"
+            description={
+              activeCategory === "Toutes"
+                ? "Commencez par creer votre premier service."
+                : `Aucun service dans la categorie "${activeCategory}".`
+            }
+            action={
+              activeCategory === "Toutes" ? (
+                <Link href="/admin/services/new">
+                  <Button>Creer un service</Button>
+                </Link>
+              ) : null
+            }
+          />
+        ) : null}
       </div>
-    </section>
+
+      <ConfirmDialog
+        isOpen={Boolean(serviceToDelete)}
+        onClose={() => setServiceToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Supprimer le service ?"
+        message={`Etes-vous sur de vouloir supprimer "${serviceToDelete?.name ?? ""}" ? Cette action est irreversible.`}
+        confirmLabel="Supprimer"
+        variant="danger"
+        loading={deleting}
+      />
+    </Card>
   );
 }

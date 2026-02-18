@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { Button, Card, ColorPicker, FormField, FormSection, Input, Switch, Textarea } from "@/components/admin/ui";
 import { getImageUrl } from "@/lib/api";
 import type { SiteSettings } from "@/types/settings";
 
@@ -29,27 +30,22 @@ export function SettingsForm({
   const faviconInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
-    <section className="bo-card space-y-6 p-6">
+    <Card className="space-y-6">
       <div>
-        <p className="bo-label">Parametres</p>
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-500">Parametres</p>
         <h2 className="mt-2 text-2xl font-semibold">Parametres du site</h2>
       </div>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Informations generales</h3>
+      <FormSection title="Informations generales">
         <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium">Nom du site</label>
-            <input
-              className="bo-input"
+          <FormField label="Nom du site">
+            <Input
               value={settings.general.siteName}
               onChange={(event) => onChange({ ...settings, general: { ...settings.general, siteName: event.target.value } })}
             />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Meta description par defaut</label>
-            <input
-              className="bo-input"
+          </FormField>
+          <FormField label="Meta description par defaut">
+            <Input
               value={settings.general.defaultMetaDescription}
               onChange={(event) =>
                 onChange({
@@ -58,12 +54,12 @@ export function SettingsForm({
                 })
               }
             />
-          </div>
+          </FormField>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-medium">Logo</label>
+            <p className="text-sm font-medium text-stone-600">Logo</p>
             {settings.general.logo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt="Logo" className="h-12 rounded border border-stone-200 bg-white p-1" />
@@ -79,12 +75,12 @@ export function SettingsForm({
                 event.currentTarget.value = "";
               }}
             />
-            <button type="button" className="bo-button-primary" disabled={uploadingLogo} onClick={() => logoInputRef.current?.click()}>
+            <Button type="button" loading={uploadingLogo} onClick={() => logoInputRef.current?.click()}>
               {uploadingLogo ? "Upload..." : "Uploader logo"}
-            </button>
+            </Button>
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-medium">Favicon</label>
+            <p className="text-sm font-medium text-stone-600">Favicon</p>
             {settings.general.favicon ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={getImageUrl(settings.general.favicon) ?? settings.general.favicon} alt="Favicon" className="h-10 w-10 rounded border border-stone-200 bg-white p-1" />
@@ -100,18 +96,16 @@ export function SettingsForm({
                 event.currentTarget.value = "";
               }}
             />
-            <button type="button" className="bo-button-primary" disabled={uploadingFavicon} onClick={() => faviconInputRef.current?.click()}>
+            <Button type="button" loading={uploadingFavicon} onClick={() => faviconInputRef.current?.click()}>
               {uploadingFavicon ? "Upload..." : "Uploader favicon"}
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </FormSection>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Coordonnees</h3>
+      <FormSection title="Coordonnees">
         <div className="grid gap-4 md:grid-cols-3">
-          <input
-            className="bo-input"
+          <Input
             placeholder="Rue"
             value={settings.contact.address.street}
             onChange={(event) =>
@@ -121,8 +115,7 @@ export function SettingsForm({
               })
             }
           />
-          <input
-            className="bo-input"
+          <Input
             placeholder="Code postal"
             value={settings.contact.address.postalCode}
             onChange={(event) =>
@@ -132,8 +125,7 @@ export function SettingsForm({
               })
             }
           />
-          <input
-            className="bo-input"
+          <Input
             placeholder="Ville"
             value={settings.contact.address.city}
             onChange={(event) =>
@@ -145,41 +137,35 @@ export function SettingsForm({
           />
         </div>
         <div className="grid gap-4 md:grid-cols-2">
-          <input
-            className="bo-input"
+          <Input
             placeholder="Telephone"
             value={settings.contact.phone}
             onChange={(event) => onChange({ ...settings, contact: { ...settings.contact, phone: event.target.value } })}
           />
-          <input
-            className="bo-input"
+          <Input
             placeholder="Email"
             value={settings.contact.email}
             onChange={(event) => onChange({ ...settings, contact: { ...settings.contact, email: event.target.value } })}
           />
         </div>
-        <input
-          className="bo-input"
+        <Input
           placeholder="Google Maps URL"
           value={settings.contact.googleMapsUrl ?? ""}
           onChange={(event) => onChange({ ...settings, contact: { ...settings.contact, googleMapsUrl: event.target.value || null } })}
         />
-        <textarea
-          className="bo-input"
+        <Textarea
           placeholder="Google Maps embed URL"
           rows={2}
           value={settings.contact.googleMapsEmbed ?? ""}
           onChange={(event) => onChange({ ...settings, contact: { ...settings.contact, googleMapsEmbed: event.target.value || null } })}
         />
-      </div>
+      </FormSection>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Horaires</h3>
+      <FormSection title="Horaires">
         <div className="space-y-2">
           {settings.hours.schedule.map((item, index) => (
             <div key={`${item.days}-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-              <input
-                className="bo-input"
+              <Input
                 placeholder="Jours"
                 value={item.days}
                 onChange={(event) => {
@@ -188,8 +174,7 @@ export function SettingsForm({
                   onChange({ ...settings, hours: { ...settings.hours, schedule: next } });
                 }}
               />
-              <input
-                className="bo-input"
+              <Input
                 placeholder="Horaires"
                 value={item.hours}
                 onChange={(event) => {
@@ -198,18 +183,19 @@ export function SettingsForm({
                   onChange({ ...settings, hours: { ...settings.hours, schedule: next } });
                 }}
               />
-              <button
+              <Button
                 type="button"
-                className="rounded-md border border-rose-200 px-3 py-2 text-sm text-rose-700 hover:bg-rose-50"
+                variant="danger"
+                size="sm"
                 onClick={() => onChange({ ...settings, hours: { ...settings.hours, schedule: settings.hours.schedule.filter((_, i) => i !== index) } })}
               >
                 Supprimer
-              </button>
+              </Button>
             </div>
           ))}
-          <button
+          <Button
             type="button"
-            className="rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-700"
+            variant="secondary"
             onClick={() =>
               onChange({
                 ...settings,
@@ -218,51 +204,43 @@ export function SettingsForm({
             }
           >
             Ajouter un creneau
-          </button>
+          </Button>
         </div>
-        <input
-          className="bo-input"
+        <Input
           placeholder="Message fermeture"
           value={settings.hours.closedMessage}
           onChange={(event) => onChange({ ...settings, hours: { ...settings.hours, closedMessage: event.target.value } })}
         />
-      </div>
+      </FormSection>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Reseaux sociaux</h3>
+      <FormSection title="Reseaux sociaux">
         <div className="grid gap-4 md:grid-cols-3">
-          <input
-            className="bo-input"
+          <Input
             placeholder="Instagram"
             value={settings.social.instagram ?? ""}
             onChange={(event) => onChange({ ...settings, social: { ...settings.social, instagram: event.target.value || null } })}
           />
-          <input
-            className="bo-input"
+          <Input
             placeholder="Facebook"
             value={settings.social.facebook ?? ""}
             onChange={(event) => onChange({ ...settings, social: { ...settings.social, facebook: event.target.value || null } })}
           />
-          <input
-            className="bo-input"
+          <Input
             placeholder="LinkedIn"
             value={settings.social.linkedin ?? ""}
             onChange={(event) => onChange({ ...settings, social: { ...settings.social, linkedin: event.target.value || null } })}
           />
         </div>
-      </div>
+      </FormSection>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Reservations</h3>
+      <FormSection title="Reservations">
         <div className="grid gap-4 md:grid-cols-2">
-          <input
-            className="bo-input"
+          <Input
             placeholder="Email notification"
             value={settings.booking.notificationEmail}
             onChange={(event) => onChange({ ...settings, booking: { ...settings.booking, notificationEmail: event.target.value } })}
           />
-          <input
-            className="bo-input"
+          <Input
             type="number"
             min={0}
             placeholder="Delai minimum (heures)"
@@ -272,39 +250,32 @@ export function SettingsForm({
             }
           />
         </div>
-        <textarea
-          className="bo-input"
+        <Textarea
           rows={3}
           placeholder="Message de confirmation"
           value={settings.booking.confirmationMessage}
           onChange={(event) => onChange({ ...settings, booking: { ...settings.booking, confirmationMessage: event.target.value } })}
         />
-      </div>
+      </FormSection>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Apparence</h3>
+      <FormSection title="Apparence">
         <div className="grid gap-4 md:grid-cols-2">
-          <input
-            className="bo-input"
-            type="color"
-            value={settings.appearance.primaryColor}
-            onChange={(event) => onChange({ ...settings, appearance: { ...settings.appearance, primaryColor: event.target.value } })}
-          />
-          <label className="inline-flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={settings.appearance.darkModeDefault}
-              onChange={(event) => onChange({ ...settings, appearance: { ...settings.appearance, darkModeDefault: event.target.checked } })}
+          <FormField label="Couleur principale">
+            <ColorPicker
+              value={settings.appearance.primaryColor}
+              onChange={(color) => onChange({ ...settings, appearance: { ...settings.appearance, primaryColor: color } })}
             />
-            Mode sombre par defaut
-          </label>
+          </FormField>
+          <Switch
+            label="Mode sombre par defaut"
+            checked={settings.appearance.darkModeDefault}
+            onChange={(event) => onChange({ ...settings, appearance: { ...settings.appearance, darkModeDefault: event.target.checked } })}
+          />
         </div>
-      </div>
+      </FormSection>
 
-      <div className="space-y-6 rounded-lg border border-stone-200 p-4">
-        <h3 className="text-lg font-semibold">Footer</h3>
-        <input
-          className="bo-input"
+      <FormSection title="Footer">
+        <Input
           placeholder="Copyright"
           value={settings.footer.copyrightText}
           onChange={(event) => onChange({ ...settings, footer: { ...settings.footer, copyrightText: event.target.value } })}
@@ -312,8 +283,7 @@ export function SettingsForm({
         <div className="space-y-2">
           {settings.footer.quickLinks.map((link, index) => (
             <div key={`${link.label}-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-              <input
-                className="bo-input"
+              <Input
                 placeholder="Label"
                 value={link.label}
                 onChange={(event) => {
@@ -322,8 +292,7 @@ export function SettingsForm({
                   onChange({ ...settings, footer: { ...settings.footer, quickLinks: next } });
                 }}
               />
-              <input
-                className="bo-input"
+              <Input
                 placeholder="URL"
                 value={link.url}
                 onChange={(event) => {
@@ -332,9 +301,10 @@ export function SettingsForm({
                   onChange({ ...settings, footer: { ...settings.footer, quickLinks: next } });
                 }}
               />
-              <button
+              <Button
                 type="button"
-                className="rounded-md border border-rose-200 px-3 py-2 text-sm text-rose-700 hover:bg-rose-50"
+                variant="danger"
+                size="sm"
                 onClick={() =>
                   onChange({
                     ...settings,
@@ -343,12 +313,12 @@ export function SettingsForm({
                 }
               >
                 Supprimer
-              </button>
+              </Button>
             </div>
           ))}
-          <button
+          <Button
             type="button"
-            className="rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-700"
+            variant="secondary"
             onClick={() =>
               onChange({
                 ...settings,
@@ -357,13 +327,13 @@ export function SettingsForm({
             }
           >
             Ajouter un lien
-          </button>
+          </Button>
         </div>
-      </div>
+      </FormSection>
 
-      <button type="button" className="bo-button-primary" disabled={saving} onClick={() => void onSave()}>
+      <Button type="button" loading={saving} onClick={() => void onSave()}>
         {saving ? "Enregistrement..." : "Enregistrer"}
-      </button>
-    </section>
+      </Button>
+    </Card>
   );
 }
