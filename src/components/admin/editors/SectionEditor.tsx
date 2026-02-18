@@ -82,7 +82,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
       : section.key === "approche" && typeof content.image === "string"
         ? [content.image]
         : [];
-  const shouldShowImages = Array.isArray(content.images) || section.key === "approche";
+  const shouldShowImages = (Array.isArray(content.images) || section.key === "approche") && !["formations", "parcours"].includes(section.key);
   const bulletsList = Array.isArray(content.bullets) ? (content.bullets as string[]) : [];
   const offersList = Array.isArray(content.offers) ? (content.offers as Array<Record<string, unknown>>) : [];
   const paragraphsList = Array.isArray(content.paragraphs) ? (content.paragraphs as string[]) : [];
@@ -249,7 +249,7 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
       {!isGenericSection ? (
         <>
-      {"image" in content || section.key === "presentation" ? (
+      {("image" in content || section.key === "presentation") && section.key !== "parcours" ? (
         <MediaPicker
           token={token}
           value={(content.image as string | null) ?? null}
