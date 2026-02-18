@@ -20,11 +20,10 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <TransitionProvider>
-      <div className="fixed-background" aria-hidden="true" />
-      <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text-primary)]">
+      <div className="min-h-screen bg-(--color-background) text-(--color-text-primary)">
         <Header />
         <PageWrapper>
-          <main className="pr-20 pl-20">{children}</main>
+          <main className="mt-20 mr-20 ml-20 max-md:m-1 min-lg:p-20 bg-amber-500">{children}</main>
         </PageWrapper>
         <Footer />
       </div>

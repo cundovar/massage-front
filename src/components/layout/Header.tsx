@@ -106,8 +106,8 @@ export function Header({ initialNavItems }: HeaderProps) {
   };
 
   return (
-    <header className="glass-panel bg-amber-300 left-4 right-4 top-4 z-50 fixed rounded-2xl px-4 py-3 md:left-8 md:right-8">
-      <div className="container mx-auto flex flex-wrap items-center justify-between gap-4">
+    <header className="top-0 h-20 left-4 right-4 z-50 fixed rounded-2xl px-4 py-3 backdrop-blur-md  border-white/20 shadow-lg">
+      <div className=" mx-auto flex flex-wrap items-center justify-between gap-4">
         <TransitionLink href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
           {settings.general.logo ? (
             // eslint-disable-next-line @next/next/no-img-element

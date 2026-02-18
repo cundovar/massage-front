@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
-:root,
-[data-theme="light"] {
+:root {
   --color-primary-start: #ffce67;
   --color-primary-end: #f67e54;
   --gradient-primary: linear-gradient(135deg, #ffce67 0%, #f67e54 100%);
@@ -18,43 +17,8 @@
   --color-text-primary: #1a1a1a;
   --color-text-secondary: #525252;
   --color-text-on-gradient: #ffffff;
-  --color-background: #ffffff;
+  --color-background: #f39797;
   --color-background-alt: #fafafa;
-
-  /* Variables génériques pour composants */
-  --text: var(--color-text-primary);
-  --muted: var(--color-gray-600);
-  --panel: var(--color-white);
-  --line: var(--color-gray-200);
-  --accent: var(--color-primary-end);
-}
-
-[data-theme="dark"] {
-  --color-primary-start: #ffce67;
-  --color-primary-end: #f67e54;
-  --gradient-primary: linear-gradient(135deg, #ffce67 0%, #f67e54 100%);
-
-  --color-white: #1a1a1a;
-  --color-black: #ffffff;
-  --color-gray-50: #262626;
-  --color-gray-100: #2a2a2a;
-  --color-gray-200: #3a3a3a;
-  --color-gray-400: #888888;
-  --color-gray-600: #a3a3a3;
-  --color-gray-800: #e5e5e5;
-
-  --color-text-primary: #f5f5f5;
-  --color-text-secondary: #a3a3a3;
-  --color-text-on-gradient: #ffffff;
-  --color-background: #121212;
-  --color-background-alt: #1a1a1a;
-
-  /* Variables génériques pour composants */
-  --text: var(--color-text-primary);
-  --muted: var(--color-gray-600);
-  --panel: var(--color-gray-100);
-  --line: var(--color-gray-200);
-  --accent: var(--color-primary-start);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -176,6 +140,37 @@ body.is-transitioning .page-content {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* View Transitions - Cross-fade fluide sans moment vide */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: fade-out 0.3s ease-out forwards;
+}
+
+::view-transition-new(root) {
+  animation: fade-in 0.3s ease-in forwards;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

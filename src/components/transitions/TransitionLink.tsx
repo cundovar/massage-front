@@ -16,6 +16,7 @@ export function TransitionLink({ href, children, className, onClick }: Transitio
   const { navigateTo, isTransitioning } = useTransition();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    // Si même page ou ancre, comportement normal
     if (href === pathname || href.startsWith("#")) {
       onClick?.();
       return;
@@ -27,7 +28,13 @@ export function TransitionLink({ href, children, className, onClick }: Transitio
   };
 
   return (
-    <Link href={href} className={className} onClick={handleClick} aria-disabled={isTransitioning}>
+    <Link
+      href={href}
+      className={className}
+      onClick={handleClick}
+      aria-disabled={isTransitioning}
+      style={{ pointerEvents: isTransitioning ? "none" : "auto" }}
+    >
       {children}
     </Link>
   );

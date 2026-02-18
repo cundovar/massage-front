@@ -22,7 +22,7 @@ export function Hero({ content }: HeroProps) {
   const firstSlide = slides[0];
 
   return (
-    <section className="glass-panel relative min-h-screen w-full overflow-hidden rounded-3xl px-6 md:px-12" data-animate="section">
+    <section className="glass-panel min-h-screen w-full  overflow-hidden rounded-3xl px-6 md:px-12" data-animate="section">
       <div className="absolute inset-0">
         {slides.map((slide, index) => {
           const imageUrl = getImageUrl(slide.image);
@@ -47,8 +47,8 @@ export function Hero({ content }: HeroProps) {
             </div>
           );
         })}
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70" />
+        <div className="absolute inset-0" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/20 to-black/70" />
       </div>
 
       <div className="js-hero-content relative z-10 mx-auto flex min-h-[65vh] max-w-4xl flex-col items-center justify-center text-center text-sand-100">

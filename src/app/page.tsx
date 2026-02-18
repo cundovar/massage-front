@@ -18,10 +18,10 @@ export default async function HomePage() {
   const approcheContent = getSectionContent<ApprocheContent>(page, "approche", DEFAULT_HOME.approche);
 
   return (
-    <main className="page-transition">
-      <div data-animate="section">
+    <div className="page-transition">
+    <div data-animate="section">
         <Hero content={heroContent} />
-      </div>
+      </div> 
       <div data-animate="section">
         <Presentation content={presentationContent} />
       </div>
@@ -32,6 +32,6 @@ export default async function HomePage() {
         <Approche content={approcheContent} />
       </div>
       <ContactCTA />
-    </main>
+    </div>
   );
 }
