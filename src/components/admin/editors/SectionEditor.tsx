@@ -15,6 +15,7 @@ interface SectionEditorProps {
 
 export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: SectionEditorProps) {
   const [content, setContent] = useState<Record<string, unknown>>(section.content);
+  const [sectionTitle, setSectionTitle] = useState<string>(section.title ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -57,7 +58,10 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
     setSuccess(false);
 
     try {
-      const updated = await updateSection(token, pageSlug, section.key, { content: sanitizeContent(content) });
+      const updated = await updateSection(token, pageSlug, section.key, {
+        title: sectionTitle.trim() || null,
+        content: sanitizeContent(content)
+      });
       onUpdate(updated);
       setSuccess(true);
     } catch (err) {
@@ -85,7 +89,8 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
   const entrepriseCharacteristics = Array.isArray(content.characteristics) ? (content.characteristics as string[]) : [];
   const entrepriseTeamBenefits = Array.isArray(content.teamBenefits) ? (content.teamBenefits as string[]) : [];
   const entrepriseCompanyBenefits = Array.isArray(content.companyBenefits) ? (content.companyBenefits as string[]) : [];
-  const isGenericSection = section.type === "text" || section.type === "image" || section.type === "quote";
+  const specialKeys = ["presentation", "approche", "tarifs", "entreprise", "parcours", "formations", "philosophie"];
+  const isGenericSection = (section.type === "text" || section.type === "image" || section.type === "quote") && !specialKeys.includes(section.key);
 
   function renderGenericEditor() {
     switch (section.type) {
@@ -205,10 +210,20 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
   return (
     <Card className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">
-          {section.title ?? section.key} ({section.type})
-        </h3>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-stone-500">Cle: {section.key}</span>
+            <span className="text-xs text-stone-400">({section.type})</span>
+          </div>
+          <Input
+            type="text"
+            value={sectionTitle}
+            onChange={(event) => setSectionTitle(event.target.value)}
+            className="mt-1 w-full rounded-md border border-stone-200 px-3 py-2 text-lg font-semibold"
+            placeholder="Titre de la section (affiché sur le site)"
+          />
+        </div>
         <div className="flex items-center gap-2">
           <Button
             type="button"
@@ -573,6 +588,189 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
                 })}
               </div>
             )}
+          </div>
+        </div>
+      ) : null}
+
+      {section.key === "parcours" ? (
+        <div className="space-y-4 rounded-lg border border-stone-200 p-4">
+          <MediaPicker
+            token={token}
+            value={(content.image as string | null) ?? null}
+            onChange={(path) => updateContent("image", path)}
+            label="Photo"
+          />
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <label className="block text-sm font-medium text-stone-600">Paragraphes</label>
+              <Button
+                type="button"
+                onClick={() => updateContent("paragraphs", [...paragraphsList, ""])}
+                className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
+              >
+                Ajouter un paragraphe
+              </Button>
+            </div>
+            {paragraphsList.length === 0 ? (
+              <p className="text-sm text-stone-500">Aucun paragraphe pour le moment.</p>
+            ) : (
+              <div className="space-y-2">
+                {paragraphsList.map((paragraph, index) => (
+                  <div key={`${section.key}-paragraph-${index}`} className="flex items-start gap-2">
+                    <Textarea
+                      rows={2}
+                      value={paragraph}
+                      onChange={(event) => {
+                        const next = [...paragraphsList];
+                        next[index] = event.target.value;
+                        updateContent("paragraphs", next);
+                      }}
+                      className="w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+                      placeholder="Nouveau paragraphe"
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => updateContent("paragraphs", paragraphsList.filter((_, i) => i !== index))}
+                      className="mt-1 rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
+                    >
+                      Supprimer
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
+
+      {section.key === "formations" ? (
+        <div className="space-y-4 rounded-lg border border-stone-200 p-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-4">
+              <label className="block text-sm font-medium text-stone-600">Images des certifications</label>
+              <Button
+                type="button"
+                onClick={() => {
+                  const currentImages = Array.isArray(content.images) ? [...(content.images as string[])] : [];
+                  currentImages.push("");
+                  updateContent("images", currentImages);
+                }}
+                className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
+              >
+                Ajouter une image
+              </Button>
+            </div>
+            {(() => {
+              const formationsImages = Array.isArray(content.images) ? (content.images as string[]) : [];
+              return formationsImages.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2">
+                  {formationsImages.map((path, index) => (
+                    <div key={`${section.key}-formation-image-${index}`} className="rounded-lg border border-stone-200 p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-medium text-stone-600">Image {index + 1}</p>
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const next = formationsImages.filter((_, i) => i !== index);
+                            updateContent("images", next);
+                          }}
+                          className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
+                        >
+                          Supprimer
+                        </Button>
+                      </div>
+                      <MediaPicker
+                        token={token}
+                        value={path ?? null}
+                        onChange={(newPath) => {
+                          const next = [...formationsImages];
+                          next[index] = newPath ?? "";
+                          updateContent("images", next.filter((entry) => entry));
+                        }}
+                        label=""
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-stone-500">Aucune image pour le moment.</p>
+              );
+            })()}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <label className="block text-sm font-medium text-stone-600">Formations</label>
+              <Button
+                type="button"
+                onClick={() => {
+                  const currentItems = Array.isArray(content.items) ? [...(content.items as Array<Record<string, string>>)] : [];
+                  currentItems.push({ year: "", title: "" });
+                  updateContent("items", currentItems);
+                }}
+                className="rounded-md border border-stone-200 px-3 py-1 text-sm text-stone-700 hover:border-amber-500 hover:text-amber-600"
+              >
+                Ajouter une formation
+              </Button>
+            </div>
+            {(() => {
+              const formationsItems = Array.isArray(content.items) ? (content.items as Array<Record<string, string>>) : [];
+              return formationsItems.length > 0 ? (
+                <div className="space-y-2">
+                  {formationsItems.map((item, index) => (
+                    <div key={`${section.key}-formation-item-${index}`} className="flex items-center gap-2">
+                      <Input
+                        type="text"
+                        value={item.year ?? ""}
+                        onChange={(event) => {
+                          const next = [...formationsItems];
+                          next[index] = { ...item, year: event.target.value };
+                          updateContent("items", next);
+                        }}
+                        className="w-24 rounded-md border border-stone-200 px-3 py-2 text-sm"
+                        placeholder="Annee"
+                      />
+                      <Input
+                        type="text"
+                        value={item.title ?? ""}
+                        onChange={(event) => {
+                          const next = [...formationsItems];
+                          next[index] = { ...item, title: event.target.value };
+                          updateContent("items", next);
+                        }}
+                        className="flex-1 rounded-md border border-stone-200 px-3 py-2 text-sm"
+                        placeholder="Titre de la formation"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => updateContent("items", formationsItems.filter((_, i) => i !== index))}
+                        className="rounded-md px-2 py-1 text-xs text-rose-600 hover:bg-rose-50"
+                      >
+                        Supprimer
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-stone-500">Aucune formation pour le moment.</p>
+              );
+            })()}
+          </div>
+        </div>
+      ) : null}
+
+      {section.key === "philosophie" ? (
+        <div className="space-y-4 rounded-lg border border-stone-200 p-4">
+          <div>
+            <label className="block text-sm font-medium text-stone-600">Citation</label>
+            <Textarea
+              rows={3}
+              value={(content.quote as string | undefined) ?? ""}
+              onChange={(event) => updateContent("quote", event.target.value)}
+              className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
+              placeholder="Le massage est une conversation silencieuse..."
+            />
           </div>
         </div>
       ) : null}
