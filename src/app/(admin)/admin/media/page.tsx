@@ -15,6 +15,9 @@ export default function AdminMediaPage() {
     setToken(getTokenFromStorage());
   }, []);
 
+
+
+  
   useEffect(() => {
     if (!mounted) return;
     if (!token) {
