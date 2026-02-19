@@ -36,8 +36,9 @@ export function ServiceSelector({ content }: ServiceSelectorProps) {
           {content.subtitle ? <p className="mt-4 text-lg text-gray-600">{content.subtitle}</p> : null}
         </div>
 
-        <div className="grid gap-10 md:grid-cols-[260px_1fr]">
-          <div className="space-y-2">
+        <div className="grid gap-6 md:gap-10 md:grid-cols-[240px_1fr] lg:grid-cols-[260px_1fr]">
+          <aside className="w-full md:w-60 lg:w-64 flex-shrink-0 border-b border-gray-200 pb-4 md:border-b-0 md:border-r md:pr-4 md:pb-0">
+            <div className="space-y-2 overflow-x-auto whitespace-nowrap md:overflow-visible md:whitespace-normal scrollbar-hide">
             {content.offers.map((offer, index) => {
               const isActive = index === activeIndex;
               return (
@@ -45,7 +46,7 @@ export function ServiceSelector({ content }: ServiceSelectorProps) {
                   key={offer.title}
                   type="button"
                   onClick={() => setActiveIndex(index)}
-                  className={`w-full rounded-full border px-4 py-2 text-left text-sm transition ${
+                  className={`inline-flex w-auto min-w-[44px] md:w-full rounded-full border px-4 py-2 text-left text-sm transition ${
                     isActive
                       ? "border-orange-400 bg-orange-50 text-gray-900"
                       : "border-gray-200 text-gray-600 hover:border-orange-300"
@@ -55,7 +56,8 @@ export function ServiceSelector({ content }: ServiceSelectorProps) {
                 </button>
               );
             })}
-          </div>
+            </div>
+          </aside>
 
           <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <h3 className="text-3xl" style={{ fontFamily: "var(--font-serif)" }}>

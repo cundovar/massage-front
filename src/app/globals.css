@@ -122,6 +122,21 @@ textarea:focus-visible {
   line-height: 1.7;
 }
 
+.text-display {
+  font-size: clamp(1.875rem, 5vw, 3.75rem);
+  line-height: 1.1;
+}
+
+.text-heading {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.2;
+}
+
+.text-body-large {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.6;
+}
+
 .page-transition {
   animation: page-enter 0.45s ease both;
 }
@@ -226,6 +241,27 @@ body.is-transitioning .page-content {
     box-shadow: 0 10px 30px rgba(246, 126, 84, 0.25);
   }
 
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .aspect-hero {
+    aspect-ratio: 16 / 9;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -255,6 +291,23 @@ body.is-transitioning .page-content {
       opacity: 1;
       transform: scale(1);
     }
+  }
+}
+
+@media (min-width: 768px) {
+  .aspect-hero {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+@media (pointer: coarse) {
+  .touch-spacing > * + * {
+    margin-top: 1rem;
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 

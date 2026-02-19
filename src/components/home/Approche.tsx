@@ -117,6 +117,29 @@ export function Approche({ content }: ApprocheProps) {
 
   return (
     <section id="parcours" className="mb-10 mt-20 grid gap-10 lg:grid-cols-2">
+      <div className="lg:hidden">
+        {imageUrls.length > 0 ? (
+          <div className="glass-panel group relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <Image
+              src={imageUrls[0]}
+              alt="Approche"
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="100vw"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to top, color-mix(in srgb, var(--text-primary) 20%, transparent), transparent)",
+              }}
+            />
+          </div>
+        ) : (
+          <div className="aspect-[4/3] rounded-2xl" style={{ background: "var(--background-alt)" }} />
+        )}
+      </div>
+
       <div ref={leftRef} className="hidden lg:block">
         {imageUrls.length > 0 ? (
           imageUrls.length === 1 ? (

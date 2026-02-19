@@ -22,7 +22,10 @@ export function Hero({ content }: HeroProps) {
   const firstSlide = slides[0];
 
   return (
-    <section className="glass-panel min-h-screen w-full  overflow-hidden rounded-3xl px-6 md:px-12" data-animate="section">
+    <section
+      className="glass-panel w-full overflow-hidden rounded-3xl px-4 sm:px-6 md:px-12 min-h-[60vh] md:min-h-[70vh] lg:min-h-[80vh]"
+      data-animate="section"
+    >
       <div className="absolute inset-0">
         {slides.map((slide, index) => {
           const imageUrl = getImageUrl(slide.image);
@@ -51,7 +54,7 @@ export function Hero({ content }: HeroProps) {
         <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/20 to-black/70" />
       </div>
 
-      <div className="js-hero-content relative z-10 mx-auto flex min-h-[65vh] max-w-4xl flex-col items-center justify-center text-center text-sand-100">
+      <div className="js-hero-content relative z-10 mx-auto flex min-h-[60vh] md:min-h-[65vh] max-w-4xl flex-col items-center justify-center text-center text-sand-100 py-8 md:py-12">
         <div className="h-px w-24 bg-gold-default" />
         <h1 data-animate="title" className="mt-6 text-5xl font-extralight leading-[0.95] text-sand-warm md:text-7xl font-serif">
           {content.siteTitle ?? "Les Massages d'Helene"}

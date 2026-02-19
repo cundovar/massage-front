@@ -21,10 +21,10 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <TransitionProvider>
-      <div className="min-h-screen bg-(--color-background) text-(--color-text-primary)">
+      <div className="min-h-screen overflow-x-hidden bg-(--color-background) text-(--color-text-primary)">
         <Header />
         <PageWrapper>
-          <main className="mt-20 mr-20 ml-20 max-md:m-1 lg:p-20">{children}</main>
+          <main className="pt-20 pb-8 px-4 sm:px-8 md:px-12 lg:px-20">{children}</main>
         </PageWrapper>
         {!isHome && <Footer />}
       </div>

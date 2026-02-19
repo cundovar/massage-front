@@ -113,10 +113,10 @@ export function Header({ initialNavItems }: HeaderProps) {
 
   const headerClass =
     settings.appearance.headerStyle === "transparent"
-      ? "top-0 h-20 left-4 right-4 z-50 fixed rounded-2xl px-4 py-3 backdrop-blur-md border-white/20 shadow-lg bg-transparent"
+      ? "top-0 left-2 right-2 md:left-4 md:right-4 z-50 fixed h-16 md:h-20 rounded-2xl px-4 py-2 md:py-3 backdrop-blur-md border-white/20 shadow-lg bg-transparent"
       : settings.appearance.headerStyle === "solid"
-        ? "top-0 h-20 left-4 right-4 z-50 fixed rounded-2xl px-4 py-3 border border-[var(--card-border)] bg-[var(--background-alt)] shadow-lg"
-        : "top-0 h-20 left-4 right-4 z-50 sticky rounded-2xl px-4 py-3 backdrop-blur-md border border-[var(--card-border)] bg-[var(--background-alt)]/90 shadow-lg";
+        ? "top-0 left-2 right-2 md:left-4 md:right-4 z-50 fixed h-16 md:h-20 rounded-2xl px-4 py-2 md:py-3 border border-[var(--card-border)] bg-[var(--background-alt)] shadow-lg"
+        : "top-0 left-2 right-2 md:left-4 md:right-4 z-50 sticky h-16 md:h-20 rounded-2xl px-4 py-2 md:py-3 backdrop-blur-md border border-[var(--card-border)] bg-[var(--background-alt)]/90 shadow-lg";
 
   return (
     <header className={headerClass}>
