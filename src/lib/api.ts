@@ -27,6 +27,33 @@ import type {
 } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+const FETCH_TIMEOUT_MS = 4000;
+
+function shouldSkipRemoteFetch(): boolean {
+  const isVercelBuild = process.env.VERCEL === "1" || process.env.CI === "true";
+  const isLocalApi =
+    API_BASE_URL.includes("127.0.0.1") ||
+    API_BASE_URL.includes("localhost");
+
+  return isVercelBuild && isLocalApi;
+}
+
+async function fetchWithTimeout(
+  input: string,
+  init?: RequestInit,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 interface ServicesResponse {
   items: ServiceItem[];
@@ -251,8 +278,14 @@ const FALLBACK_PAGES: Record<string, PageResponse> = {
 };
 
 export async function fetchServices(): Promise<ServiceItem[]> {
+  if (shouldSkipRemoteFetch()) {
+    return fallbackServices;
+  }
+
   try {
-    const response = await fetch(`${API_BASE_URL}/api/services`, { cache: "no-store" });
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/services`, {
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       return fallbackServices;
@@ -266,8 +299,12 @@ export async function fetchServices(): Promise<ServiceItem[]> {
 }
 
 export async function getNavigation(): Promise<NavigationResponse> {
+  if (shouldSkipRemoteFetch()) {
+    return FALLBACK_NAVIGATION;
+  }
+
   try {
-    const response = await fetch(`${API_BASE_URL}/api/navigation`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/navigation`, {
       next: { revalidate: 60 },
     });
 
@@ -287,8 +324,12 @@ export async function getNavigation(): Promise<NavigationResponse> {
 }
 
 export async function getSettings(): Promise<PublicSettings> {
+  if (shouldSkipRemoteFetch()) {
+    return FALLBACK_SETTINGS;
+  }
+
   try {
-    const response = await fetch(`${API_BASE_URL}/api/settings`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/settings`, {
       next: { revalidate: 60 },
     });
     if (!response.ok) {
@@ -306,9 +347,17 @@ export async function getPage(slug: string, options: { fallback: true }): Promis
 export async function getPage(slug: string, options: { fallback: false }): Promise<PageResponse | null>;
 export async function getPage(slug: string, options?: { fallback?: boolean }): Promise<PageResponse | null> {
   const useFallback = options?.fallback ?? true;
+  if (shouldSkipRemoteFetch()) {
+    if (!useFallback) {
+      return null;
+    }
+    return FALLBACK_PAGES[slug] ?? FALLBACK_PAGES.home;
+  }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/pages/${slug}`, { cache: "no-store" });
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/pages/${slug}`, {
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       if (!useFallback) {
