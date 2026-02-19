@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { CSSProperties } from "react";
 import { useTransition } from "@/context/TransitionContext";
 
 interface TransitionLinkProps {
@@ -9,9 +10,10 @@ interface TransitionLinkProps {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  style?: CSSProperties;
 }
 
-export function TransitionLink({ href, children, className, onClick }: TransitionLinkProps) {
+export function TransitionLink({ href, children, className, onClick, style }: TransitionLinkProps) {
   const pathname = usePathname();
   const { navigateTo, isTransitioning } = useTransition();
 
@@ -33,10 +35,12 @@ export function TransitionLink({ href, children, className, onClick }: Transitio
       className={className}
       onClick={handleClick}
       aria-disabled={isTransitioning}
-      style={{ pointerEvents: isTransitioning ? "none" : "auto" }}
+      style={{
+        ...style,
+        pointerEvents: isTransitioning ? "none" : "auto",
+      }}
     >
       {children}
     </Link>
   );
 }
-
