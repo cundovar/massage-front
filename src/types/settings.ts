@@ -1,3 +1,6 @@
+export type ThemePreset = "ayurveda" | "spa-luxe" | "nature" | "zen" | "energique";
+export type HeaderStyle = "transparent" | "solid" | "sticky";
+
 export interface SiteSettings {
   general: GeneralSettings;
   contact: ContactSettings;
@@ -46,8 +49,11 @@ export interface BookingSettings {
 }
 
 export interface AppearanceSettings {
-  primaryColor: string;
-  darkModeDefault: boolean;
+  themePreset: ThemePreset;
+  useCustomAccent: boolean;
+  customAccentColor: string | null;
+  headerStyle: HeaderStyle;
+  showDarkModeToggle: boolean;
 }
 
 export interface FooterSettings {

@@ -2,17 +2,23 @@ import { TransitionLink } from "@/components/transitions/TransitionLink";
 
 export function ContactCTA() {
   return (
-    <section className="py-24 md:py-32 bg-gradient-to-r from-[#FFCE67] to-[#F67E54] text-white" data-animate="section">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 data-animate="title" className="text-4xl md:text-5xl font-serif mb-6">
-          Prêt(e) à vous offrir<br />une pause bien-être ?
+    <section
+      className="py-24 text-white md:py-32"
+      style={{ background: "var(--gradient-primary)" }}
+      data-animate="section"
+    >
+      <div className="mx-auto max-w-4xl px-6 text-center">
+        <h2 data-animate="title" className="mb-6 text-4xl font-serif md:text-5xl">
+          Pret(e) a vous offrir
+          <br />
+          une pause bien-etre ?
         </h2>
-        <p data-animate="text" className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-          Réservez votre séance et découvrez les bienfaits d&apos;un massage personnalisé
+        <p data-animate="text" className="mx-auto mb-8 max-w-2xl text-xl opacity-90">
+          Reservez votre seance et decouvrez les bienfaits d&apos;un massage personnalise
         </p>
         <TransitionLink
           href="/contact"
-          className="inline-flex px-8 py-4 bg-white text-gray-900 rounded-full font-medium hover:shadow-lg transition"
+          className="inline-flex rounded-full bg-[var(--card-bg)] px-8 py-4 font-medium text-[var(--text-primary)] transition hover:shadow-lg"
         >
           Prendre rendez-vous
         </TransitionLink>

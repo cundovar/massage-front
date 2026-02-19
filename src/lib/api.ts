@@ -55,7 +55,13 @@ const FALLBACK_SETTINGS: PublicSettings = {
   },
   social: { instagram: null, facebook: null, linkedin: null },
   booking: { minDelayHours: 24, confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h." },
-  appearance: { primaryColor: "#D4A574", darkModeDefault: false },
+  appearance: {
+    themePreset: "ayurveda",
+    useCustomAccent: false,
+    customAccentColor: null,
+    headerStyle: "sticky",
+    showDarkModeToggle: true,
+  },
   footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
 };
 

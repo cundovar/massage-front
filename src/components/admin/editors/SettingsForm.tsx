@@ -1,9 +1,21 @@
 "use client";
 
 import { useRef } from "react";
-import { Button, Card, ColorPicker, FormField, FormSection, Input, Switch, Textarea } from "@/components/admin/ui";
+import {
+  Button,
+  Card,
+  Checkbox,
+  ColorPicker,
+  FormField,
+  FormSection,
+  Input,
+  Select,
+  Switch,
+  Textarea,
+  ThemeSelector,
+} from "@/components/admin/ui";
 import { getImageUrl } from "@/lib/api";
-import type { SiteSettings } from "@/types/settings";
+import type { HeaderStyle, SiteSettings, ThemePreset } from "@/types/settings";
 
 interface SettingsFormProps {
   settings: SiteSettings;
@@ -28,6 +40,11 @@ export function SettingsForm({
 }: SettingsFormProps) {
   const logoInputRef = useRef<HTMLInputElement | null>(null);
   const faviconInputRef = useRef<HTMLInputElement | null>(null);
+  const headerStyleOptions = [
+    { value: "transparent", label: "Transparent (fond visible)" },
+    { value: "solid", label: "Solid (couleur de fond)" },
+    { value: "sticky", label: "Sticky (reste en haut au scroll)" },
+  ];
 
   return (
     <Card className="space-y-6">
@@ -258,20 +275,65 @@ export function SettingsForm({
         />
       </FormSection>
 
-      <FormSection title="Apparence">
-        <div className="grid gap-4 md:grid-cols-2">
-          <FormField label="Couleur principale">
-            <ColorPicker
-              value={settings.appearance.primaryColor}
-              onChange={(color) => onChange({ ...settings, appearance: { ...settings.appearance, primaryColor: color } })}
-            />
-          </FormField>
-          <Switch
-            label="Mode sombre par defaut"
-            checked={settings.appearance.darkModeDefault}
-            onChange={(event) => onChange({ ...settings, appearance: { ...settings.appearance, darkModeDefault: event.target.checked } })}
+      <FormSection title="Apparence" description="Personnalisez le style visuel de votre site">
+        <ThemeSelector
+          value={settings.appearance.themePreset}
+          onChange={(preset) =>
+            onChange({
+              ...settings,
+              appearance: { ...settings.appearance, themePreset: preset as ThemePreset },
+            })
+          }
+        />
+
+        <FormField label="Style du header">
+          <Select
+            options={headerStyleOptions}
+            value={settings.appearance.headerStyle}
+            onChange={(event) =>
+              onChange({
+                ...settings,
+                appearance: { ...settings.appearance, headerStyle: event.target.value as HeaderStyle },
+              })
+            }
           />
+        </FormField>
+
+        <div className="space-y-3">
+          <Checkbox
+            checked={settings.appearance.useCustomAccent}
+            onChange={(event) =>
+              onChange({
+                ...settings,
+                appearance: { ...settings.appearance, useCustomAccent: event.target.checked },
+              })
+            }
+            label="Utiliser une couleur d'accent personnalisee"
+          />
+
+          {settings.appearance.useCustomAccent ? (
+            <ColorPicker
+              value={settings.appearance.customAccentColor || "#FFCE67"}
+              onChange={(color) =>
+                onChange({
+                  ...settings,
+                  appearance: { ...settings.appearance, customAccentColor: color },
+                })
+              }
+            />
+          ) : null}
         </div>
+
+        <Switch
+          label="Afficher le bouton dark/light mode"
+          checked={settings.appearance.showDarkModeToggle}
+          onChange={(event) =>
+            onChange({
+              ...settings,
+              appearance: { ...settings.appearance, showDarkModeToggle: event.target.checked },
+            })
+          }
+        />
       </FormSection>
 
       <FormSection title="Footer">

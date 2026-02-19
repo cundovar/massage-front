@@ -46,7 +46,13 @@ const FALLBACK_SETTINGS: PublicSettings = {
     minDelayHours: 24,
     confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h.",
   },
-  appearance: { primaryColor: "#D4A574", darkModeDefault: false },
+  appearance: {
+    themePreset: "ayurveda",
+    useCustomAccent: false,
+    customAccentColor: null,
+    headerStyle: "sticky",
+    showDarkModeToggle: true,
+  },
   footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
 };
 
@@ -105,8 +111,15 @@ export function Header({ initialNavItems }: HeaderProps) {
     return pathname === path || pathname.startsWith(`${path}/`);
   };
 
+  const headerClass =
+    settings.appearance.headerStyle === "transparent"
+      ? "top-0 h-20 left-4 right-4 z-50 fixed rounded-2xl px-4 py-3 backdrop-blur-md border-white/20 shadow-lg bg-transparent"
+      : settings.appearance.headerStyle === "solid"
+        ? "top-0 h-20 left-4 right-4 z-50 fixed rounded-2xl px-4 py-3 border border-[var(--card-border)] bg-[var(--background-alt)] shadow-lg"
+        : "top-0 h-20 left-4 right-4 z-50 sticky rounded-2xl px-4 py-3 backdrop-blur-md border border-[var(--card-border)] bg-[var(--background-alt)]/90 shadow-lg";
+
   return (
-    <header className="top-0 h-20 left-4 right-4 z-50 fixed rounded-2xl px-4 py-3 backdrop-blur-md  border-white/20 shadow-lg">
+    <header className={headerClass}>
       <div className=" mx-auto flex flex-wrap items-center justify-between gap-4">
         <TransitionLink href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
           {settings.general.logo ? (
@@ -133,7 +146,7 @@ export function Header({ initialNavItems }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
+          {settings.appearance.showDarkModeToggle ? <ThemeToggle /> : null}
           <button
             onClick={() => setIsMenuOpen((prev) => !prev)}
             className="rounded p-2 text-brown-darker focus:outline-none focus:ring-2 focus:ring-gold-default"
@@ -152,7 +165,7 @@ export function Header({ initialNavItems }: HeaderProps) {
         </div>
 
         <div className="hidden md:block">
-          <ThemeToggle />
+          {settings.appearance.showDarkModeToggle ? <ThemeToggle /> : null}
         </div>
       </div>
 

@@ -9,15 +9,15 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="text-center py-12">
+    <div className="animate-fade-in text-center py-12">
       {icon && (
-        <div className="mx-auto w-12 h-12 text-stone-400 mb-4">
+        <div className="mx-auto mb-4 h-12 w-12 text-gray-400">
           {icon}
         </div>
       )}
-      <h3 className="text-lg font-medium text-stone-900">{title}</h3>
+      <h3 className="font-serif text-xl text-[var(--color-text-primary)]">{title}</h3>
       {description && (
-        <p className="mt-2 text-sm text-stone-500 max-w-sm mx-auto">{description}</p>
+        <p className="body-text mx-auto mt-2 max-w-sm text-sm text-gray-600">{description}</p>
       )}
       {action && <div className="mt-6">{action}</div>}
     </div>

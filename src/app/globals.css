@@ -1,10 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary-start: #ffce67;
-  --color-primary-end: #f67e54;
+  --primary-start: #ffce67;
+  --primary-end: #f67e54;
   --gradient-primary: linear-gradient(135deg, #ffce67 0%, #f67e54 100%);
 
+  --text-primary: #1a1a1a;
+  --text-secondary: #525252;
+  --background: #fdf8f3;
+  --background-alt: #ffffff;
+
+  --card-bg: #ffffff;
+  --card-border: #e7e5e4;
+  --card-radius: 1rem;
+
+  --btn-bg: linear-gradient(135deg, #ffce67, #f67e54);
+  --btn-text: #ffffff;
+  --btn-border: transparent;
+  --btn-radius: 9999px;
+
+  --font-heading: "DM Serif Display", serif;
+
+  --color-primary-start: var(--primary-start);
+  --color-primary-end: var(--primary-end);
   --color-white: #ffffff;
   --color-black: #1a1a1a;
   --color-gray-50: #fafafa;
@@ -14,11 +32,11 @@
   --color-gray-600: #525252;
   --color-gray-800: #262626;
 
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #525252;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
   --color-text-on-gradient: #ffffff;
-  --color-background: #f39797;
-  --color-background-alt: #fafafa;
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -83,7 +101,7 @@ textarea:focus-visible {
 }
 
 .heading-hero {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-heading), var(--font-serif), serif;
   font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 400;
   line-height: 1.1;
@@ -91,7 +109,7 @@ textarea:focus-visible {
 }
 
 .heading-section {
-  font-family: var(--font-serif), serif;
+  font-family: var(--font-heading), var(--font-serif), serif;
   font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 400;
   line-height: 1.2;
@@ -237,6 +255,17 @@ body.is-transitioning .page-content {
       opacity: 1;
       transform: scale(1);
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

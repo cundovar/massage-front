@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from "react";
 
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className="bo-input" {...props} />;
+export function Input({ className = "", ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={`bo-input ${className}`.trim()} {...props} />;
 }

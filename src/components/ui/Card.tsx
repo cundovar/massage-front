@@ -1,5 +1,21 @@
-import type { PropsWithChildren } from "react";
+import type { HTMLAttributes, PropsWithChildren } from "react";
 
-export function Card({ children }: PropsWithChildren) {
-  return <div className="rounded border p-4">{children}</div>;
+type CardProps = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
+
+export function Card({ children, className = "", ...props }: CardProps) {
+  return (
+    <div
+      className={`
+        border
+        border-[var(--card-border)]
+        bg-[var(--card-bg)]
+        rounded-[var(--card-radius)]
+        p-4
+        ${className}
+      `.trim()}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 }

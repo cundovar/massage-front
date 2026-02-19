@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import { getSettings } from "@/lib/api";
+import { THEME_PRESETS, generateThemeCSS } from "@/lib/themes";
 import "./globals.css";
 
 const dmSerif = DM_Serif_Display({
@@ -29,9 +30,25 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  let themeCSS = generateThemeCSS(THEME_PRESETS.ayurveda);
+
+  try {
+    const settings = await getSettings();
+    const preset = THEME_PRESETS[settings.appearance.themePreset] ?? THEME_PRESETS.ayurveda;
+    const customAccentColor = settings.appearance.useCustomAccent
+      ? settings.appearance.customAccentColor || undefined
+      : undefined;
+    themeCSS = generateThemeCSS(preset, customAccentColor);
+  } catch {
+    themeCSS = generateThemeCSS(THEME_PRESETS.ayurveda);
+  }
+
   return (
     <html lang="fr" className={`${dmSerif.variable} ${inter.variable}`}>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+      </head>
       <body className="font-sans antialiased">
         {/* Background fixe - ne bouge jamais entre les pages */}
         <div className="fixed-background" aria-hidden="true" />

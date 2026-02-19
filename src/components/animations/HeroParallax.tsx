@@ -53,11 +53,13 @@ export function HeroParallax() {
     <div ref={wrapperRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
       <div
         ref={orbPrimaryRef}
-        className="absolute -left-12 -top-8 h-48 w-48 rounded-full bg-amber-400/20 blur-3xl md:h-64 md:w-64"
+        className="absolute -left-12 -top-8 h-48 w-48 rounded-full blur-3xl md:h-64 md:w-64"
+        style={{ background: "color-mix(in srgb, var(--primary-start) 20%, transparent)" }}
       />
       <div
         ref={orbSecondaryRef}
-        className="absolute -bottom-16 right-4 h-56 w-56 rounded-full bg-amber-300/20 blur-3xl md:h-80 md:w-80"
+        className="absolute -bottom-16 right-4 h-56 w-56 rounded-full blur-3xl md:h-80 md:w-80"
+        style={{ background: "color-mix(in srgb, var(--primary-end) 20%, transparent)" }}
       />
     </div>
   );

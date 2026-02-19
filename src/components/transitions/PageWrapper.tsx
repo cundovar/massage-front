@@ -16,7 +16,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      gsap.set("[data-animate]", { clearProps: "all" });
+      gsap.set("[data-animate]", { clearProps: "transform,opacity" });
 
       const tl = gsap.timeline();
       tl.from("[data-animate='title']", {
@@ -67,4 +67,3 @@ export function PageWrapper({ children }: PageWrapperProps) {
     </div>
   );
 }
-

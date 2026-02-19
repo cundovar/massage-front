@@ -8,92 +8,74 @@ interface ServicesPreviewProps {
 
 export function ServicesPreview({ services }: ServicesPreviewProps) {
   return (
-    <section className="py-24 md:py-32 bg-gray-50" data-animate="section">
-      <div className="max-w-7xl mx-auto px-6">
-
-        {/* Header */}
-        <AnimatedSection className="text-center mb-16">
-          <p className="text-orange-500 font-medium mb-4 uppercase tracking-wide text-sm">
-            Mes soins
-          </p>
-          <h2 data-animate="title" className="text-4xl md:text-5xl font-serif text-gray-900">
-            Une gamme de soins<br />pour votre bien-être
+    <section className="bg-[var(--background-alt)] py-24 md:py-32" data-animate="section">
+      <div className="mx-auto max-w-7xl px-6">
+        <AnimatedSection className="mb-16 text-center">
+          <p className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--primary-start)]">Mes soins</p>
+          <h2 data-animate="title" className="text-4xl font-serif text-[var(--text-primary)] md:text-5xl">
+            Une gamme de soins
+            <br />
+            pour votre bien-etre
           </h2>
         </AnimatedSection>
 
-        {/* Services Grid - Données depuis /api/services */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-3">
           {services.map((service, index) => {
-            // Premier prix pour l'affichage
             const firstPrice = service.prices[0];
-            const priceDisplay = firstPrice
-              ? `${firstPrice.price}€`
-              : "Sur devis";
+            const priceDisplay = firstPrice ? `${firstPrice.price}EUR` : "Sur devis";
 
             return (
-              <AnimatedSection
-                key={service.id}
-                delay={index * 150}
-                className="group"
-              >
-                <article className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
-
-                  {/* Image (si disponible) */}
-                  <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#FFCE67]/20 to-[#F67E54]/20">
-                    {/* Placeholder ou image du service */}
-                    <div className="w-full h-full flex items-center justify-center">
+              <AnimatedSection key={service.id} delay={index * 150} className="group">
+                <article
+                  className="overflow-hidden bg-[var(--card-bg)] shadow-sm transition-all duration-300 hover:shadow-xl"
+                  style={{ borderRadius: "var(--card-radius)" }}
+                >
+                  <div
+                    className="aspect-[4/3] overflow-hidden"
+                    style={{
+                      background: "linear-gradient(to bottom right, var(--primary-start), var(--primary-end))",
+                      opacity: 0.2,
+                    }}
+                  >
+                    <div className="flex h-full w-full items-center justify-center">
                       <span className="text-6xl opacity-50">✨</span>
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6">
-                    {/* Catégorie et prix */}
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                    <div className="mb-3 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                       <span>{service.category}</span>
                       <span>•</span>
-                      <span className="text-orange-500 font-medium">
-                        {priceDisplay}
-                      </span>
+                      <span className="font-medium text-[var(--primary-start)]">{priceDisplay}</span>
                     </div>
 
-                    {/* Nom du service (depuis API) */}
-                    <h3 className="text-xl font-serif mb-2 text-gray-900">
-                      {service.name}
-                    </h3>
+                    <h3 className="mb-2 text-xl font-serif text-[var(--text-primary)]">{service.name}</h3>
 
-                    {/* Description (depuis API) */}
-                    <p className="text-gray-600 mb-4 line-clamp-2">
-                      {service.description}
-                    </p>
+                    <p className="mb-4 line-clamp-2 text-[var(--text-secondary)]">{service.description}</p>
 
                     <TransitionLink
                       href="/soins"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-gray-900 group/link"
+                      className="group/link inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)]"
                     >
-                      Découvrir
-                      <span className="transition-transform group-hover/link:translate-x-1">
-                        →
-                      </span>
+                      Decouvrir
+                      <span className="transition-transform group-hover/link:translate-x-1">→</span>
                     </TransitionLink>
                   </div>
-
                 </article>
               </AnimatedSection>
             );
           })}
         </div>
 
-        {/* CTA */}
-        <AnimatedSection delay={500} className="text-center mt-12">
+        <AnimatedSection delay={500} className="mt-12 text-center">
           <TransitionLink
             href="/soins"
-            className="inline-flex px-8 py-4 bg-gradient-to-r from-[#FFCE67] to-[#F67E54] text-white rounded-full font-medium hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300"
+            className="inline-flex rounded-full px-8 py-4 font-medium text-white transition-all duration-300 hover:shadow-lg"
+            style={{ background: "var(--gradient-primary)" }}
           >
             Voir tous les soins
           </TransitionLink>
         </AnimatedSection>
-
       </div>
     </section>
   );

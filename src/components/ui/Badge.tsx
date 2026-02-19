@@ -1,5 +1,23 @@
-import type { PropsWithChildren } from "react";
+import type { HTMLAttributes, PropsWithChildren } from "react";
 
-export function Badge({ children }: PropsWithChildren) {
-  return <span className="rounded-full bg-stone-100 px-2 py-1 text-xs text-stone-700">{children}</span>;
+type BadgeProps = PropsWithChildren<HTMLAttributes<HTMLSpanElement>>;
+
+export function Badge({ children, className = "", ...props }: BadgeProps) {
+  return (
+    <span
+      className={`
+        rounded-full
+        border
+        border-[var(--card-border)]
+        bg-[var(--background-alt)]
+        px-2 py-1
+        text-xs
+        text-[var(--text-secondary)]
+        ${className}
+      `.trim()}
+      {...props}
+    >
+      {children}
+    </span>
+  );
 }
