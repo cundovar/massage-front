@@ -12,6 +12,8 @@ const dmSerif = DM_Serif_Display({
   display: "swap",
 });
 
+
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
