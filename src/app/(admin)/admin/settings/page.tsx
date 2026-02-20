@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SettingsForm } from "@/components/admin/editors/SettingsForm";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
-import { fetchSettings, updateSettings, uploadFavicon, uploadLogo } from "@/lib/api-admin";
+import { fetchSettings, revalidateFrontend, updateSettings, uploadFavicon, uploadLogo } from "@/lib/api-admin";
 import type { SiteSettings } from "@/types/settings";
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -101,6 +101,8 @@ export default function AdminSettingsPage() {
     try {
       const updated = await updateSettings(token, settings);
       setSettings(updated);
+      // Revalider le cache frontend pour refléter les changements
+      await revalidateFrontend();
       setSuccess("Parametres enregistres.");
     } catch (err) {
       if (err instanceof Error && err.message === "UNAUTHORIZED") {

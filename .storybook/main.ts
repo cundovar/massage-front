@@ -1,13 +1,13 @@
 import type { StorybookConfig } from "@storybook/nextjs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
   stories: ["../src/components/**/*.stories.@(js|jsx|ts|tsx|mdx)"],
-  addons: [
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
-    "@storybook/addon-a11y",
-  ],
+  addons: [],
   framework: {
     name: "@storybook/nextjs",
     options: {},

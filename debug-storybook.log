@@ -1,0 +1,23 @@
+[23:08:22.197] [INFO] storybook v10.2.10
+[23:08:24.702] [DEBUG] Getting package.json info for /home/cundo/Bureau/code_perso/massage_ln/next-symfony/front/package.json...
+[23:08:25.814] [INFO] Storybook collects completely anonymous usage telemetry. We use it to shape Storybook's roadmap and prioritize features. You can learn more, including how to opt out, at https://storybook.js.org/telemetry
+[23:08:26.462] [DEBUG] Serving static files from [36mpublic[39m at [36m/[39m
+[23:08:26.467] [INFO] Starting...
+[23:08:26.801] [DEBUG] Starting preview..
+[23:08:26.842] [INFO] Using implicit CSS loaders
+[23:08:27.205] [INFO] Using SWC as compiler
+[23:08:27.219] [ERROR] Failed to build the preview
+[23:08:27.223] [ERROR] [38;2;241;97;97mReferenceError: __dirname is not defined[39m
+    at Object.webpackFinal (file://./.storybook/main.ts:17:27)
+    at file://./node_modules/storybook/dist/_node-chunks/chunk-URMZXQZT.js:10114:36
+    at async Object.webpack (file://./node_modules/@storybook/builder-webpack5/dist/presets/custom-webpack-preset.js:263:28)
+    at async starter (file://./node_modules/@storybook/builder-webpack5/dist/index.js:753:16)
+    at async Module.start (file://./node_modules/@storybook/builder-webpack5/dist/index.js:857:14)
+    at async storybookDevServer (file://./node_modules/storybook/dist/core-server/index.js:7241:83)
+    at async buildOrThrow (file://./node_modules/storybook/dist/core-server/index.js:4504:12)
+    at async buildDevStandalone (file://./node_modules/storybook/dist/core-server/index.js:7611:66)
+    at async withTelemetry (file://./node_modules/storybook/dist/_node-chunks/chunk-S3MWHNYJ.js:218:12)
+    at async dev (file://./node_modules/storybook/dist/bin/core.js:2734:3)
+[23:08:27.227] [WARN] Broken build, fix the error above.
+You may need to refresh the browser.
+[23:09:20.535] [PROMPT] Would you like to send anonymous crash reports to improve Storybook and fix bugs faster? {"choice":true}

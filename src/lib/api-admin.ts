@@ -395,6 +395,24 @@ export async function syncContactPage(token: string): Promise<void> {
   }
 }
 
+export async function revalidateFrontend(path?: string): Promise<void> {
+  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || window.location.origin;
+  const secret = process.env.NEXT_PUBLIC_REVALIDATE_SECRET || "dev-secret";
+
+  try {
+    await fetch(`${frontendUrl}/api/revalidate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-revalidate-secret": secret,
+      },
+      body: JSON.stringify({ path }),
+    });
+  } catch (error) {
+    console.warn("Revalidation failed:", error);
+  }
+}
+
 export async function loginAdmin(email: string, password: string): Promise<LoginResponse> {
   const response = await fetch(`${API_BASE_URL}/api/login`, {
     method: "POST",

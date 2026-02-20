@@ -9,6 +9,7 @@ import {
   createSection,
   deleteSection,
   fetchPage,
+  revalidateFrontend,
   syncContactPage,
   updateSection,
   type PageDetail,
@@ -86,6 +87,10 @@ export default function PageEditorPage() {
     if (params.slug === "contact") {
       await syncContactPage(token);
     }
+
+    // Revalider le cache frontend
+    const publicPath = params.slug === "home" ? "/" : `/${params.slug}`;
+    await revalidateFrontend(publicPath);
 
     const refreshed = await fetchPage(token, params.slug);
     setPage(refreshed);

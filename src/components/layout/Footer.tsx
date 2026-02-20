@@ -87,25 +87,56 @@ export function Footer() {
   const telHref = settings.contact.phone.replace(/\s+/g, "");
 
   return (
-    <footer className="bg-gray-900 py-16 text-white">
-      <div className="mx-auto max-w-7xl px-6">
+    <footer
+      className="relative mx-4 mb-4 overflow-hidden rounded-3xl py-16 backdrop-blur-2xl md:mx-6"
+      style={{
+        background: "linear-gradient(160deg, color-mix(in srgb, var(--footer-bg, #1C1917) 92%, transparent) 0%, color-mix(in srgb, var(--footer-bg, #1C1917) 85%, transparent) 60%, color-mix(in srgb, var(--primary-start, #FFCE67) 12%, var(--footer-bg, #1C1917) 88%) 100%)",
+        color: "var(--footer-text, #FFFFFF)",
+        border: "1px solid color-mix(in srgb, var(--footer-border, #292524) 40%, transparent)",
+        boxShadow: "inset 0 1px 0 0 color-mix(in srgb, var(--footer-text, #FFFFFF) 8%, transparent), 0 -10px 40px -10px color-mix(in srgb, var(--primary-start, #FFCE67) 10%, transparent)",
+      }}
+    >
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <h3 className="mb-4 text-2xl font-serif">{settings.general.siteName}</h3>
-            <p className="mb-6 max-w-md text-gray-400">{settings.general.defaultMetaDescription}</p>
+            <h3 className="mb-4 text-2xl font-serif drop-shadow-sm">{settings.general.siteName}</h3>
+            <p
+              className="mb-6 max-w-md"
+              style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+            >
+              {settings.general.defaultMetaDescription}
+            </p>
             <div className="flex gap-4">
               {settings.social.instagram ? (
-                <a href={settings.social.instagram} target="_blank" rel="noreferrer" className="text-sm text-gray-300 hover:text-white">
+                <a
+                  href={settings.social.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-link text-sm transition"
+                  style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+                >
                   Instagram
                 </a>
               ) : null}
               {settings.social.facebook ? (
-                <a href={settings.social.facebook} target="_blank" rel="noreferrer" className="text-sm text-gray-300 hover:text-white">
+                <a
+                  href={settings.social.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-link text-sm transition"
+                  style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+                >
                   Facebook
                 </a>
               ) : null}
               {settings.social.linkedin ? (
-                <a href={settings.social.linkedin} target="_blank" rel="noreferrer" className="text-sm text-gray-300 hover:text-white">
+                <a
+                  href={settings.social.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer-link text-sm transition"
+                  style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+                >
                   LinkedIn
                 </a>
               ) : null}
@@ -113,16 +144,16 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-medium">Navigation</h4>
-            <ul className="space-y-2 text-gray-400">
+            <h4 className="mb-4 font-medium drop-shadow-sm">Navigation</h4>
+            <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
               {quickLinks.map((link) => (
                 <li key={`${link.label}-${link.url}`}>
                   {isInternalUrl(link.url) ? (
-                    <TransitionLink href={link.url} className="transition hover:text-white">
+                    <TransitionLink href={link.url} className="footer-link transition">
                       {link.label}
                     </TransitionLink>
                   ) : (
-                    <a href={link.url} className="transition hover:text-white" target="_blank" rel="noreferrer">
+                    <a href={link.url} className="footer-link transition" target="_blank" rel="noreferrer">
                       {link.label}
                     </a>
                   )}
@@ -132,17 +163,17 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-medium">Contact</h4>
-            <ul className="space-y-2 text-gray-400">
+            <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
+            <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
               <li>{settings.contact.address.street}</li>
               <li>{addressLine}</li>
               <li className="pt-2">
-                <a href={`tel:${telHref}`} className="transition hover:text-white">
+                <a href={`tel:${telHref}`} className="footer-link transition">
                   {settings.contact.phone}
                 </a>
               </li>
               <li>
-                <a href={`mailto:${settings.contact.email}`} className="transition hover:text-white">
+                <a href={`mailto:${settings.contact.email}`} className="footer-link transition">
                   {settings.contact.email}
                 </a>
               </li>
@@ -150,13 +181,28 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-800 pt-8 text-sm text-gray-500 md:flex-row">
+        <div
+          className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 text-sm md:flex-row"
+          style={{
+            borderColor: "color-mix(in srgb, var(--footer-border, #292524) 40%, transparent)",
+            color: "var(--footer-text-muted, #A8A29E)",
+          }}
+        >
           <p>{settings.footer.copyrightText || FALLBACK_SETTINGS.footer.copyrightText}</p>
-          <TransitionLink href="/mentions-legales" className="transition hover:text-white">
-            Mentions légales
+          <TransitionLink href="/mentions-legales" className="footer-link transition">
+            Mentions legales
           </TransitionLink>
         </div>
       </div>
+
+      {/* Decorative gradient overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.12]"
+        style={{
+          background: "radial-gradient(ellipse 80% 50% at 90% 100%, var(--primary-start, #FFCE67), transparent)",
+        }}
+        aria-hidden="true"
+      />
     </footer>
   );
 }

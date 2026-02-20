@@ -61,6 +61,13 @@
   --bo-muted: #78716c;
   --bo-line: #e7dfd2;
   --bo-accent: #f59e0b;
+
+  /* Footer theming - defaults to Ayurveda theme */
+  --footer-bg: #1C1917;
+  --footer-text: #FFFFFF;
+  --footer-text-muted: #A8A29E;
+  --footer-border: #292524;
+  --footer-link-hover: #FFCE67;
 }
 
 * {
@@ -79,10 +86,11 @@ html {
 body {
   margin: 0;
   color: var(--color-text-primary);
-  
+  background-color: var(--color-background);
   font-family: var(--font-sans), system-ui, sans-serif;
   letter-spacing: 0.01em;
   line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a,
@@ -146,6 +154,7 @@ textarea:focus-visible {
   inset: 0;
   z-index: -1;
   background: var(--color-background);
+  transition: background-color 0.3s ease;
 }
 
 .page-content {
@@ -347,4 +356,13 @@ body.is-transitioning .page-content {
   border: 1px solid #d6d3d1;
   background: #fff;
   padding: 0.6rem 0.75rem;
+}
+
+/* Footer theming */
+.footer-link {
+  color: inherit;
+}
+
+.footer-link:hover {
+  color: var(--footer-link-hover, #FFCE67);
 }
