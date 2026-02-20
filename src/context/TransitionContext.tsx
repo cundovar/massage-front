@@ -46,6 +46,11 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     (href: string) => {
       if (href === pathname || isTransitioning) return;
 
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        router.push(href);
+        return;
+      }
+
       setIsTransitioning(true);
       timelineRef.current?.kill();
 
@@ -55,42 +60,68 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
 
       timelineRef.current = tl;
 
+      // ============================================
+      // SORTIE - Slide vers la gauche, désynchronisé
+      // ============================================
+
+      // Le titre part en premier, rapide et loin
       tl.to("[data-animate='title']", {
-        y: -30,
+        x: -180,
         opacity: 0,
-        duration: 0.28,
-        ease: "power2.in",
+        scale: 0.95,
+        duration: 0.45,
+        ease: "power3.in",
       })
-        .to(
-          "[data-animate='text']",
-          {
-            y: -20,
-            opacity: 0,
-            duration: 0.28,
-            ease: "power2.in",
-          },
-          "-=0.18",
-        )
+        // Les images partent plus lentement avec rotation subtile
         .to(
           "[data-animate='image']",
           {
-            y: -15,
+            x: -120,
             opacity: 0,
-            duration: 0.32,
+            scale: 0.92,
+            rotation: -2,
+            duration: 0.55,
             ease: "power2.in",
           },
-          "-=0.22",
+          "-=0.35",
         )
+        // Le texte part avec un délai différent
+        .to(
+          "[data-animate='text']",
+          {
+            x: -150,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power3.in",
+          },
+          "-=0.45",
+        )
+        // Les sections partent en cascade
         .to(
           "[data-animate='section']",
           {
-            y: -10,
+            x: -80,
             opacity: 0,
-            duration: 0.24,
+            duration: 0.4,
             ease: "power2.in",
-            stagger: 0.04,
+            stagger: {
+              each: 0.06,
+              from: "start",
+            },
           },
-          "-=0.2",
+          "-=0.4",
+        )
+        // Les boutons/CTA partent en dernier
+        .to(
+          "[data-animate='cta']",
+          {
+            x: -100,
+            opacity: 0,
+            scale: 0.9,
+            duration: 0.35,
+            ease: "power3.in",
+          },
+          "-=0.3",
         );
     },
     [isTransitioning, pathname, router],
@@ -118,4 +149,3 @@ export function useTransition(): TransitionContextType {
 export function useTransitionSafe(): TransitionContextType | null {
   return useContext(TransitionContext);
 }
-

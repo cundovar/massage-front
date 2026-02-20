@@ -164,6 +164,7 @@ textarea:focus-visible {
 
 body.is-transitioning {
   pointer-events: none;
+  overflow-x: hidden;
 }
 
 body.is-transitioning .page-content {
@@ -172,6 +173,13 @@ body.is-transitioning .page-content {
 
 [data-animate] {
   will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Empêcher le débordement horizontal pendant les transitions */
+.page-content {
+  overflow-x: clip;
 }
 
 @keyframes page-enter {

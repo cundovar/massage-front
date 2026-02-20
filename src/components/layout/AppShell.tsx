@@ -13,7 +13,6 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
-  const isHome = pathname === "/";
 
   if (isAdmin) {
     return <>{children}</>;
@@ -26,7 +25,7 @@ export function AppShell({ children }: AppShellProps) {
         <PageWrapper>
           <main className="pt-20 pb-8 px-4 sm:px-8 md:px-12 lg:px-20">{children}</main>
         </PageWrapper>
-        {!isHome && <Footer />}
+        <Footer />
       </div>
     </TransitionProvider>
   );

@@ -19,42 +19,69 @@ export function PageWrapper({ children }: PageWrapperProps) {
       gsap.set("[data-animate]", { clearProps: "transform,opacity" });
 
       const tl = gsap.timeline();
-      tl.from("[data-animate='title']", {
-        y: 40,
+
+      // ============================================
+      // ENTRÉE - Slide depuis la droite, désynchronisé
+      // ============================================
+
+      // Les sections arrivent en premier (fond de page)
+      tl.from("[data-animate='section']", {
+        x: 120,
         opacity: 0,
-        duration: 0.5,
+        duration: 0.6,
         ease: "power3.out",
+        stagger: {
+          each: 0.1,
+          from: "end",
+        },
       })
-        .from(
-          "[data-animate='text']",
-          {
-            y: 30,
-            opacity: 0,
-            duration: 0.5,
-            ease: "power3.out",
-          },
-          "-=0.3",
-        )
+        // Les images arrivent avec un mouvement plus ample
         .from(
           "[data-animate='image']",
           {
-            y: 25,
+            x: 200,
             opacity: 0,
-            duration: 0.6,
+            scale: 1.05,
+            rotation: 3,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          "-=0.5",
+        )
+        // Le texte glisse doucement
+        .from(
+          "[data-animate='text']",
+          {
+            x: 100,
+            opacity: 0,
+            duration: 0.55,
             ease: "power3.out",
+          },
+          "-=0.55",
+        )
+        // Le titre arrive avec un effet de rebond
+        .from(
+          "[data-animate='title']",
+          {
+            x: 180,
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.65,
+            ease: "back.out(1.4)",
+          },
+          "-=0.5",
+        )
+        // Les boutons/CTA arrivent en dernier avec rebond
+        .from(
+          "[data-animate='cta']",
+          {
+            x: 80,
+            opacity: 0,
+            scale: 0.85,
+            duration: 0.5,
+            ease: "back.out(2)",
           },
           "-=0.35",
-        )
-        .from(
-          "[data-animate='section']",
-          {
-            y: 20,
-            opacity: 0,
-            duration: 0.4,
-            ease: "power3.out",
-            stagger: 0.08,
-          },
-          "-=0.3",
         );
     }, containerRef);
 

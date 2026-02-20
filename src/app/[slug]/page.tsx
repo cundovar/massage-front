@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
-import { Footer } from "@/components/layout/Footer";
 import { getPage } from "@/lib/api";
 
 const DEDICATED_ROUTES = new Set(["soins", "entreprise", "a-propos", "contact", "mentions-legales", "admin", "register"]);
@@ -49,9 +48,8 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
   }));
 
   return (
-    <main className="pt-24">
+    <main className="page-transition pt-24">
       <SectionRenderer sections={sections} />
-      <Footer />
     </main>
   );
 }

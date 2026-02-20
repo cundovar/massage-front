@@ -1,6 +1,5 @@
 import { getPage, fetchServices } from "@/lib/api";
 import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
-import { Footer } from "@/components/layout/Footer";
 
 // Desactiver le cache pour voir les modifications en temps reel
 export const dynamic = "force-dynamic";
@@ -25,7 +24,6 @@ export default async function HomePage() {
   return (
     <main className="page-transition">
       <SectionRenderer sections={sections} services={services} />
-      <Footer />
     </main>
   );
 }
