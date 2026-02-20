@@ -26,7 +26,9 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${settings.general.siteName}`,
     },
     description: settings.general.defaultMetaDescription,
-    icons: settings.general.favicon ? [{ url: settings.general.favicon }] : undefined,
+    icons: settings.general.favicon
+      ? [{ url: settings.general.favicon }]
+      : [{ url: "/favicon-front.svg", type: "image/svg+xml" }],
   };
 }
 

@@ -103,11 +103,19 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
   );
 }
 
-export function useTransition() {
+export function useTransition(): TransitionContextType {
   const ctx = useContext(TransitionContext);
+  // Return fallback for components rendered outside TransitionProvider (e.g., admin preview)
   if (!ctx) {
-    throw new Error("useTransition must be used within TransitionProvider");
+    return {
+      isTransitioning: false,
+      navigateTo: () => {},
+    };
   }
   return ctx;
+}
+
+export function useTransitionSafe(): TransitionContextType | null {
+  return useContext(TransitionContext);
 }
 

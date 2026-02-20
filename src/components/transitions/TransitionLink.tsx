@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
-import { useTransition } from "@/context/TransitionContext";
+import { useTransitionSafe } from "@/context/TransitionContext";
 
 interface TransitionLinkProps {
   href: string;
@@ -15,9 +15,15 @@ interface TransitionLinkProps {
 
 export function TransitionLink({ href, children, className, onClick, style }: TransitionLinkProps) {
   const pathname = usePathname();
-  const { navigateTo, isTransitioning } = useTransition();
+  const ctx = useTransitionSafe();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    // Si pas de provider (admin preview), comportement standard
+    if (!ctx) {
+      onClick?.();
+      return;
+    }
+
     // Si même page ou ancre, comportement normal
     if (href === pathname || href.startsWith("#")) {
       onClick?.();
@@ -26,8 +32,10 @@ export function TransitionLink({ href, children, className, onClick, style }: Tr
 
     event.preventDefault();
     onClick?.();
-    navigateTo(href);
+    ctx.navigateTo(href);
   };
+
+  const isTransitioning = ctx?.isTransitioning ?? false;
 
   return (
     <Link
