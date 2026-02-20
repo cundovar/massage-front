@@ -161,7 +161,7 @@ interface PageResponse {
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
-  sections: Record<string, { type?: string; title: string | null; content: Record<string, unknown> }>;
+  sections: Record<string, { type?: string; title: string | null; content: Record<string, unknown>; sortOrder?: number }>;
 }
 
 const FALLBACK_NAVIGATION: NavigationResponse = {
@@ -394,9 +394,6 @@ export function getImageUrl(path?: string | null): string | null {
     return null;
   }
   if (path.startsWith("http")) {
-    return path;
-  }
-  if (path.startsWith("/images/default/")) {
     return path;
   }
   return `${API_BASE_URL}${path}`;

@@ -20,18 +20,22 @@ export function GenericGallerySection({ content }: { content: GenericGalleryCont
         ) : null}
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {images.map((image, index) => (
-            <ScrollReveal key={`${image}-${index}`} delay={index * 0.1}>
-              <div className="glass-panel relative aspect-square overflow-hidden rounded-2xl">
-                <Image
-                  src={getImageUrl(image) ?? "/images/default/placeholder.jpg"}
-                  alt=""
-                  fill
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-            </ScrollReveal>
-          ))}
+          {images.map((image, index) => {
+            const url = getImageUrl(image);
+            if (!url) return null;
+            return (
+              <ScrollReveal key={`gallery-${index}`} delay={index * 0.1}>
+                <div className="glass-panel relative aspect-square overflow-hidden rounded-2xl">
+                  <Image
+                    src={url}
+                    alt=""
+                    fill
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+              </ScrollReveal>
+            );
+          })}
         </div>
       </div>
     </section>

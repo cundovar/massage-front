@@ -9,12 +9,16 @@ interface GenericHeroContent {
 }
 
 export function GenericHeroSection({ content }: { content: GenericHeroContent }) {
-  const imageUrl = getImageUrl(content.image) ?? "/images/default/hero-1.jpg";
+  const imageUrl = getImageUrl(content.image);
 
   return (
     <section className="relative min-h-[60vh] w-full overflow-hidden rounded-3xl">
       <div className="absolute inset-0">
-        <Image src={imageUrl} alt="" fill className="object-cover" priority />
+        {imageUrl ? (
+          <Image src={imageUrl} alt="" fill className="object-cover" priority />
+        ) : (
+          <div className="h-full w-full" style={{ background: "var(--gradient-primary)" }} />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       </div>
       <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">

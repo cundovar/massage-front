@@ -1,22 +1,24 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getImageUrl } from "@/lib/api";
 import type { ApprocheContent } from "@/lib/api";
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface ApprocheProps {
   content: ApprocheContent;
 }
 
 export function Approche({ content }: ApprocheProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const leftRef = useRef<HTMLDivElement | null>(null);
   const rightRef = useRef<HTMLDivElement | null>(null);
-  const gridRef = useRef<HTMLDivElement | null>(null);
 
   const imageSources =
     Array.isArray(content.images) && content.images.length > 0
@@ -28,95 +30,65 @@ export function Approche({ content }: ApprocheProps) {
     .map((src) => getImageUrl(src))
     .filter((src): src is string => Boolean(src));
 
-  useLayoutEffect(() => {
-    const context = gsap.context(() => {
-      if (leftRef.current) {
-        gsap.fromTo(
-          leftRef.current,
-          { opacity: 0, x: -80, scale: 0.95 },
-          {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: leftRef.current,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-      }
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
-      if (rightRef.current) {
-        gsap.from(rightRef.current.querySelectorAll("[data-anim-child]"), {
-          opacity: 0,
-          x: 80,
-          duration: 0.8,
-          ease: "power2.out",
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: rightRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
+    let ctx: gsap.Context | null = null;
 
-      if (gridRef.current) {
-        const images = gridRef.current.querySelectorAll<HTMLImageElement>("img");
-
-        images.forEach((img, index) => {
-          if (!img.parentElement) return;
-
+    // Attendre que le DOM soit prêt
+    const timeout = setTimeout(() => {
+      ctx = gsap.context(() => {
+        // Animation du bloc gauche (images)
+        if (leftRef.current) {
           gsap.fromTo(
-            img.parentElement,
-            { opacity: 0, y: 30 },
+            leftRef.current,
+            { opacity: 0, x: -50 },
             {
               opacity: 1,
-              y: 0,
+              x: 0,
               duration: 0.8,
-              delay: index * 0.1,
               ease: "power2.out",
               scrollTrigger: {
-                trigger: gridRef.current,
-                start: "top 80%",
+                trigger: leftRef.current,
+                start: "top 85%",
                 toggleActions: "play none none none",
               },
             },
           );
+        }
 
-          const direction = index % 2 === 0 ? 1 : -1;
-          const distance = index === 0 ? 100 : 70;
-
+        // Animation du bloc droit (texte)
+        if (rightRef.current) {
+          const children = rightRef.current.querySelectorAll("[data-anim-child]");
           gsap.fromTo(
-            img,
-            { y: direction * distance, scale: 1.1 },
+            children,
+            { opacity: 0, x: 50 },
             {
-              y: -direction * distance,
-              scale: 1.1,
-              ease: "none",
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.1,
               scrollTrigger: {
-                trigger: img.parentElement,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-                toggleActions: "play reverse play reverse",
+                trigger: rightRef.current,
+                start: "top 85%",
+                toggleActions: "play none none none",
               },
             },
           );
-        });
-      }
-    });
+        }
+      }, section);
+    }, 100);
 
     return () => {
-      context.revert();
+      clearTimeout(timeout);
+      ctx?.revert();
     };
   }, []);
 
   return (
-    <section id="parcours" className="mb-10 mt-20 grid gap-10 lg:grid-cols-2">
+    <section ref={sectionRef} id="parcours" className="mb-10 mt-20 grid gap-10 lg:grid-cols-2">
       <div className="lg:hidden">
         {imageUrls.length > 0 ? (
           <div className="glass-panel group relative aspect-[4/3] overflow-hidden rounded-2xl">
@@ -143,7 +115,7 @@ export function Approche({ content }: ApprocheProps) {
       <div ref={leftRef} className="hidden lg:block">
         {imageUrls.length > 0 ? (
           imageUrls.length === 1 ? (
-            <div ref={gridRef} className="glass-panel group relative h-[500px] overflow-hidden rounded-2xl" data-approche-card>
+            <div className="glass-panel group relative h-[500px] overflow-hidden rounded-2xl" data-approche-card>
               <Image
                 src={imageUrls[0]}
                 alt="Approche"
@@ -160,9 +132,9 @@ export function Approche({ content }: ApprocheProps) {
               />
             </div>
           ) : (
-            <div ref={gridRef} className="grid h-[500px] grid-cols-2 grid-rows-2 gap-3">
+            <div className="grid h-[500px] grid-cols-2 grid-rows-2 gap-3">
               {imageUrls.slice(0, 4).map((url, index) => (
-                <div key={url} className="glass-panel group relative overflow-hidden rounded-2xl" data-approche-card>
+                <div key={`approche-img-${index}`} className="glass-panel group relative overflow-hidden rounded-2xl" data-approche-card>
                   <Image
                     src={url}
                     alt={`Approche ${index + 1}`}
@@ -182,7 +154,7 @@ export function Approche({ content }: ApprocheProps) {
             </div>
           )
         ) : (
-          <div ref={gridRef} className="grid h-[500px] grid-cols-6 grid-rows-4 gap-1">
+          <div className="grid h-[500px] grid-cols-6 grid-rows-4 gap-1">
             <div
               className="rounded-lg shadow-xl [grid-area:1/1/4/5]"
               style={{ background: "color-mix(in srgb, var(--primary-start) 70%, var(--card-bg))" }}

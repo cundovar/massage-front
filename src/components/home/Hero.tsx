@@ -14,7 +14,7 @@ export function Hero({ content }: HeroProps) {
     ? content.slides
     : [
         {
-          image: "/images/default/hero-1.jpg",
+          image: "",
           title: "Une pause pour vous recentrer",
           subtitle: "Massages ayurvediques • Kobido • Reflexologie • Prenatal",
         },

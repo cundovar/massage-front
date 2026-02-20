@@ -1,12 +1,9 @@
-import { getPage, fetchServices, getSectionContent } from "@/lib/api";
-import { Hero } from "@/components/home/Hero";
-import { Presentation } from "@/components/home/Presentation";
-import { Approche } from "@/components/home/Approche";
-import { ServicesPreview } from "@/components/sections/ServicesPreview";
-import { ContactCTA } from "@/components/sections/ContactCTA";
-import { DEFAULT_HOME } from "@/lib/defaultContent";
-import type { HeroContent, PresentationContent, ApprocheContent } from "@/types";
+import { getPage, fetchServices } from "@/lib/api";
+import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
 import { Footer } from "@/components/layout/Footer";
+
+// Desactiver le cache pour voir les modifications en temps reel
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [page, services] = await Promise.all([
@@ -14,25 +11,20 @@ export default async function HomePage() {
     fetchServices(),
   ]);
 
-  const heroContent = getSectionContent<HeroContent>(page, "hero", DEFAULT_HOME.hero);
-  const presentationContent = getSectionContent<PresentationContent>(page, "presentation", DEFAULT_HOME.presentation);
-  const approcheContent = getSectionContent<ApprocheContent>(page, "approche", DEFAULT_HOME.approche);
+  const sections = Object.entries(page.sections).map(([key, section]) => ({
+    sectionKey: key,
+    type: section.type,
+    title: section.title,
+    content: section.content,
+    sortOrder: section.sortOrder,
+  }));
+
+  // Trier par sortOrder
+  sections.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
   return (
     <main className="absolute top-0 left-0 right-0 page-transition">
-    <div data-animate="section">
-        <Hero content={heroContent} />
-      </div> 
-      <div data-animate="section">
-        <Presentation content={presentationContent} />
-      </div>
-      <div data-animate="section">
-        <ServicesPreview services={services.slice(0, 3)} />
-      </div>
-      <div data-animate="section">
-        <Approche content={approcheContent} />
-      </div>
-      <ContactCTA />
+      <SectionRenderer sections={sections} services={services} />
       <Footer />
     </main>
   );
