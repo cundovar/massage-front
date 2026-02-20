@@ -52,6 +52,8 @@ const FALLBACK_SETTINGS: PublicSettings = {
     customAccentColor: null,
     headerStyle: "sticky",
     showDarkModeToggle: true,
+
+    
   },
   footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
 };
