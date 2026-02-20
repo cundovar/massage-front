@@ -9,6 +9,7 @@ import {
   createSection,
   deleteSection,
   fetchPage,
+  syncContactPage,
   updateSection,
   type PageDetail,
   type PageSection,
@@ -79,6 +80,11 @@ export default function PageEditorPage() {
           sortOrder: section.sortOrder,
         });
       }
+    }
+
+    // Synchroniser les données Contact avec Settings
+    if (params.slug === "contact") {
+      await syncContactPage(token);
     }
 
     const refreshed = await fetchPage(token, params.slug);

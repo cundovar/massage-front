@@ -382,6 +382,19 @@ export async function updateSection(
   return (await response.json()) as PageSection;
 }
 
+export async function syncContactPage(token: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages/contact/sync`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    console.warn("Contact sync failed");
+  }
+}
+
 export async function loginAdmin(email: string, password: string): Promise<LoginResponse> {
   const response = await fetch(`${API_BASE_URL}/api/login`, {
     method: "POST",
