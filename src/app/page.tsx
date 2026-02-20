@@ -23,7 +23,7 @@ export default async function HomePage() {
   sections.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
   return (
-    <main className="absolute top-0 left-0 right-0 page-transition">
+    <main className="page-transition">
       <SectionRenderer sections={sections} services={services} />
       <Footer />
     </main>
