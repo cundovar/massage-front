@@ -49,6 +49,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
     copyrightText: "© 2024 Helene Massage & Ayurveda",
     quickLinks: [],
   },
+  navigation: {
+    externalLinks: [],
+  },
 };
 
 export default function AdminSettingsPage() {

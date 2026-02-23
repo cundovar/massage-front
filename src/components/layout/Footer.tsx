@@ -46,6 +46,9 @@ const FALLBACK_SETTINGS: PublicSettings = {
       { label: "Contact", url: "/contact" },
     ],
   },
+  navigation: {
+    externalLinks: [],
+  },
 };
 
 function isInternalUrl(url: string): boolean {

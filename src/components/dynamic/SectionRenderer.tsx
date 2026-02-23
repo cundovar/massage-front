@@ -181,7 +181,7 @@ export function SectionRenderer({
             return withAnimation(
               <ContactInfoSection
                 key={key}
-                content={section.content as ContactInfosContent & { title?: string }}
+                content={section.content as unknown as ContactInfosContent & { title?: string }}
               />,
             );
 
