@@ -190,8 +190,8 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
         </div>
       ) : null}
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/2 overflow-y-auto border-r bg-stone-50">
+      <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
+        <div className="h-1/2 w-full overflow-y-auto border-b bg-stone-50 lg:h-auto lg:w-1/2 lg:border-b-0 lg:border-r">
           <div className="space-y-4 p-6">
             {sections.length === 0 && hasPageTemplate(pageSlug) ? (
               <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-8 text-center">
@@ -248,7 +248,7 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
           </div>
         </div>
 
-        <div className="w-1/2 overflow-y-auto bg-white">
+        <div className="h-1/2 w-full overflow-y-auto bg-white lg:h-auto lg:w-1/2">
           <LivePreview sections={orderedSections} activeSection={activeSection} onSelectSection={setActiveSection} />
         </div>
       </div>
