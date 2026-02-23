@@ -250,31 +250,6 @@ export function SettingsForm({
         </div>
       </FormSection>
 
-      <FormSection title="Reservations">
-        <div className="grid gap-4 md:grid-cols-2">
-          <Input
-            placeholder="Email notification"
-            value={settings.booking.notificationEmail}
-            onChange={(event) => onChange({ ...settings, booking: { ...settings.booking, notificationEmail: event.target.value } })}
-          />
-          <Input
-            type="number"
-            min={0}
-            placeholder="Delai minimum (heures)"
-            value={settings.booking.minDelayHours}
-            onChange={(event) =>
-              onChange({ ...settings, booking: { ...settings.booking, minDelayHours: Number(event.target.value || 0) } })
-            }
-          />
-        </div>
-        <Textarea
-          rows={3}
-          placeholder="Message de confirmation"
-          value={settings.booking.confirmationMessage}
-          onChange={(event) => onChange({ ...settings, booking: { ...settings.booking, confirmationMessage: event.target.value } })}
-        />
-      </FormSection>
-
       <FormSection title="Apparence" description="Personnalisez le style visuel de votre site">
         <ThemeSelector
           value={settings.appearance.themePreset}

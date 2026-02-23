@@ -332,7 +332,8 @@ export async function fetchSettings(token: string): Promise<SiteSettings> {
 }
 
 export async function updateSettings(token: string, payload: Partial<SiteSettings>): Promise<SiteSettings> {
-  const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+  const endpoint = `${API_BASE_URL}/api/admin/settings`;
+  let response = await fetch(endpoint, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -340,6 +341,19 @@ export async function updateSettings(token: string, payload: Partial<SiteSetting
     },
     body: JSON.stringify(payload),
   });
+
+  // Some production reverse proxies/shared hosts reject PUT with 405.
+  // Retry with POST on the same endpoint, handled server-side as an update fallback.
+  if (response.status === 405) {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  }
 
   if (response.status === 401) throw new Error("UNAUTHORIZED");
   if (!response.ok) {
