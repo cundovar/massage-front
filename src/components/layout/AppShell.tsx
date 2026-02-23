@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { TransitionProvider } from "@/context/TransitionContext";
 import { PageWrapper } from "@/components/transitions/PageWrapper";
 import type { NavItem } from "@/types/navigation";
@@ -22,6 +23,8 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
     return <>{children}</>;
   }
 
+  const showMobileToggle = initialSettings?.appearance?.showDarkModeToggle !== false;
+
   return (
     <TransitionProvider>
       <div className="min-h-screen overflow-x-hidden bg-(--color-background) text-(--color-text-primary)">
@@ -31,6 +34,12 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
         </PageWrapper>
         <Footer initialSettings={initialSettings} />
       </div>
+
+      {showMobileToggle && (
+        <div className="fixed bottom-4 right-4 z-50 md:hidden">
+          <ThemeToggle />
+        </div>
+      )}
     </TransitionProvider>
   );
 }

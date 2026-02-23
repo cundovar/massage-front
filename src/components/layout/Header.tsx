@@ -179,7 +179,6 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
-          {settings.appearance.showDarkModeToggle ? <ThemeToggle /> : null}
           {useBurgerMenu ? (
             <button
               onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -206,42 +205,41 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
       </div>
 
       {!useBurgerMenu ? (
-        <nav
-          className="mt-3 flex flex-wrap justify-center gap-1 border-t border-sand-warm/20 pt-3 md:hidden"
-          aria-label="Navigation mobile"
-        >
-          {navItems.map((item) =>
-            item.isExternal ? (
-              <a
-                key={item.slug}
-                href={item.path}
-                target={item.openInNewTab ? "_blank" : undefined}
-                rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                className="flex items-center gap-1 rounded-full px-3 py-2 text-sm text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
-              >
-                {item.title}
-                {item.openInNewTab && (
-                  <svg className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                )}
-              </a>
-            ) : (
-              <TransitionLink
-                key={item.slug}
-                href={item.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`rounded-full px-3 py-2 text-sm transition-all duration-200 ${
-                  isActive(item.path)
-                    ? "bg-gold-default font-medium text-brown-darker"
-                    : "text-brown-darker hover:bg-sand-light/10 hover:text-gold-default"
-                }`}
-              >
-                {item.title}
-              </TransitionLink>
-            )
-          )}
-        </nav>
+        <div className="mt-3 border-t border-sand-warm/20 pt-3 md:hidden">
+          <nav className="flex flex-wrap justify-center gap-1" aria-label="Navigation mobile">
+            {navItems.map((item) =>
+              item.isExternal ? (
+                <a
+                  key={item.slug}
+                  href={item.path}
+                  target={item.openInNewTab ? "_blank" : undefined}
+                  rel={item.openInNewTab ? "noopener noreferrer" : undefined}
+                  className="flex items-center gap-1 rounded-full px-3 py-2 text-sm text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
+                >
+                  {item.title}
+                  {item.openInNewTab && (
+                    <svg className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  )}
+                </a>
+              ) : (
+                <TransitionLink
+                  key={item.slug}
+                  href={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`rounded-full px-3 py-2 text-sm transition-all duration-200 ${
+                    isActive(item.path)
+                      ? "bg-gold-default font-medium text-brown-darker"
+                      : "text-brown-darker hover:bg-sand-light/10 hover:text-gold-default"
+                  }`}
+                >
+                  {item.title}
+                </TransitionLink>
+              )
+            )}
+          </nav>
+        </div>
       ) : (
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out md:hidden ${
@@ -289,6 +287,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
           </nav>
         </div>
       )}
+
     </header>
   );
 }
