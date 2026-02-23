@@ -5,6 +5,17 @@ import { MediaPicker } from "@/components/admin/media/MediaPicker";
 import type { PageSection } from "@/lib/api-admin";
 import type { BlockDefinition, FieldDefinition } from "./block-catalog";
 
+const ANIMATION_OPTIONS = [
+  { value: "none", label: "Aucune" },
+  { value: "fade-up", label: "Fondu + montee" },
+  { value: "fade-down", label: "Fondu + descente" },
+  { value: "slide-left", label: "Glissement gauche" },
+  { value: "slide-right", label: "Glissement droite" },
+  { value: "zoom-in", label: "Zoom entrant" },
+  { value: "zoom-out", label: "Zoom sortant" },
+  { value: "bounce", label: "Rebond" },
+] as const;
+
 interface BlockEditorProps {
   section: PageSection;
   definition: BlockDefinition;
@@ -69,6 +80,38 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
           token={token}
         />
       ))}
+
+      <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
+        <h4 className="text-sm font-medium text-stone-700">Animation d&apos;entree</h4>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-stone-700">Effet</label>
+          <select
+            value={(section.content.animation as string | undefined) ?? "fade-up"}
+            onChange={(event) => setValue("animation", event.target.value)}
+            className="w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-amber-500"
+          >
+            {ANIMATION_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-stone-700">Delai (secondes)</label>
+          <input
+            type="number"
+            step="0.1"
+            min="0"
+            max="2"
+            value={(section.content.animationDelay as number | undefined) ?? 0}
+            onChange={(event) => setValue("animationDelay", Number.parseFloat(event.target.value) || 0)}
+            className="w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+      </div>
     </div>
   );
 }

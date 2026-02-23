@@ -1,4 +1,4 @@
-import { getPage, fetchServices } from "@/lib/api";
+import { getPage, getServices } from "@/lib/api";
 import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
 
 // Desactiver le cache pour voir les modifications en temps reel
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const [page, services] = await Promise.all([
     getPage("home"),
-    fetchServices(),
+    getServices(),
   ]);
 
   const sections = Object.entries(page.sections).map(([key, section]) => ({

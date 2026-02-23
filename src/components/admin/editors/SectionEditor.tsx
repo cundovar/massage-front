@@ -5,6 +5,17 @@ import { MediaPicker } from "@/components/admin/media/MediaPicker";
 import { Alert, Button, Card, Input, Textarea } from "@/components/admin/ui";
 import { updateSection, type PageSection } from "@/lib/api-admin";
 
+const ANIMATION_OPTIONS = [
+  { value: "none", label: "Aucune" },
+  { value: "fade-up", label: "Fondu + montee" },
+  { value: "fade-down", label: "Fondu + descente" },
+  { value: "slide-left", label: "Glissement gauche" },
+  { value: "slide-right", label: "Glissement droite" },
+  { value: "zoom-in", label: "Zoom entrant" },
+  { value: "zoom-out", label: "Zoom sortant" },
+  { value: "bounce", label: "Rebond" },
+] as const;
+
 interface SectionEditorProps {
   token: string;
   pageSlug: string;
@@ -245,6 +256,33 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
 
       {error ? <Alert variant="error">{error}</Alert> : null}
       {success ? <Alert variant="success">Sauvegarde reussie.</Alert> : null}
+      <div className="grid gap-4 rounded-lg border border-stone-200 bg-stone-50 p-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-stone-700">Animation d&apos;entree</label>
+          <select
+            value={(content.animation as string | undefined) ?? "fade-up"}
+            onChange={(event) => updateContent("animation", event.target.value)}
+            className="w-full rounded-lg border border-stone-200 px-3 py-2"
+          >
+            {ANIMATION_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-stone-700">Delai (secondes)</label>
+          <Input
+            type="number"
+            step="0.1"
+            min="0"
+            max="2"
+            value={String((content.animationDelay as number | undefined) ?? 0)}
+            onChange={(event) => updateContent("animationDelay", Number.parseFloat(event.target.value) || 0)}
+          />
+        </div>
+      </div>
       {isGenericSection ? renderGenericEditor() : null}
 
       {!isGenericSection ? (

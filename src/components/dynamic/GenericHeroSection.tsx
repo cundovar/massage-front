@@ -6,10 +6,48 @@ interface GenericHeroContent {
   title?: string;
   subtitle?: string;
   image?: string;
+  compact?: boolean;
 }
 
 export function GenericHeroSection({ content }: { content: GenericHeroContent }) {
   const imageUrl = getImageUrl(content.image);
+  const isCompact = content.compact ?? false;
+
+  if (isCompact) {
+    return (
+      <section className="relative overflow-hidden bg-white py-20">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={content.title ?? ""}
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority
+          />
+        ) : null}
+        <div
+          className={`absolute inset-0 ${
+            imageUrl
+              ? "bg-black/40"
+              : "bg-gradient-to-r from-[#ffce67]/30 to-[#f67e54]/30"
+          }`}
+        />
+        <div
+          className={`relative mx-auto max-w-7xl px-6 ${
+            imageUrl ? "text-white" : "text-[var(--color-text-primary)]"
+          }`}
+        >
+          {content.title ? <h1 className="heading-hero">{content.title}</h1> : null}
+          {content.subtitle ? (
+            <p className={`mt-4 text-xl ${imageUrl ? "text-white/90" : "text-gray-700"}`}>
+              {content.subtitle}
+            </p>
+          ) : null}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative min-h-[60vh] w-full overflow-hidden rounded-3xl">

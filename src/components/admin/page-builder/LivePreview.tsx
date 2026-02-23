@@ -11,7 +11,11 @@ const Approche = dynamic(() => import("@/components/home/Approche").then((mod) =
 const Tarifs = dynamic(() => import("@/components/home/Tarifs").then((mod) => mod.Tarifs), { ssr: false });
 const MassageAmma = dynamic(() => import("@/components/entreprise/MassageAmma").then((mod) => mod.MassageAmma), { ssr: false });
 const ContactCTA = dynamic(() => import("@/components/sections/ContactCTA").then((mod) => mod.ContactCTA), { ssr: false });
+const ContactForm = dynamic(() => import("@/components/sections/ContactForm").then((mod) => mod.ContactForm), { ssr: false });
+const ContactInfo = dynamic(() => import("@/components/sections/ContactInfo").then((mod) => mod.ContactInfo), { ssr: false });
+const ServiceSelector = dynamic(() => import("@/components/sections/ServiceSelector").then((mod) => mod.ServiceSelector), { ssr: false });
 const ContactInfoSection = dynamic(() => import("@/components/dynamic/ContactInfoSection").then((mod) => mod.ContactInfoSection), { ssr: false });
+const BenefitsGridSection = dynamic(() => import("@/components/dynamic/BenefitsGridSection").then((mod) => mod.BenefitsGridSection), { ssr: false });
 const GoogleMapSection = dynamic(() => import("@/components/dynamic/GoogleMapSection").then((mod) => mod.GoogleMapSection), { ssr: false });
 const TextSection = dynamic(() => import("@/components/dynamic/TextSection").then((mod) => mod.TextSection), { ssr: false });
 const QuoteSection = dynamic(() => import("@/components/dynamic/QuoteSection").then((mod) => mod.QuoteSection), { ssr: false });
@@ -87,6 +91,8 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
       return withWrapper(<Hero content={content as never} />);
     case "hero":
       return withWrapper(<GenericHeroSection content={content as { title?: string; subtitle?: string; image?: string }} />);
+    case "hero-compact":
+      return withWrapper(<GenericHeroSection content={{ ...(content as { title?: string; subtitle?: string; image?: string }), compact: true }} />);
     case "presentation":
       return withWrapper(<Presentation content={content as never} />);
     case "approche":
@@ -99,8 +105,14 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
       return withWrapper(<ContactCTA content={content as { title?: string; subtitle?: string; buttonText?: string }} />);
     case "contact-infos":
       return withWrapper(<ContactInfoSection content={content as never} />);
+    case "contact-info":
+      return withWrapper(<ContactInfo content={content as never} />);
+    case "contact-form":
+      return withWrapper(<ContactForm />);
     case "google-map":
       return withWrapper(<GoogleMapSection content={content as never} />);
+    case "benefits-grid":
+      return withWrapper(<BenefitsGridSection content={content as never} />);
     case "text":
       return withWrapper(<TextSection content={content as never} />);
     case "quote":
@@ -114,6 +126,22 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
       return withWrapper(<ParcoursSection content={content as never} />);
     case "formations":
       return withWrapper(<FormationsSection content={content as never} />);
+    case "service-selector":
+      return withWrapper(
+        <ServiceSelector
+          content={{
+            title: (content.title as string) ?? "Carte & tarifs",
+            subtitle: (content.subtitle as string | undefined) ?? "",
+            offers: (content.offers as Array<{ title: string; description: string; prices: string[] }>) ?? [],
+          }}
+        />,
+      );
+    case "services-preview":
+      return withWrapper(
+        <div className="rounded-lg border border-stone-200 bg-white px-6 py-12 text-center text-stone-500">
+          Apercu des services disponible uniquement sur le site public.
+        </div>,
+      );
     default:
       return withWrapper(
         <div className="rounded-lg bg-stone-100 px-6 py-12 text-center text-stone-500">

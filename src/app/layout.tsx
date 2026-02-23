@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
-import { getSettings } from "@/lib/api";
+import { getNavigation, getSettings } from "@/lib/api";
 import { THEME_PRESETS, generateThemeCSS } from "@/lib/themes";
 import "./globals.css";
 
@@ -38,9 +38,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   let themeCSS = generateThemeCSS(THEME_PRESETS.ayurveda);
+  let initialSettings = await getSettings();
+  const initialNavigation = await getNavigation();
 
   try {
-    const settings = await getSettings();
+    const settings = initialSettings;
     const preset = THEME_PRESETS[settings.appearance.themePreset] ?? THEME_PRESETS.ayurveda;
     const customAccentColor = settings.appearance.useCustomAccent
       ? settings.appearance.customAccentColor || undefined
@@ -48,6 +50,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     themeCSS = generateThemeCSS(preset, customAccentColor);
   } catch {
     themeCSS = generateThemeCSS(THEME_PRESETS.ayurveda);
+    initialSettings = await getSettings();
   }
 
   return (
@@ -59,7 +62,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         {/* Background fixe - ne bouge jamais entre les pages */}
         <div className="fixed-background" aria-hidden="true" />
 
-        <AppShell>{children}</AppShell>
+        <AppShell initialNavItems={initialNavigation.items} initialSettings={initialSettings}>
+          {children}
+        </AppShell>
       </body>
     </html>
   );

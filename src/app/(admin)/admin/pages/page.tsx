@@ -111,7 +111,18 @@ export default function AdminPagesPage() {
           <Card key={page.id} padding="sm" className="transition hover:-translate-y-0.5 hover:shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-lg font-semibold">{page.title}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">{page.title}</p>
+                  {page.showInNav ? (
+                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                      Menu
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-500">
+                      Masquee
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-[var(--bo-muted)]">/{page.slug}</p>
               </div>
               <div className="flex items-center gap-2">

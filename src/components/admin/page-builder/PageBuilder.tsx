@@ -16,15 +16,31 @@ interface PageBuilderProps {
   pageSlug: string;
   pageTitle: string;
   initialSections: PageSection[];
+  showInNav: boolean;
   onSave: (sections: PageSection[]) => Promise<void>;
+  onToggleNav: (showInNav: boolean) => Promise<void>;
 }
 
-export function PageBuilder({ token, pageSlug, pageTitle, initialSections, onSave }: PageBuilderProps) {
+export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showInNav, onSave, onToggleNav }: PageBuilderProps) {
   const [sections, setSections] = useState<PageSection[]>(initialSections);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isInNav, setIsInNav] = useState(showInNav);
+  const [isTogglingNav, setIsTogglingNav] = useState(false);
+
+  const handleToggleNav = useCallback(async () => {
+    setIsTogglingNav(true);
+    try {
+      await onToggleNav(!isInNav);
+      setIsInNav(!isInNav);
+    } catch {
+      setError("Impossible de modifier la visibilité dans le menu.");
+    } finally {
+      setIsTogglingNav(false);
+    }
+  }, [isInNav, onToggleNav]);
 
   useEffect(() => {
     setSections(initialSections);
@@ -135,14 +151,37 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, onSav
           <p className="text-sm text-stone-500">/{pageSlug}</p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isSaving}
-          className="rounded-lg bg-amber-600 px-4 py-2 text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
-        >
-          {isSaving ? "Enregistrement..." : "Enregistrer"}
-        </button>
+        <div className="flex items-center gap-4">
+          {/* Toggle afficher dans le menu */}
+          <label className="flex cursor-pointer items-center gap-2">
+            <span className="text-sm text-stone-600">Afficher dans le menu</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isInNav}
+              disabled={isTogglingNav}
+              onClick={handleToggleNav}
+              className={`relative h-6 w-11 rounded-full transition-colors ${
+                isInNav ? "bg-amber-600" : "bg-stone-300"
+              } ${isTogglingNav ? "opacity-50" : ""}`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                  isInNav ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </label>
+
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving}
+            className="rounded-lg bg-amber-600 px-4 py-2 text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
+          >
+            {isSaving ? "Enregistrement..." : "Enregistrer"}
+          </button>
+        </div>
       </div>
 
       {error ? (

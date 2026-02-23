@@ -11,6 +11,7 @@ import {
   fetchPage,
   revalidateFrontend,
   syncContactPage,
+  updatePage,
   updateSection,
   type PageDetail,
   type PageSection,
@@ -89,11 +90,22 @@ export default function PageEditorPage() {
     }
 
     // Revalider le cache frontend
-    const publicPath = params.slug === "home" ? "/" : `/${params.slug}`;
+    const publicPath = params.slug === "home" ? "/" : params.slug === "about" ? "/a-propos" : `/${params.slug}`;
     await revalidateFrontend(publicPath);
 
     const refreshed = await fetchPage(token, params.slug);
     setPage(refreshed);
+  }
+
+  async function handleToggleNav(showInNav: boolean) {
+    if (!token || !params.slug) {
+      return;
+    }
+
+    await updatePage(token, params.slug, { showInNav });
+
+    // Revalider la navigation
+    await revalidateFrontend("/");
   }
 
   if (!token || (!page && !error)) {
@@ -120,7 +132,9 @@ export default function PageEditorPage() {
       pageSlug={page.slug}
       pageTitle={page.title}
       initialSections={page.sections}
+      showInNav={page.showInNav}
       onSave={handleSave}
+      onToggleNav={handleToggleNav}
     />
   );
 }

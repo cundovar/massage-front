@@ -52,8 +52,12 @@ function isInternalUrl(url: string): boolean {
   return url.startsWith("/");
 }
 
-export function Footer() {
-  const [settings, setSettings] = useState<PublicSettings>(FALLBACK_SETTINGS);
+interface FooterProps {
+  initialSettings?: PublicSettings;
+}
+
+export function Footer({ initialSettings }: FooterProps) {
+  const [settings, setSettings] = useState<PublicSettings>(initialSettings ?? FALLBACK_SETTINGS);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,6 +102,7 @@ export function Footer() {
     >
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <div className="grid gap-12 md:grid-cols-4">
+          {/* Titre + Description + Réseaux sociaux */}
           <div className="md:col-span-2">
             <h3 className="mb-4 text-2xl font-serif drop-shadow-sm">{settings.general.siteName}</h3>
             <p
@@ -143,41 +148,44 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h4 className="mb-4 font-medium drop-shadow-sm">Navigation</h4>
-            <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
-              {quickLinks.map((link) => (
-                <li key={`${link.label}-${link.url}`}>
-                  {isInternalUrl(link.url) ? (
-                    <TransitionLink href={link.url} className="footer-link transition">
-                      {link.label}
-                    </TransitionLink>
-                  ) : (
-                    <a href={link.url} className="footer-link transition" target="_blank" rel="noreferrer">
-                      {link.label}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Navigation + Contact : flex sur mobile, colonnes séparées sur desktop */}
+          <div className="flex flex-row gap-8 md:contents">
+            <div className="flex-1">
+              <h4 className="mb-4 font-medium drop-shadow-sm">Navigation</h4>
+              <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
+                {quickLinks.map((link) => (
+                  <li key={`${link.label}-${link.url}`}>
+                    {isInternalUrl(link.url) ? (
+                      <TransitionLink href={link.url} className="footer-link transition">
+                        {link.label}
+                      </TransitionLink>
+                    ) : (
+                      <a href={link.url} className="footer-link transition" target="_blank" rel="noreferrer">
+                        {link.label}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div>
-            <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
-            <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
-              <li>{settings.contact.address.street}</li>
-              <li>{addressLine}</li>
-              <li className="pt-2">
-                <a href={`tel:${telHref}`} className="footer-link transition">
-                  {settings.contact.phone}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${settings.contact.email}`} className="footer-link transition">
-                  {settings.contact.email}
-                </a>
-              </li>
-            </ul>
+            <div className="flex-1">
+              <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
+              <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
+                <li>{settings.contact.address.street}</li>
+                <li>{addressLine}</li>
+                <li className="pt-2">
+                  <a href={`tel:${telHref}`} className="footer-link transition">
+                    {settings.contact.phone}
+                  </a>
+                </li>
+                <li>
+                  <a href={`mailto:${settings.contact.email}`} className="footer-link transition">
+                    {settings.contact.email}
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 

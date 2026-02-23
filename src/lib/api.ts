@@ -298,6 +298,8 @@ export async function fetchServices(): Promise<ServiceItem[]> {
   }
 }
 
+export const getServices = fetchServices;
+
 export async function getNavigation(): Promise<NavigationResponse> {
   if (shouldSkipRemoteFetch()) {
     return FALLBACK_NAVIGATION;

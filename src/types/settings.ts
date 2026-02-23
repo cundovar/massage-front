@@ -9,6 +9,7 @@ export interface SiteSettings {
   booking: BookingSettings;
   appearance: AppearanceSettings;
   footer: FooterSettings;
+  navigation: NavigationSettings;
   updatedAt?: string;
 }
 
@@ -59,6 +60,18 @@ export interface AppearanceSettings {
 export interface FooterSettings {
   copyrightText: string;
   quickLinks: Array<{ label: string; url: string }>;
+}
+
+export interface ExternalNavLink {
+  id: string;
+  label: string;
+  url: string;
+  openInNewTab: boolean;
+  order: number;
+}
+
+export interface NavigationSettings {
+  externalLinks: ExternalNavLink[];
 }
 
 export interface PublicSettings extends Omit<SiteSettings, "booking"> {

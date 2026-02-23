@@ -1,12 +1,8 @@
 "use client";
 
-import { Approche } from "@/components/home/Approche";
-import { Hero } from "@/components/home/Hero";
-import { Presentation } from "@/components/home/Presentation";
-import { Tarifs } from "@/components/home/Tarifs";
-import { MassageAmma } from "@/components/entreprise/MassageAmma";
-import { ContactCTA } from "@/components/sections/ContactCTA";
-import { ServicesPreview } from "@/components/sections/ServicesPreview";
+import type { ReactNode } from "react";
+import { AnimationWrapper, type AnimationEffect } from "@/components/animations/AnimationWrapper";
+import { BenefitsGridSection, type BenefitsGridContent } from "@/components/dynamic/BenefitsGridSection";
 import { ContactInfoSection } from "@/components/dynamic/ContactInfoSection";
 import { FormationsSection } from "@/components/dynamic/FormationsSection";
 import { GenericGallerySection } from "@/components/dynamic/GenericGallerySection";
@@ -17,8 +13,19 @@ import { ImageSection } from "@/components/dynamic/ImageSection";
 import { ParcoursSection } from "@/components/dynamic/ParcoursSection";
 import { QuoteSection } from "@/components/dynamic/QuoteSection";
 import { TextSection } from "@/components/dynamic/TextSection";
+import { MassageAmma } from "@/components/entreprise/MassageAmma";
+import { Approche } from "@/components/home/Approche";
+import { Hero } from "@/components/home/Hero";
+import { Presentation } from "@/components/home/Presentation";
+import { Tarifs } from "@/components/home/Tarifs";
+import { ContactForm } from "@/components/sections/ContactForm";
+import { ContactCTA } from "@/components/sections/ContactCTA";
+import { ContactInfo } from "@/components/sections/ContactInfo";
+import { ServiceSelector } from "@/components/sections/ServiceSelector";
+import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import type {
   ApprocheContent,
+  ContactInfosContent,
   EntrepriseContent,
   FormationsContent,
   HeroContent,
@@ -28,81 +35,199 @@ import type {
 } from "@/lib/api";
 import type { ServiceItem } from "@/types/service";
 
+interface SectionContent {
+  animation?: AnimationEffect;
+  animationDelay?: number;
+  [key: string]: unknown;
+}
+
 interface Section {
   sectionKey: string;
   type?: string;
   title: string | null;
-  content: Record<string, unknown>;
+  content: SectionContent;
   sortOrder?: number;
 }
 
 interface SectionRendererProps {
   sections: Section[];
   services?: ServiceItem[];
+  tarifsContent?: TarifsContent;
+  contactInfos?: ContactInfosContent;
 }
 
-export function SectionRenderer({ sections, services }: SectionRendererProps) {
+export function SectionRenderer({
+  sections,
+  services,
+  tarifsContent,
+  contactInfos,
+}: SectionRendererProps) {
   return (
     <>
       {sections.map((section, index) => {
         const key = `${section.sectionKey}-${section.sortOrder ?? index}`;
         const sectionType = section.type ?? section.sectionKey;
+        const animation = section.content.animation ?? "fade-up";
+        const animationDelay = section.content.animationDelay ?? 0;
+
+        const withAnimation = (component: ReactNode) => {
+          const noAnimationTypes = ["hero-home", "hero", "hero-simple", "hero-compact"];
+          if (noAnimationTypes.includes(sectionType)) {
+            return component;
+          }
+
+          return (
+            <AnimationWrapper effect={animation} delay={animationDelay}>
+              {component}
+            </AnimationWrapper>
+          );
+        };
 
         switch (sectionType) {
           case "hero-home":
             return <Hero key={key} content={section.content as unknown as HeroContent} />;
+
           case "hero":
           case "hero-simple":
-            return <GenericHeroSection key={key} content={section.content as unknown as { title?: string; subtitle?: string; image?: string }} />;
+          case "hero-compact":
+            return (
+              <GenericHeroSection
+                key={key}
+                content={{
+                  ...(section.content as unknown as {
+                    title?: string;
+                    subtitle?: string;
+                    image?: string;
+                  }),
+                  compact: sectionType === "hero-compact",
+                }}
+              />
+            );
+
           case "presentation":
-            return <Presentation key={key} content={section.content as unknown as PresentationContent} />;
+            return withAnimation(
+              <Presentation key={key} content={section.content as unknown as PresentationContent} />,
+            );
+
           case "approche":
-            return <Approche key={key} content={section.content as unknown as ApprocheContent} />;
+            return withAnimation(
+              <Approche key={key} content={section.content as unknown as ApprocheContent} />,
+            );
+
           case "tarifs":
-            return <Tarifs key={key} content={section.content as unknown as TarifsContent} />;
+            return withAnimation(<Tarifs key={key} content={section.content as unknown as TarifsContent} />);
+
           case "entreprise":
-            return <MassageAmma key={key} content={section.content as unknown as EntrepriseContent} />;
-          case "gallery":
-            return <GenericGallerySection key={key} content={section.content as unknown as { title?: string; images?: string[] }} />;
+            return withAnimation(
+              <MassageAmma key={key} content={section.content as unknown as EntrepriseContent} />,
+            );
+
+          case "benefits-grid":
+            return <BenefitsGridSection key={key} content={section.content as BenefitsGridContent} />;
+
           case "text":
-            return <TextSection key={key} content={section.content as { title?: string; paragraphs?: string[]; image?: string | null }} />;
+            return withAnimation(
+              <TextSection
+                key={key}
+                content={section.content as {
+                  title?: string;
+                  paragraphs?: string[];
+                  image?: string | null;
+                }}
+              />,
+            );
+
           case "image":
-            return <ImageSection key={key} content={section.content as { image?: string | null; alt?: string; caption?: string }} />;
+            return withAnimation(
+              <ImageSection
+                key={key}
+                content={section.content as { image?: string | null; alt?: string; caption?: string }}
+              />,
+            );
+
+          case "gallery":
+            return withAnimation(
+              <GenericGallerySection
+                key={key}
+                content={section.content as unknown as { title?: string; images?: string[] }}
+              />,
+            );
+
           case "quote":
           case "philosophie":
-            return <QuoteSection key={key} content={section.content as { text?: string; author?: string }} />;
+            return withAnimation(
+              <QuoteSection key={key} content={section.content as { text?: string; author?: string }} />,
+            );
+
           case "parcours":
-            return <ParcoursSection key={key} content={section.content as unknown as ParcoursContent} />;
+            return withAnimation(
+              <ParcoursSection key={key} content={section.content as unknown as ParcoursContent} />,
+            );
+
           case "formations":
-            return <FormationsSection key={key} content={section.content as unknown as FormationsContent} />;
+            return withAnimation(
+              <FormationsSection key={key} content={section.content as unknown as FormationsContent} />,
+            );
+
           case "contact-cta":
-            return (
+            return withAnimation(
               <ContactCTA
                 key={key}
                 content={section.content as { title?: string; subtitle?: string; buttonText?: string }}
-              />
+              />,
             );
+
           case "contact-infos":
-            return (
+            return withAnimation(
               <ContactInfoSection
                 key={key}
-                content={section.content as { title?: string; address?: { street?: string; city?: string }; phone?: string; email?: string; hours?: Array<{ days: string; hours: string }> }}
-              />
+                content={section.content as ContactInfosContent & { title?: string }}
+              />,
             );
-          case "google-map":
-            return (
-              <GoogleMapSection
+
+          case "contact-info":
+            return withAnimation(
+              <ContactInfo
                 key={key}
-                content={section.content as { title?: string; embedUrl?: string }}
-              />
+                content={contactInfos ?? (section.content as unknown as ContactInfosContent)}
+              />,
             );
+
+          case "contact-form":
+            return withAnimation(<ContactForm key={key} />);
+
+          case "google-map":
+            return withAnimation(
+              <GoogleMapSection key={key} content={section.content as { title?: string; embedUrl?: string }} />,
+            );
+
           case "services-preview":
-            return services && services.length > 0 ? (
-              <ServicesPreview key={key} services={services.slice(0, 3)} />
-            ) : null;
+            return services && services.length > 0
+              ? withAnimation(<ServicesPreview key={key} services={services.slice(0, 3)} />)
+              : null;
+
+          case "service-selector": {
+            const baseContent = tarifsContent ?? (section.content as unknown as TarifsContent);
+            const safeContent: TarifsContent = {
+              title: baseContent?.title ?? "Carte & tarifs",
+              subtitle: baseContent?.subtitle,
+              offers: Array.isArray(baseContent?.offers) ? baseContent.offers : [],
+            };
+            return withAnimation(<ServiceSelector key={key} content={safeContent} />);
+          }
+
           default:
             console.warn(`Type de section inconnu: ${sectionType}`);
-            return <GenericTextSection key={key} content={section.content as unknown as { title?: string; paragraphs?: string[]; quote?: string }} />;
+            return withAnimation(
+              <GenericTextSection
+                key={key}
+                content={section.content as unknown as {
+                  title?: string;
+                  paragraphs?: string[];
+                  quote?: string;
+                }}
+              />,
+            );
         }
       })}
     </>

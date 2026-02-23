@@ -83,6 +83,22 @@ export interface PageSection {
 
 export type SectionType = "hero" | "text" | "image" | "quote" | "presentation" | "approche" | "tarifs" | "entreprise" | string;
 
+export interface SectionTypeOption {
+  value: string;
+  label: string;
+  category?: string;
+}
+
+export interface AnimationOption {
+  value: string;
+  label: string;
+}
+
+export interface SectionTypesResponse {
+  types: SectionTypeOption[];
+  animations: AnimationOption[];
+}
+
 export interface PageDetail {
   id: number;
   slug: string;
@@ -102,6 +118,8 @@ export interface PageListItem {
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
+  showInNav: boolean;
+  navOrder: number;
   updatedAt: string;
 }
 
@@ -411,6 +429,48 @@ export async function revalidateFrontend(path?: string): Promise<void> {
   } catch (error) {
     console.warn("Revalidation failed:", error);
   }
+}
+
+export async function getSectionTypes(token: string): Promise<SectionTypesResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/pages/section-types`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return {
+      types: [
+        { value: "hero-home", label: "Hero accueil", category: "hero" },
+        { value: "hero", label: "Hero (grand)", category: "hero" },
+        { value: "hero-compact", label: "Hero (compact)", category: "hero" },
+        { value: "text", label: "Texte", category: "content" },
+        { value: "image", label: "Image", category: "content" },
+        { value: "quote", label: "Citation", category: "content" },
+        { value: "gallery", label: "Galerie", category: "content" },
+        { value: "contact-form", label: "Formulaire de contact", category: "contact" },
+        { value: "contact-info", label: "Infos de contact", category: "contact" },
+        { value: "contact-cta", label: "Call to action", category: "contact" },
+        { value: "google-map", label: "Carte Google Maps", category: "contact" },
+        { value: "service-selector", label: "Selecteur de soins", category: "services" },
+        { value: "services-preview", label: "Apercu des services", category: "services" },
+        { value: "benefits-grid", label: "Grille avantages (2 colonnes)", category: "layout" },
+        { value: "parcours", label: "Parcours", category: "about" },
+        { value: "formations", label: "Formations", category: "about" },
+      ],
+      animations: [
+        { value: "none", label: "Aucune" },
+        { value: "fade-up", label: "Fondu + montee" },
+        { value: "fade-down", label: "Fondu + descente" },
+        { value: "slide-left", label: "Glissement gauche" },
+        { value: "slide-right", label: "Glissement droite" },
+        { value: "zoom-in", label: "Zoom entrant" },
+        { value: "zoom-out", label: "Zoom sortant" },
+        { value: "bounce", label: "Rebond" },
+      ],
+    };
+  }
+
+  return (await response.json()) as SectionTypesResponse;
 }
 
 export async function loginAdmin(email: string, password: string): Promise<LoginResponse> {

@@ -66,7 +66,7 @@ const PAGE_TEMPLATES: PageTemplate[] = [
     sections: [
       {
         key: "hero",
-        type: "hero",
+        type: "hero-compact",
         title: null,
         sortOrder: 0,
         content: {
@@ -76,12 +76,11 @@ const PAGE_TEMPLATES: PageTemplate[] = [
         },
       },
       {
-        key: "contact-infos",
-        type: "contact-infos",
+        key: "infos",
+        type: "contact-info",
         title: "Informations pratiques",
         sortOrder: 1,
         content: {
-          title: "Informations pratiques",
           address: {
             street: "123 Rue du Bien-Etre",
             city: "75011 Paris",
@@ -95,10 +94,17 @@ const PAGE_TEMPLATES: PageTemplate[] = [
         },
       },
       {
-        key: "google-map",
+        key: "form",
+        type: "contact-form",
+        title: null,
+        sortOrder: 2,
+        content: {},
+      },
+      {
+        key: "map",
         type: "google-map",
         title: "Localisation",
-        sortOrder: 2,
+        sortOrder: 3,
         content: {
           title: "Me trouver",
           embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.999457739055!2d2.3509873!3d48.856614!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66fdf2e4b5f3b%3A0x2b6f8e3c4a5b2f1b!2sParis!5e0!3m2!1sfr!2sfr!4v1710000000000",
@@ -108,7 +114,7 @@ const PAGE_TEMPLATES: PageTemplate[] = [
         key: "contact-cta",
         type: "contact-cta",
         title: null,
-        sortOrder: 3,
+        sortOrder: 4,
         content: {
           title: "Pret(e) a vous offrir une pause bien-etre ?",
           subtitle: "Reservez votre seance et decouvrez les bienfaits d'un massage personnalise",
@@ -122,7 +128,7 @@ const PAGE_TEMPLATES: PageTemplate[] = [
     sections: [
       {
         key: "hero",
-        type: "hero",
+        type: "hero-compact",
         title: null,
         sortOrder: 0,
         content: {
@@ -173,7 +179,7 @@ const PAGE_TEMPLATES: PageTemplate[] = [
     sections: [
       {
         key: "hero",
-        type: "hero",
+        type: "hero-compact",
         title: null,
         sortOrder: 0,
         content: {
@@ -196,7 +202,7 @@ const PAGE_TEMPLATES: PageTemplate[] = [
       },
       {
         key: "tarifs",
-        type: "tarifs",
+        type: "service-selector",
         title: "Carte & tarifs",
         sortOrder: 2,
         content: {
@@ -223,7 +229,7 @@ const PAGE_TEMPLATES: PageTemplate[] = [
     sections: [
       {
         key: "hero",
-        type: "hero",
+        type: "hero-compact",
         title: null,
         sortOrder: 0,
         content: {
@@ -233,28 +239,39 @@ const PAGE_TEMPLATES: PageTemplate[] = [
         },
       },
       {
-        key: "entreprise",
-        type: "entreprise",
-        title: "Massage Amma en entreprise",
+        key: "benefits",
+        type: "benefits-grid",
+        title: null,
         sortOrder: 1,
         content: {
-          title: "Massage Amma en entreprise",
-          subtitle: "Massage Amma assis : rapide, efficace, sans huile, sur chaise ergonomique.",
-          teamTitle: "Pour vos equipes",
-          teamBenefits: [
+          leftTitle: "Pour vos equipes",
+          leftSubtitle: "Avantages",
+          leftItems: [
             "Moins de stress",
             "Plus d'energie et de concentration",
             "Moins de tensions musculaires",
             "Plus de motivation",
           ],
-          companyTitle: "Pour votre entreprise",
-          companyBenefits: [
+          rightTitle: "Pour votre entreprise",
+          rightSubtitle: "Benefices",
+          rightItems: [
             "Qualite de Vie au Travail renforcee",
             "Collaborateurs plus performants et engages",
             "Image positive et responsable",
           ],
-          characteristics: ["10-20 min", "Dans vos locaux", "Sans huile", "Chaise ergo"],
+          tags: ["10-20 min", "Dans vos locaux", "Sans huile", "Chaise ergo"],
           quote: "Le massage Amma assis : un investissement simple et rentable pour le bien-etre collectif.",
+        },
+      },
+      {
+        key: "cta",
+        type: "contact-cta",
+        title: null,
+        sortOrder: 2,
+        content: {
+          title: "Pret(e) a vous offrir une pause bien-etre ?",
+          subtitle: "Reservez votre seance et decouvrez les bienfaits d'un massage personnalise",
+          buttonText: "Prendre rendez-vous",
         },
       },
     ],
