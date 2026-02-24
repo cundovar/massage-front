@@ -27,3 +27,4 @@ export { ConfirmDialog } from "./ConfirmDialog";
 // Special
 export { ColorPicker } from "./ColorPicker";
 export { ThemeSelector } from "./ThemeSelector";
+export { PageLinkPicker } from "./PageLinkPicker";

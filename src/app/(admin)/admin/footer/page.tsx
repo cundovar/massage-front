@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SettingsForm } from "@/components/admin/editors/SettingsForm";
+import { FooterForm } from "@/components/admin/editors/FooterForm";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
-import { fetchSettings, revalidateFrontend, updateSettings, uploadFavicon, uploadLogo } from "@/lib/api-admin";
+import { fetchSettings, revalidateFrontend, updateSettings } from "@/lib/api-admin";
 import type { SiteSettings } from "@/types/settings";
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -60,15 +60,13 @@ const DEFAULT_SETTINGS: SiteSettings = {
   },
 };
 
-export default function AdminSettingsPage() {
+export default function AdminFooterPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -87,7 +85,15 @@ export default function AdminSettingsPage() {
     setLoading(true);
     fetchSettings(token)
       .then((data) => {
-        setSettings(data);
+        // Merge with defaults to ensure all new fields exist
+        setSettings({
+          ...DEFAULT_SETTINGS,
+          ...data,
+          footer: {
+            ...DEFAULT_SETTINGS.footer,
+            ...data.footer,
+          },
+        });
         setError(null);
       })
       .catch((err: Error) => {
@@ -109,10 +115,16 @@ export default function AdminSettingsPage() {
     setSuccess(null);
     try {
       const updated = await updateSettings(token, settings);
-      setSettings(updated);
-      // Revalider le cache frontend pour refléter les changements
+      setSettings({
+        ...DEFAULT_SETTINGS,
+        ...updated,
+        footer: {
+          ...DEFAULT_SETTINGS.footer,
+          ...updated.footer,
+        },
+      });
       await revalidateFrontend();
-      setSuccess("Parametres enregistres.");
+      setSuccess("Footer enregistre avec succes.");
     } catch (err) {
       if (err instanceof Error && err.message === "UNAUTHORIZED") {
         clearTokenFromStorage();
@@ -125,55 +137,28 @@ export default function AdminSettingsPage() {
     }
   }
 
-  async function handleUploadLogo(file: File) {
-    if (!token) return;
-    setUploadingLogo(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const result = await uploadLogo(token, file);
-      setSettings((prev) => ({ ...prev, general: { ...prev.general, logo: result.path } }));
-      setSuccess("Logo mis a jour.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur upload logo.");
-    } finally {
-      setUploadingLogo(false);
-    }
-  }
-
-  async function handleUploadFavicon(file: File) {
-    if (!token) return;
-    setUploadingFavicon(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const result = await uploadFavicon(token, file);
-      setSettings((prev) => ({ ...prev, general: { ...prev.general, favicon: result.path } }));
-      setSuccess("Favicon mis a jour.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur upload favicon.");
-    } finally {
-      setUploadingFavicon(false);
-    }
-  }
-
   if (!mounted || !token || loading) {
     return <section className="bo-card p-6">Chargement...</section>;
   }
 
   return (
     <div className="space-y-4">
-      {error ? <p className="rounded-md border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</p> : null}
-      {success ? <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">{success}</p> : null}
-      <SettingsForm
+      {error && (
+        <p className="rounded-md border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
+      {success && (
+        <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+          {success}
+        </p>
+      )}
+      <FooterForm
+        token={token}
         settings={settings}
         saving={saving}
-        uploadingLogo={uploadingLogo}
-        uploadingFavicon={uploadingFavicon}
         onChange={setSettings}
         onSave={handleSave}
-        onUploadLogo={handleUploadLogo}
-        onUploadFavicon={handleUploadFavicon}
       />
     </div>
   );

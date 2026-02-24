@@ -54,7 +54,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <main className="page-transition xl:pt-24">
+    <main className="page-transition ">
       <SectionRenderer sections={sections} />
     </main>
   );

@@ -230,26 +230,6 @@ export function SettingsForm({
         />
       </FormSection>
 
-      <FormSection title="Reseaux sociaux">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Input
-            placeholder="Instagram"
-            value={settings.social.instagram ?? ""}
-            onChange={(event) => onChange({ ...settings, social: { ...settings.social, instagram: event.target.value || null } })}
-          />
-          <Input
-            placeholder="Facebook"
-            value={settings.social.facebook ?? ""}
-            onChange={(event) => onChange({ ...settings, social: { ...settings.social, facebook: event.target.value || null } })}
-          />
-          <Input
-            placeholder="LinkedIn"
-            value={settings.social.linkedin ?? ""}
-            onChange={(event) => onChange({ ...settings, social: { ...settings.social, linkedin: event.target.value || null } })}
-          />
-        </div>
-      </FormSection>
-
       <FormSection title="Apparence" description="Personnalisez le style visuel de votre site">
         <ThemeSelector
           value={settings.appearance.themePreset}
@@ -309,63 +289,6 @@ export function SettingsForm({
             })
           }
         />
-      </FormSection>
-
-      <FormSection title="Footer">
-        <Input
-          placeholder="Copyright"
-          value={settings.footer.copyrightText}
-          onChange={(event) => onChange({ ...settings, footer: { ...settings.footer, copyrightText: event.target.value } })}
-        />
-        <div className="space-y-2">
-          {settings.footer.quickLinks.map((link, index) => (
-            <div key={`${link.label}-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-              <Input
-                placeholder="Label"
-                value={link.label}
-                onChange={(event) => {
-                  const next = [...settings.footer.quickLinks];
-                  next[index] = { ...next[index], label: event.target.value };
-                  onChange({ ...settings, footer: { ...settings.footer, quickLinks: next } });
-                }}
-              />
-              <Input
-                placeholder="URL"
-                value={link.url}
-                onChange={(event) => {
-                  const next = [...settings.footer.quickLinks];
-                  next[index] = { ...next[index], url: event.target.value };
-                  onChange({ ...settings, footer: { ...settings.footer, quickLinks: next } });
-                }}
-              />
-              <Button
-                type="button"
-                variant="danger"
-                size="sm"
-                onClick={() =>
-                  onChange({
-                    ...settings,
-                    footer: { ...settings.footer, quickLinks: settings.footer.quickLinks.filter((_, i) => i !== index) },
-                  })
-                }
-              >
-                Supprimer
-              </Button>
-            </div>
-          ))}
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() =>
-              onChange({
-                ...settings,
-                footer: { ...settings.footer, quickLinks: [...settings.footer.quickLinks, { label: "", url: "" }] },
-              })
-            }
-          >
-            Ajouter un lien
-          </Button>
-        </div>
       </FormSection>
 
       <Button type="button" loading={saving} onClick={() => void onSave()}>

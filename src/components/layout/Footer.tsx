@@ -45,6 +45,12 @@ const FALLBACK_SETTINGS: PublicSettings = {
       { label: "À propos", url: "/a-propos" },
       { label: "Contact", url: "/contact" },
     ],
+    showSocialLinks: true,
+    showContactInfo: true,
+    showHours: false,
+    customDescription: null,
+    mentionsLegalesText: "Mentions legales",
+    showMentionsLegales: true,
   },
   navigation: {
     externalLinks: [],
@@ -112,43 +118,45 @@ export function Footer({ initialSettings }: FooterProps) {
               className="mb-6 max-w-md"
               style={{ color: "var(--footer-text-muted, #A8A29E)" }}
             >
-              {settings.general.defaultMetaDescription}
+              {settings.footer.customDescription || settings.general.defaultMetaDescription}
             </p>
-            <div className="flex gap-4">
-              {settings.social.instagram ? (
-                <a
-                  href={settings.social.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="footer-link text-sm transition"
-                  style={{ color: "var(--footer-text-muted, #A8A29E)" }}
-                >
-                  Instagram
-                </a>
-              ) : null}
-              {settings.social.facebook ? (
-                <a
-                  href={settings.social.facebook}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="footer-link text-sm transition"
-                  style={{ color: "var(--footer-text-muted, #A8A29E)" }}
-                >
-                  Facebook
-                </a>
-              ) : null}
-              {settings.social.linkedin ? (
-                <a
-                  href={settings.social.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="footer-link text-sm transition"
-                  style={{ color: "var(--footer-text-muted, #A8A29E)" }}
-                >
-                  LinkedIn
-                </a>
-              ) : null}
-            </div>
+            {(settings.footer.showSocialLinks ?? true) && (
+              <div className="flex gap-4">
+                {settings.social.instagram ? (
+                  <a
+                    href={settings.social.instagram}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-link text-sm transition"
+                    style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+                  >
+                    Instagram
+                  </a>
+                ) : null}
+                {settings.social.facebook ? (
+                  <a
+                    href={settings.social.facebook}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-link text-sm transition"
+                    style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+                  >
+                    Facebook
+                  </a>
+                ) : null}
+                {settings.social.linkedin ? (
+                  <a
+                    href={settings.social.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-link text-sm transition"
+                    style={{ color: "var(--footer-text-muted, #A8A29E)" }}
+                  >
+                    LinkedIn
+                  </a>
+                ) : null}
+              </div>
+            )}
           </div>
 
           {/* Navigation + Contact : flex sur mobile, colonnes séparées sur desktop */}
@@ -172,23 +180,41 @@ export function Footer({ initialSettings }: FooterProps) {
               </ul>
             </div>
 
-            <div className="flex-1">
-              <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
-              <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
-                <li>{settings.contact.address.street}</li>
-                <li>{addressLine}</li>
-                <li className="pt-2">
-                  <a href={`tel:${telHref}`} className="footer-link transition">
-                    {settings.contact.phone}
-                  </a>
-                </li>
-                <li>
-                  <a href={`mailto:${settings.contact.email}`} className="footer-link transition">
-                    {settings.contact.email}
-                  </a>
-                </li>
-              </ul>
-            </div>
+            {(settings.footer.showContactInfo ?? true) && (
+              <div className="flex-1">
+                <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
+                <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
+                  <li>{settings.contact.address.street}</li>
+                  <li>{addressLine}</li>
+                  <li className="pt-2">
+                    <a href={`tel:${telHref}`} className="footer-link transition">
+                      {settings.contact.phone}
+                    </a>
+                  </li>
+                  <li>
+                    <a href={`mailto:${settings.contact.email}`} className="footer-link transition">
+                      {settings.contact.email}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            {(settings.footer.showHours ?? false) && settings.hours.schedule.length > 0 && (
+              <div className="flex-1">
+                <h4 className="mb-4 font-medium drop-shadow-sm">Horaires</h4>
+                <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
+                  {settings.hours.schedule.map((slot, index) => (
+                    <li key={index}>
+                      <span className="font-medium">{slot.days}</span>: {slot.hours}
+                    </li>
+                  ))}
+                  {settings.hours.closedMessage && (
+                    <li className="pt-2 text-sm italic">{settings.hours.closedMessage}</li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
@@ -200,9 +226,11 @@ export function Footer({ initialSettings }: FooterProps) {
           }}
         >
           <p>{settings.footer.copyrightText || FALLBACK_SETTINGS.footer.copyrightText}</p>
-          <TransitionLink href="/mentions-legales" className="footer-link transition">
-            Mentions legales
-          </TransitionLink>
+          {(settings.footer.showMentionsLegales ?? true) && (
+            <TransitionLink href="/mentions-legales" className="footer-link transition">
+              {settings.footer.mentionsLegalesText || "Mentions legales"}
+            </TransitionLink>
+          )}
         </div>
       </div>
 

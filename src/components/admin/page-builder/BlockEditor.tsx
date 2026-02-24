@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, X, ChevronDown } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { MediaPicker } from "@/components/admin/media/MediaPicker";
-import { fetchPages, type PageSection, type PageListItem } from "@/lib/api-admin";
+import { PageLinkPicker } from "@/components/admin/ui/PageLinkPicker";
+import type { PageSection } from "@/lib/api-admin";
 import type { BlockDefinition, FieldDefinition } from "./block-catalog";
 
 const ANIMATION_OPTIONS = [
@@ -182,10 +182,11 @@ function FieldRenderer({ field, value, onChange, token }: FieldRendererProps) {
     case "page-link":
       return (
         <PageLinkPicker
-          field={field}
+          label={field.label}
+          placeholder={field.placeholder}
           value={(value as string) ?? ""}
-          onChange={onChange}
           token={token}
+          onChange={(nextValue) => onChange(nextValue)}
         />
       );
 
@@ -317,130 +318,6 @@ function ArrayField({ field, value, onChange, token }: ArrayFieldProps) {
         <Plus className="h-4 w-4" />
         Ajouter
       </button>
-    </div>
-  );
-}
-
-// Liens prédéfinis (externes ou spéciaux)
-const PREDEFINED_LINKS = [
-  { value: "/", label: "Accueil" },
-  { value: "/contact", label: "Contact" },
-  { value: "/soins", label: "Soins" },
-  { value: "#", label: "# (ancre)" },
-];
-
-interface PageLinkPickerProps {
-  field: FieldDefinition;
-  value: string;
-  onChange: (value: string) => void;
-  token: string;
-}
-
-function PageLinkPicker({ field, value, onChange, token }: PageLinkPickerProps) {
-  const [pages, setPages] = useState<PageListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isCustom, setIsCustom] = useState(false);
-
-  useEffect(() => {
-    async function loadPages() {
-      try {
-        const data = await fetchPages(token);
-        setPages(data);
-      } catch (error) {
-        console.error("Erreur chargement pages:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadPages();
-  }, [token]);
-
-  // Vérifier si la valeur actuelle est dans la liste
-  useEffect(() => {
-    if (!value) {
-      setIsCustom(false);
-      return;
-    }
-    const allLinks = [
-      ...PREDEFINED_LINKS.map((l) => l.value),
-      ...pages.map((p) => `/${p.slug}`),
-    ];
-    setIsCustom(!allLinks.includes(value));
-  }, [value, pages]);
-
-  const handleSelectChange = (newValue: string) => {
-    if (newValue === "__custom__") {
-      setIsCustom(true);
-      onChange("");
-    } else {
-      setIsCustom(false);
-      onChange(newValue);
-    }
-  };
-
-  return (
-    <div>
-      <label className="mb-1 block text-sm font-medium text-stone-700">{field.label}</label>
-
-      {isCustom ? (
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            placeholder={field.placeholder || "https://... ou /chemin"}
-            className="flex-1 rounded-lg border border-stone-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-amber-500"
-          />
-          <button
-            type="button"
-            onClick={() => {
-              setIsCustom(false);
-              onChange("");
-            }}
-            className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-600 hover:bg-stone-50"
-          >
-            Liste
-          </button>
-        </div>
-      ) : (
-        <div className="relative">
-          <select
-            value={value}
-            onChange={(event) => handleSelectChange(event.target.value)}
-            disabled={loading}
-            className="w-full appearance-none rounded-lg border border-stone-300 bg-white px-3 py-2 pr-10 focus:border-transparent focus:ring-2 focus:ring-amber-500 disabled:bg-stone-100"
-          >
-            <option value="">-- Sélectionner une page --</option>
-
-            <optgroup label="Pages du site">
-              {pages.map((page) => (
-                <option key={page.slug} value={`/${page.slug}`}>
-                  {page.title} ({`/${page.slug}`})
-                </option>
-              ))}
-            </optgroup>
-
-            <optgroup label="Liens prédéfinis">
-              {PREDEFINED_LINKS.map((link) => (
-                <option key={link.value} value={link.value}>
-                  {link.label}
-                </option>
-              ))}
-            </optgroup>
-
-            <optgroup label="Autre">
-              <option value="__custom__">✏️ Saisir un lien personnalisé...</option>
-            </optgroup>
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-        </div>
-      )}
-
-      {value && !isCustom && (
-        <p className="mt-1 text-xs text-stone-500">
-          Lien: <code className="rounded bg-stone-100 px-1">{value}</code>
-        </p>
-      )}
     </div>
   );
 }

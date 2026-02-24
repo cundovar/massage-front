@@ -90,7 +90,16 @@ const FALLBACK_SETTINGS: PublicSettings = {
     headerStyle: "sticky",
     showDarkModeToggle: true,
   },
-  footer: { copyrightText: "© 2024 Helene Massage & Ayurveda", quickLinks: [] },
+  footer: {
+    copyrightText: "© 2024 Helene Massage & Ayurveda",
+    quickLinks: [],
+    showSocialLinks: true,
+    showContactInfo: true,
+    showHours: false,
+    customDescription: null,
+    mentionsLegalesText: "Mentions legales",
+    showMentionsLegales: true,
+  },
   navigation: { externalLinks: [] },
 };
 

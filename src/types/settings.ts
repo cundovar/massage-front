@@ -60,6 +60,12 @@ export interface AppearanceSettings {
 export interface FooterSettings {
   copyrightText: string;
   quickLinks: Array<{ label: string; url: string }>;
+  showSocialLinks: boolean;
+  showContactInfo: boolean;
+  showHours: boolean;
+  customDescription: string | null;
+  mentionsLegalesText: string;
+  showMentionsLegales: boolean;
 }
 
 export interface ExternalNavLink {
