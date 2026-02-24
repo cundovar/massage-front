@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ServiceItem } from "@/types";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
@@ -134,12 +135,14 @@ function ServiceCard({ index, name, category, description, price, image, link }:
         style={{ borderRadius: "var(--card-radius)" }}
       >
         {/* Image ou placeholder */}
-        <div className="aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden">
           {imageUrl ? (
-            <img
+            <Image
               src={imageUrl}
               alt={name}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div
