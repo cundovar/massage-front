@@ -3,6 +3,7 @@
 import { useMemo, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { PageSection } from "@/lib/api-admin";
+import { getImageUrl } from "@/lib/api";
 
 const GenericHeroSection = dynamic(() => import("@/components/dynamic/GenericHeroSection").then((mod) => mod.GenericHeroSection), { ssr: false });
 const Hero = dynamic(() => import("@/components/home/Hero").then((mod) => mod.Hero), { ssr: false });
@@ -140,7 +141,7 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
         />,
       );
     case "services-preview": {
-      const items = (content.items as Array<{ name?: string; category?: string; price?: string }>) || [];
+      const items = (content.items as Array<{ name?: string; category?: string; price?: string; image?: string | null }>) || [];
       const validItems = items.filter((item) => item.name?.trim());
       return withWrapper(
         <div className="rounded-lg border border-stone-200 bg-stone-50 px-6 py-12 text-center">
@@ -154,7 +155,14 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
             {validItems.length > 0 ? (
               validItems.map((item, i) => (
                 <div key={i} className="w-40 rounded-lg border bg-white p-3 text-left shadow-sm">
-                  <div className="mb-2 h-20 rounded bg-stone-100" />
+                  {item.image ? (
+                    <div
+                      className="mb-2 h-20 rounded bg-cover bg-center bg-no-repeat"
+                      style={{ backgroundImage: `url(${getImageUrl(item.image)})` }}
+                    />
+                  ) : (
+                    <div className="mb-2 h-20 rounded bg-stone-100" />
+                  )}
                   <p className="text-xs text-stone-500">{item.category || "Catégorie"}</p>
                   <p className="font-medium text-stone-800">{item.name}</p>
                   {item.price && <p className="text-sm text-amber-600">{item.price}</p>}

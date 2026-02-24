@@ -3,12 +3,17 @@ import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { getImageUrl } from "@/lib/api";
 
+interface ImageValueObject {
+  path?: string | null;
+  url?: string | null;
+}
+
 export interface ServicePreviewItem {
   name?: string;
   category?: string;
   description?: string;
   price?: string;
-  image?: string | null;
+  image?: string | ImageValueObject | null;
   link?: string;
 }
 
@@ -107,12 +112,20 @@ interface ServiceCardProps {
   category?: string;
   description?: string;
   price?: string;
-  image?: string | null;
+  image?: string | ImageValueObject | null;
   link: string;
 }
 
+function resolveImageValue(image?: string | ImageValueObject | null): string | null {
+  if (!image) return null;
+  if (typeof image === "string") return image;
+  if (typeof image.path === "string" && image.path.trim().length > 0) return image.path;
+  if (typeof image.url === "string" && image.url.trim().length > 0) return image.url;
+  return null;
+}
+
 function ServiceCard({ index, name, category, description, price, image, link }: ServiceCardProps) {
-  const imageUrl = image ? getImageUrl(image) : null;
+  const imageUrl = getImageUrl(resolveImageValue(image));
 
   return (
     <AnimatedSection delay={index * 150} className="group">
