@@ -58,7 +58,7 @@ export function BottomNav({ showThemeToggle = true }: BottomNavProps) {
       }`}
       aria-label="Navigation mobile"
     >
-      <div className="flex items-center justify-around rounded-t-3xl border border-white/20 bg-white/80 px-2 py-3 shadow-lg shadow-black/10 backdrop-blur-xl dark:border-white/10 dark:bg-stone-900/80">
+      <div className="flex items-center justify-around rounded-t-3xl border border-white/25 bg-white/55 px-2 py-3 shadow-lg shadow-black/10 backdrop-blur-2xl backdrop-saturate-150 dark:border-white/15 dark:bg-stone-900/55">
         <NavItem href="/" icon={<Home className="h-5 w-5" />} label="Accueil" isActive={isActive("/")} />
 
         <TransitionLink

@@ -23,7 +23,7 @@ import { ContactCTA } from "@/components/sections/ContactCTA";
 import { ContactInfo } from "@/components/sections/ContactInfo";
 import { ContactLayout } from "@/components/sections/ContactLayout";
 import { ServiceSelector } from "@/components/sections/ServiceSelector";
-import { ServicesPreview } from "@/components/sections/ServicesPreview";
+import { ServicesPreview, type ServicesPreviewContent } from "@/components/sections/ServicesPreview";
 import type {
   ApprocheContent,
   ContactInfosContent,
@@ -211,13 +211,7 @@ export function SectionRenderer({
             );
 
           case "services-preview": {
-            const previewContent = section.content as {
-              subtitle?: string;
-              title?: string;
-              buttonText?: string;
-              buttonLink?: string;
-              items?: Array<{ name?: string }>;
-            };
+            const previewContent = section.content as ServicesPreviewContent;
             // Afficher si on a des items manuels OU des services API
             const hasManualItems = previewContent.items?.some((item) => item.name?.trim());
             const hasApiServices = services && services.length > 0;

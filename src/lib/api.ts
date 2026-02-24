@@ -27,6 +27,7 @@ import type {
 } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_URL;
 const FETCH_TIMEOUT_MS = 4000;
 
 function shouldSkipRemoteFetch(): boolean {
@@ -400,6 +401,14 @@ export function getImageUrl(path?: string | null): string | null {
   if (path.startsWith("http")) {
     return path;
   }
+
+  // Priority 1: Use dedicated media URL if configured
+  if (MEDIA_BASE_URL && MEDIA_BASE_URL.trim().length > 0) {
+    return `${MEDIA_BASE_URL.replace(/\/$/, "")}${path}`;
+  }
+
+  // Priority 2: Use API URL (images are served from the API server)
+  // Important: Don't fall back to window.location.origin as images are on the API server, not the frontend
   return `${API_BASE_URL}${path}`;
 }
 
