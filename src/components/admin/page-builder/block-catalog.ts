@@ -11,10 +11,11 @@ export interface BlockDefinition {
 export interface FieldDefinition {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "array";
+  type: "text" | "textarea" | "image" | "array" | "page-link" | "select";
   placeholder?: string;
   arrayItemType?: "text" | "textarea" | "image" | "object";
   objectFields?: FieldDefinition[];
+  options?: Array<{ value: string; label: string }>;
 }
 
 export const BLOCK_CATEGORIES = [
@@ -425,6 +426,41 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     fields: [],
   },
   {
+    type: "contact-layout",
+    label: "Contact complet (Infos + Form)",
+    description: "Infos pratiques a gauche, formulaire a droite (flex desktop)",
+    icon: "📱",
+    category: "contact",
+    defaultContent: {
+      address: {
+        street: "",
+        city: "",
+      },
+      phone: "",
+      email: "",
+      hours: [
+        { days: "Lundi - Vendredi", hours: "10h - 20h" },
+        { days: "Samedi", hours: "10h - 18h" },
+      ],
+    },
+    fields: [
+      { key: "address.street", label: "Adresse (rue)", type: "text", placeholder: "123 Rue du Bien-Etre" },
+      { key: "address.city", label: "Ville", type: "text", placeholder: "75011 Paris" },
+      { key: "phone", label: "Telephone", type: "text", placeholder: "06 12 34 56 78" },
+      { key: "email", label: "Email", type: "text", placeholder: "contact@example.fr" },
+      {
+        key: "hours",
+        label: "Horaires",
+        type: "array",
+        arrayItemType: "object",
+        objectFields: [
+          { key: "days", label: "Jours", type: "text" },
+          { key: "hours", label: "Heures", type: "text" },
+        ],
+      },
+    ],
+  },
+  {
     type: "service-selector",
     label: "Selecteur de soins",
     description: "Tarifs sous forme d'onglets",
@@ -454,11 +490,38 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   {
     type: "services-preview",
     label: "Apercu services",
-    description: "Apercu automatique des services",
+    description: "Cartes de services personnalisables",
     icon: "🃏",
     category: "services",
-    defaultContent: {},
-    fields: [],
+    defaultContent: {
+      subtitle: "Mes soins",
+      title: "Une gamme de soins pour votre bien-être",
+      buttonText: "Voir tous les soins",
+      buttonLink: "/soins",
+      items: [
+        { name: "", category: "", description: "", price: "", image: null, link: "/soins" },
+      ],
+    },
+    fields: [
+      { key: "subtitle", label: "Sur-titre", type: "text", placeholder: "Mes soins" },
+      { key: "title", label: "Titre principal", type: "text", placeholder: "Une gamme de soins pour votre bien-être" },
+      {
+        key: "items",
+        label: "Services",
+        type: "array",
+        arrayItemType: "object",
+        objectFields: [
+          { key: "image", label: "Image", type: "image" },
+          { key: "category", label: "Categorie", type: "text", placeholder: "Massage" },
+          { key: "name", label: "Nom du soin", type: "text", placeholder: "Abhyanga" },
+          { key: "description", label: "Description courte", type: "textarea", placeholder: "Massage ayurvedique traditionnel..." },
+          { key: "price", label: "Prix", type: "text", placeholder: "80€" },
+          { key: "link", label: "Lien", type: "page-link", placeholder: "/soins" },
+        ],
+      },
+      { key: "buttonText", label: "Texte du bouton", type: "text", placeholder: "Voir tous les soins" },
+      { key: "buttonLink", label: "Lien du bouton", type: "page-link", placeholder: "/soins" },
+    ],
   },
   {
     type: "google-map",

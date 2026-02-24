@@ -13,6 +13,7 @@ const MassageAmma = dynamic(() => import("@/components/entreprise/MassageAmma").
 const ContactCTA = dynamic(() => import("@/components/sections/ContactCTA").then((mod) => mod.ContactCTA), { ssr: false });
 const ContactForm = dynamic(() => import("@/components/sections/ContactForm").then((mod) => mod.ContactForm), { ssr: false });
 const ContactInfo = dynamic(() => import("@/components/sections/ContactInfo").then((mod) => mod.ContactInfo), { ssr: false });
+const ContactLayout = dynamic(() => import("@/components/sections/ContactLayout").then((mod) => mod.ContactLayout), { ssr: false });
 const ServiceSelector = dynamic(() => import("@/components/sections/ServiceSelector").then((mod) => mod.ServiceSelector), { ssr: false });
 const ContactInfoSection = dynamic(() => import("@/components/dynamic/ContactInfoSection").then((mod) => mod.ContactInfoSection), { ssr: false });
 const BenefitsGridSection = dynamic(() => import("@/components/dynamic/BenefitsGridSection").then((mod) => mod.BenefitsGridSection), { ssr: false });
@@ -109,6 +110,8 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
       return withWrapper(<ContactInfo content={content as never} />);
     case "contact-form":
       return withWrapper(<ContactForm />);
+    case "contact-layout":
+      return withWrapper(<ContactLayout content={content as never} />);
     case "google-map":
       return withWrapper(<GoogleMapSection content={content as never} />);
     case "benefits-grid":
@@ -136,12 +139,44 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
           }}
         />,
       );
-    case "services-preview":
+    case "services-preview": {
+      const items = (content.items as Array<{ name?: string; category?: string; price?: string }>) || [];
+      const validItems = items.filter((item) => item.name?.trim());
       return withWrapper(
-        <div className="rounded-lg border border-stone-200 bg-white px-6 py-12 text-center text-stone-500">
-          Apercu des services disponible uniquement sur le site public.
+        <div className="rounded-lg border border-stone-200 bg-stone-50 px-6 py-12 text-center">
+          <p className="text-xs font-medium uppercase tracking-wide text-amber-600">
+            {(content.subtitle as string) || "Mes soins"}
+          </p>
+          <p className="mt-2 text-xl font-serif text-stone-800">
+            {(content.title as string) || "Une gamme de soins pour votre bien-être"}
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
+            {validItems.length > 0 ? (
+              validItems.map((item, i) => (
+                <div key={i} className="w-40 rounded-lg border bg-white p-3 text-left shadow-sm">
+                  <div className="mb-2 h-20 rounded bg-stone-100" />
+                  <p className="text-xs text-stone-500">{item.category || "Catégorie"}</p>
+                  <p className="font-medium text-stone-800">{item.name}</p>
+                  {item.price && <p className="text-sm text-amber-600">{item.price}</p>}
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="h-32 w-40 rounded-lg bg-stone-200" />
+                <div className="h-32 w-40 rounded-lg bg-stone-200" />
+                <div className="h-32 w-40 rounded-lg bg-stone-200" />
+              </>
+            )}
+          </div>
+          <p className="mt-6 text-sm text-stone-500">
+            {validItems.length > 0 ? `${validItems.length} service(s) configure(s)` : "Ajoutez des services ci-dessus"}
+          </p>
+          <button className="mt-4 rounded-full bg-amber-500 px-6 py-2 text-sm text-white">
+            {(content.buttonText as string) || "Voir tous les soins"}
+          </button>
         </div>,
       );
+    }
     default:
       return withWrapper(
         <div className="rounded-lg bg-stone-100 px-6 py-12 text-center text-stone-500">

@@ -21,6 +21,7 @@ import { Tarifs } from "@/components/home/Tarifs";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { ContactInfo } from "@/components/sections/ContactInfo";
+import { ContactLayout } from "@/components/sections/ContactLayout";
 import { ServiceSelector } from "@/components/sections/ServiceSelector";
 import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import type {
@@ -196,15 +197,43 @@ export function SectionRenderer({
           case "contact-form":
             return withAnimation(<ContactForm key={key} />);
 
+          case "contact-layout":
+            return withAnimation(
+              <ContactLayout
+                key={key}
+                content={contactInfos ?? (section.content as unknown as ContactInfosContent)}
+              />,
+            );
+
           case "google-map":
             return withAnimation(
               <GoogleMapSection key={key} content={section.content as { title?: string; embedUrl?: string }} />,
             );
 
-          case "services-preview":
-            return services && services.length > 0
-              ? withAnimation(<ServicesPreview key={key} services={services.slice(0, 3)} />)
-              : null;
+          case "services-preview": {
+            const previewContent = section.content as {
+              subtitle?: string;
+              title?: string;
+              buttonText?: string;
+              buttonLink?: string;
+              items?: Array<{ name?: string }>;
+            };
+            // Afficher si on a des items manuels OU des services API
+            const hasManualItems = previewContent.items?.some((item) => item.name?.trim());
+            const hasApiServices = services && services.length > 0;
+
+            if (!hasManualItems && !hasApiServices) {
+              return null;
+            }
+
+            return withAnimation(
+              <ServicesPreview
+                key={key}
+                services={hasApiServices ? services.slice(0, 3) : []}
+                content={previewContent}
+              />,
+            );
+          }
 
           case "service-selector": {
             const baseContent = tarifsContent ?? (section.content as unknown as TarifsContent);
