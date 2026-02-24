@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { TransitionProvider } from "@/context/TransitionContext";
 import { PageWrapper } from "@/components/transitions/PageWrapper";
 import type { NavItem } from "@/types/navigation";
@@ -30,16 +30,12 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
       <div className="min-h-screen overflow-x-hidden bg-(--color-background) text-(--color-text-primary)">
         <Header initialNavItems={initialNavItems} initialSettings={initialSettings} />
         <PageWrapper>
-          <main className="xl:pt-20 pb-8 px-4 sm:px-8 md:px-12 lg:px-20">{children}</main>
+          <main className="px-4 pt-0 pb-24 sm:px-8 md:px-12 md:pb-8 lg:px-20 xl:pt-20">{children}</main>
         </PageWrapper>
         <Footer initialSettings={initialSettings} />
       </div>
 
-      {showMobileToggle && (
-        <div className="fixed bottom-4 right-4 z-50 md:hidden">
-          <ThemeToggle />
-        </div>
-      )}
+      <BottomNav showThemeToggle={showMobileToggle} />
     </TransitionProvider>
   );
 }

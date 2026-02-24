@@ -1,12 +1,32 @@
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
-import { TransitionLink } from "@/components/transitions/TransitionLink";
+import { ServiceCard, type ServicePrice } from "@/components/shared/ServiceCard";
 import type { TarifsContent } from "@/types";
 
 interface TarifsProps {
   content: TarifsContent;
+  bookingUrl?: string;
 }
 
-export function Tarifs({ content }: TarifsProps) {
+function parsePrice(raw: string): ServicePrice {
+  const normalized = raw.replace(/\s+/g, " ").trim();
+  const priceMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(?:EUR|EUROS?|€)\b/i);
+
+  if (!priceMatch) {
+    return { label: normalized };
+  }
+
+  const value = Number.parseFloat(priceMatch[1].replace(",", "."));
+  const beforePrice = normalized.slice(0, priceMatch.index).replace(/[·\-–—\s]+$/g, "").trim();
+  const afterPrice = normalized.slice((priceMatch.index ?? 0) + priceMatch[0].length).replace(/^[·\-–—\s]+/g, "").trim();
+
+  return {
+    label: beforePrice || "Seance",
+    price: Number.isNaN(value) ? undefined : value,
+    unit: afterPrice || undefined,
+  };
+}
+
+export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
   return (
     <section id="tarifs" className="mt-20" data-animate="section">
       <ScrollReveal>
@@ -14,7 +34,7 @@ export function Tarifs({ content }: TarifsProps) {
           <div className="mx-auto h-px w-24 bg-[var(--primary-start)]" />
           <h2
             data-animate="title"
-            className="mt-6 text-5xl font-extralight md:text-6xl"
+            className="mt-6 text-4xl font-light md:text-5xl"
             style={{ fontFamily: "var(--font-title)" }}
           >
             {content.title}
@@ -27,41 +47,30 @@ export function Tarifs({ content }: TarifsProps) {
         </div>
       </ScrollReveal>
 
-      <div className="js-offers-grid mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {content.offers.map((offer) => (
-          <ScrollReveal key={offer.title}>
-            <article
-              className="js-offer-card bg-[var(--card-bg)] p-6 transition-colors duration-500"
-              style={{
-                borderRadius: "var(--card-radius)",
-                border: "1px solid color-mix(in srgb, var(--primary-start) 20%, transparent)",
-              }}
-            >
-              <h3 className="text-3xl font-light" style={{ fontFamily: "var(--font-title)" }}>
-                {offer.title}
-              </h3>
-              <p className="mt-4 leading-loose text-[var(--text-secondary)]">{offer.description}</p>
-              <ul className="mt-5 space-y-1 text-sm text-[var(--text-secondary)]">
-                {offer.prices.map((price) => (
-                  <li key={price}>{price}</li>
-                ))}
-              </ul>
-            </article>
+      {/* Grille adaptative : centrée si 1-2 items, grille complète si 3+ */}
+      <div
+        className={`js-offers-grid mx-auto mt-12 grid gap-8 ${
+          content.offers.length === 1
+            ? "max-w-xl"
+            : content.offers.length === 2
+              ? "max-w-3xl md:grid-cols-2"
+              : "max-w-6xl md:grid-cols-2 xl:grid-cols-3"
+        }`}
+      >
+        {content.offers.map((offer, index) => (
+          <ScrollReveal key={offer.title} delay={index * 100}>
+            <div className="js-offer-card h-full">
+              <ServiceCard
+                category={content.title}
+                title={offer.title}
+                description={offer.description}
+                prices={offer.prices.map(parsePrice)}
+                bookingUrl={bookingUrl}
+                className="h-full"
+              />
+            </div>
           </ScrollReveal>
         ))}
-      </div>
-
-      <div className="mt-12 pt-8 text-center" style={{ borderTop: "1px solid var(--card-border)" }}>
-        <p data-animate="text" className="text-lg text-[var(--text-secondary)]">
-          Chaque massage commence par un echange pour personnaliser le soin.
-        </p>
-        <TransitionLink
-          href="/contact"
-          className="mt-5 inline-flex rounded-full px-6 py-3 font-semibold text-white transition-opacity hover:opacity-90"
-          style={{ background: "var(--primary-start)" }}
-        >
-          Me contacter
-        </TransitionLink>
       </div>
     </section>
   );

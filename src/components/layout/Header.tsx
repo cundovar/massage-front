@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@/lib/api";
+import { HorizontalNav } from "@/components/layout/HorizontalNav";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { NavItem } from "@/types/navigation";
@@ -20,8 +21,6 @@ const FALLBACK_NAV: NavItem[] = [
   { slug: "about", title: "A propos", path: "/a-propos" },
   { slug: "contact", title: "Contact", path: "/contact" },
 ];
-
-const MOBILE_MENU_THRESHOLD = 6;
 
 const FALLBACK_SETTINGS: PublicSettings = {
   general: {
@@ -64,7 +63,6 @@ const FALLBACK_SETTINGS: PublicSettings = {
 
 export function Header({ initialNavItems, initialSettings }: HeaderProps) {
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>(
     initialNavItems?.length ? initialNavItems : FALLBACK_NAV,
   );
@@ -119,14 +117,6 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
     return pathname === path || pathname.startsWith(`${path}/`);
   };
 
-  const useBurgerMenu = navItems.length >= MOBILE_MENU_THRESHOLD;
-  const headerBgClass =
-    settings.appearance.headerStyle === "transparent"
-      ? "backdrop-blur-md bg-transparent"
-      : settings.appearance.headerStyle === "solid"
-        ? "bg-[var(--background-alt)]"
-        : "backdrop-blur-md bg-[var(--background-alt)]/90";
-
   const headerClass =
     settings.appearance.headerStyle === "transparent"
       ? "top-0 left-2 right-2 md:left-4 md:right-4 z-50 fixed rounded-2xl px-4 py-2 md:py-3 backdrop-blur-md border-white/20 shadow-lg bg-transparent"
@@ -135,78 +125,18 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
         : "top-0 left-2 right-2 md:left-4 md:right-4 z-50 sticky rounded-2xl px-4 py-2 md:py-3 backdrop-blur-md border border-[var(--card-border)] bg-[var(--background-alt)]/90 shadow-lg";
 
   return (
-    <header className={headerClass}>
-      <div className=" mx-auto flex flex-wrap items-center justify-between gap-4">
-        <TransitionLink href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
-          {settings.general.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt={settings.general.siteName} className="h-9 w-auto rounded-sm" />
-          ) : null}
-          <span>{settings.general.siteName || "Helene"}</span>
-        </TransitionLink>
+    <>
+      <header className={headerClass}>
+        <div className="mx-auto flex items-center justify-between gap-4">
+          <TransitionLink href="/" className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
+            {settings.general.logo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt={settings.general.siteName} className="h-9 w-auto rounded-sm" />
+            ) : null}
+            <span>{settings.general.siteName || "Helene"}</span>
+          </TransitionLink>
 
-        <nav className="hidden flex-1 flex-wrap gap-1 text-sm tracking-wide md:flex" aria-label="Navigation principale">
-          {navItems.map((item) =>
-            item.isExternal ? (
-              <a
-                key={item.slug}
-                href={item.path}
-                target={item.openInNewTab ? "_blank" : undefined}
-                rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                className="flex items-center gap-1 rounded-full px-4 py-2 text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
-              >
-                {item.title}
-                {item.openInNewTab && (
-                  <svg className="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                )}
-              </a>
-            ) : (
-              <TransitionLink
-                key={item.slug}
-                href={item.path}
-                className={`rounded-full px-4 py-2 transition-all duration-200 ${
-                  isActive(item.path)
-                    ? "bg-gold-default font-medium text-brown-darker"
-                    : "text-brown-darker hover:bg-sand-light/10 hover:text-gold-default"
-                }`}
-              >
-                {item.title}
-              </TransitionLink>
-            )
-          )}
-        </nav>
-
-        <div className="flex items-center gap-2 md:hidden">
-          {useBurgerMenu ? (
-            <button
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className="rounded p-2 text-brown-darker focus:outline-none focus:ring-2 focus:ring-gold-default"
-              aria-label="Toggle menu"
-              aria-expanded={isMenuOpen}
-            >
-              {isMenuOpen ? (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
-          ) : null}
-        </div>
-
-        <div className="hidden md:block">
-          {settings.appearance.showDarkModeToggle ? <ThemeToggle /> : null}
-        </div>
-      </div>
-
-      {!useBurgerMenu ? (
-        <div className="mt-3 border-t border-sand-warm/20 pt-3 md:hidden">
-          <nav className="flex flex-wrap justify-center gap-1" aria-label="Navigation mobile">
+          <nav className="hidden flex-1 flex-wrap gap-1 text-sm tracking-wide md:flex" aria-label="Navigation principale">
             {navItems.map((item) =>
               item.isExternal ? (
                 <a
@@ -214,7 +144,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
                   href={item.path}
                   target={item.openInNewTab ? "_blank" : undefined}
                   rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                  className="flex items-center gap-1 rounded-full px-3 py-2 text-sm text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
+                  className="flex items-center gap-1 rounded-full px-4 py-2 text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
                 >
                   {item.title}
                   {item.openInNewTab && (
@@ -227,8 +157,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
                 <TransitionLink
                   key={item.slug}
                   href={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`rounded-full px-3 py-2 text-sm transition-all duration-200 ${
+                  className={`rounded-full px-4 py-2 transition-all duration-200 ${
                     isActive(item.path)
                       ? "bg-gold-default font-medium text-brown-darker"
                       : "text-brown-darker hover:bg-sand-light/10 hover:text-gold-default"
@@ -239,55 +168,14 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
               )
             )}
           </nav>
-        </div>
-      ) : (
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out md:hidden ${
-            isMenuOpen ? "mt-4 max-h-96 opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <nav
-            className={`rounded-xl border border-[var(--card-border)] p-3 ${headerBgClass}`}
-            aria-label="Navigation mobile"
-          >
-            <div className="flex flex-col gap-1">
-              {navItems.map((item) =>
-                item.isExternal ? (
-                  <a
-                    key={item.slug}
-                    href={item.path}
-                    target={item.openInNewTab ? "_blank" : undefined}
-                    rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-between rounded-full px-4 py-3 text-left text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
-                  >
-                    {item.title}
-                    {item.openInNewTab && (
-                      <svg className="h-4 w-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    )}
-                  </a>
-                ) : (
-                  <TransitionLink
-                    key={item.slug}
-                    href={item.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`rounded-full px-4 py-3 text-left transition-all duration-200 ${
-                      isActive(item.path)
-                        ? "bg-gold-default font-medium text-brown-darker"
-                        : "text-brown-darker hover:bg-sand-light/10 hover:text-gold-default"
-                    }`}
-                  >
-                    {item.title}
-                  </TransitionLink>
-                )
-              )}
-            </div>
-          </nav>
-        </div>
-      )}
 
-    </header>
+          <div className="hidden md:block">
+            {settings.appearance.showDarkModeToggle ? <ThemeToggle /> : null}
+          </div>
+        </div>
+      </header>
+
+      <HorizontalNav items={navItems} />
+    </>
   );
 }
