@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
+import { AnimatedBg } from "@/components/layout/AnimatedBg";
 import { AppShell } from "@/components/layout/AppShell";
 import { getNavigation, getSettings } from "@/lib/api";
 import { THEME_PRESETS, generateThemeCSS } from "@/lib/themes";
@@ -59,8 +60,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
       </head>
       <body className="font-sans antialiased">
-        {/* Background fixe - ne bouge jamais entre les pages */}
-        <div className="fixed-background" aria-hidden="true" />
+        <AnimatedBg />
 
         <AppShell initialNavItems={initialNavigation.items} initialSettings={initialSettings}>
           {children}
