@@ -149,12 +149,69 @@ textarea:focus-visible {
   animation: page-enter 0.45s ease both;
 }
 
-.fixed-background {
+.animated-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
   background: var(--color-background);
+  overflow: hidden;
+  pointer-events: none;
   transition: background-color 0.3s ease;
+}
+
+.animated-bg-layer {
+  position: absolute;
+  inset: -20%;
+  will-change: transform, opacity;
+}
+
+.animated-bg-layer-a {
+  background:
+    radial-gradient(46% 42% at 20% 28%, color-mix(in srgb, var(--primary-start) 28%, transparent) 0%, transparent 72%),
+    radial-gradient(36% 38% at 76% 22%, color-mix(in srgb, var(--primary-end) 22%, transparent) 0%, transparent 74%);
+  animation: bgFloatA 36s ease-in-out infinite alternate;
+  opacity: 0.95;
+}
+
+.animated-bg-layer-b {
+  background:
+    radial-gradient(52% 46% at 72% 78%, color-mix(in srgb, var(--primary-start) 18%, transparent) 0%, transparent 75%),
+    radial-gradient(34% 32% at 30% 70%, color-mix(in srgb, var(--primary-end) 20%, transparent) 0%, transparent 72%);
+  animation: bgFloatB 44s ease-in-out infinite alternate;
+  opacity: 0.9;
+}
+
+.animated-bg-layer-c {
+  background: radial-gradient(56% 44% at 50% 50%, color-mix(in srgb, var(--background-alt) 46%, transparent) 0%, transparent 78%);
+  animation: bgFloatC 52s ease-in-out infinite alternate;
+  opacity: 0.85;
+}
+
+@keyframes bgFloatA {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) scale(1.06);
+  }
+}
+
+@keyframes bgFloatB {
+  0% {
+    transform: translate3d(2%, -2%, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(-3%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes bgFloatC {
+  0% {
+    transform: translate3d(0, 1%, 0) scale(1.01);
+  }
+  100% {
+    transform: translate3d(0, -2%, 0) scale(1.05);
+  }
 }
 
 .page-content {
@@ -169,6 +226,11 @@ body.is-transitioning {
 
 body.is-transitioning .page-content {
   overflow: hidden;
+}
+
+body.is-transitioning .animated-bg-layer {
+  animation-play-state: paused;
+  opacity: 0.75;
 }
 
 [data-animate] {
@@ -318,6 +380,15 @@ body.is-transitioning .page-content {
 }
 
 @media (pointer: coarse) {
+  .animated-bg-layer-c {
+    display: none;
+  }
+
+  .animated-bg-layer-a,
+  .animated-bg-layer-b {
+    animation-duration: 58s;
+  }
+
   .touch-spacing > * + * {
     margin-top: 1rem;
   }
@@ -329,6 +400,10 @@ body.is-transitioning .page-content {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .animated-bg-layer {
+    animation: none !important;
+  }
+
   *,
   *::before,
   *::after {

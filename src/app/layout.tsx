@@ -59,8 +59,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
       </head>
       <body className="font-sans antialiased">
-        {/* Background fixe - ne bouge jamais entre les pages */}
-        <div className="fixed-background" aria-hidden="true" />
+        <div className="animated-bg" aria-hidden="true">
+          <div className="animated-bg-layer animated-bg-layer-a" />
+          <div className="animated-bg-layer animated-bg-layer-b" />
+          <div className="animated-bg-layer animated-bg-layer-c" />
+        </div>
 
         <AppShell initialNavItems={initialNavigation.items} initialSettings={initialSettings}>
           {children}

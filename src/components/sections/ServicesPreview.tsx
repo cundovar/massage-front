@@ -51,7 +51,7 @@ export function ServicesPreview({ services = [], content }: ServicesPreviewProps
         : "md:grid-cols-3";
 
   return (
-    <section className="bg-[var(--background-alt)] py-24 md:py-32" data-animate="section">
+    <section className="bg-transparent py-24 md:py-32" data-animate="section">
       <div className="mx-auto max-w-7xl px-6">
         <AnimatedSection className="mb-16 text-center">
           <p className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--primary-start)]">{subtitle}</p>
@@ -131,7 +131,7 @@ function ServiceCard({ index, name, category, description, price, image, link }:
   return (
     <AnimatedSection delay={index * 150} className="group">
       <article
-        className="h-full overflow-hidden bg-[var(--card-bg)] shadow-sm transition-all duration-300 hover:shadow-xl"
+        className="h-full overflow-hidden bg-transparent shadow-sm transition-all duration-300 hover:shadow-xl"
         style={{ borderRadius: "var(--card-radius)" }}
       >
         {/* Image ou placeholder */}

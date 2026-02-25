@@ -27,7 +27,10 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
 
   return (
     <TransitionProvider>
-      <div className="min-h-screen overflow-x-hidden bg-(--color-background) text-(--color-text-primary)">
+      <div
+        className="min-h-screen overflow-x-hidden text-(--color-text-primary)"
+        style={{ background: "color-mix(in srgb, var(--color-background) 88%, transparent)" }}
+      >
         <Header initialNavItems={initialNavItems} initialSettings={initialSettings} />
         <PageWrapper>
           <main className="px-4 pt-0 pb-24 sm:px-8 md:px-12 md:pb-8 lg:px-20 xl:pt-20">{children}</main>
