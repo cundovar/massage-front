@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MediaPicker } from "@/components/admin/media/MediaPicker";
+import { PageLinkPicker } from "@/components/admin/ui/PageLinkPicker";
 import { Alert, Button, Card, Input, Textarea } from "@/components/admin/ui";
 import { updateSection, type PageSection } from "@/lib/api-admin";
 
@@ -504,6 +505,40 @@ export function SectionEditor({ token, pageSlug, section, onUpdate, onDelete }: 
               className="mt-2 w-full rounded-md border border-stone-200 px-3 py-2 text-sm"
               placeholder="Une selection de soins..."
             />
+          </div>
+
+          <PageLinkPicker
+            token={token}
+            label="Lien du bouton Reserver (optionnel)"
+            placeholder="/reservation"
+            value={(content.bookingLink as string | undefined) ?? ""}
+            onChange={(nextValue) => updateContent("bookingLink", nextValue)}
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-stone-600">Ouvrir en nouvel onglet</label>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={content.bookingLinkNewTab === true || content.bookingLinkNewTab === "true"}
+              onClick={() => {
+                const checked = content.bookingLinkNewTab === true || content.bookingLinkNewTab === "true";
+                updateContent("bookingLinkNewTab", !checked);
+              }}
+              className={`mt-2 relative h-6 w-11 rounded-full transition-colors ${
+                content.bookingLinkNewTab === true || content.bookingLinkNewTab === "true"
+                  ? "bg-amber-600"
+                  : "bg-stone-300"
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                  content.bookingLinkNewTab === true || content.bookingLinkNewTab === "true"
+                    ? "translate-x-5"
+                    : "translate-x-0"
+                }`}
+              />
+            </button>
           </div>
 
           <div className="space-y-3">

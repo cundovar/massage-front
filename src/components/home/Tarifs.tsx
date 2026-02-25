@@ -27,6 +27,12 @@ function parsePrice(raw: string): ServicePrice {
 }
 
 export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
+  const hasBookingLinkField = Object.prototype.hasOwnProperty.call(content, "bookingLink");
+  const customBookingLink = content.bookingLink?.trim() || "";
+  const resolvedBookingUrl = customBookingLink || bookingUrl;
+  const showBookingButton = hasBookingLinkField ? customBookingLink.length > 0 : true;
+  const bookingLinkNewTab = String(content.bookingLinkNewTab ?? "false") === "true";
+
   return (
     <section id="tarifs" className="mt-20" data-animate="section">
       <ScrollReveal>
@@ -65,7 +71,9 @@ export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
                 title={offer.title}
                 description={offer.description}
                 prices={offer.prices.map(parsePrice)}
-                bookingUrl={bookingUrl}
+                bookingUrl={resolvedBookingUrl}
+                bookingLinkNewTab={bookingLinkNewTab}
+                showBookingButton={showBookingButton}
                 className="h-full"
               />
             </div>

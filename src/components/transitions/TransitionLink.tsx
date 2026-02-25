@@ -11,13 +11,20 @@ interface TransitionLinkProps {
   className?: string;
   onClick?: () => void;
   style?: CSSProperties;
+  target?: React.HTMLAttributeAnchorTarget;
+  rel?: string;
 }
 
-export function TransitionLink({ href, children, className, onClick, style }: TransitionLinkProps) {
+export function TransitionLink({ href, children, className, onClick, style, target, rel }: TransitionLinkProps) {
   const pathname = usePathname();
   const ctx = useTransitionSafe();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (target === "_blank") {
+      onClick?.();
+      return;
+    }
+
     // Si pas de provider (admin preview), comportement standard
     if (!ctx) {
       onClick?.();
@@ -42,6 +49,8 @@ export function TransitionLink({ href, children, className, onClick, style }: Tr
       href={href}
       className={className}
       onClick={handleClick}
+      target={target}
+      rel={rel}
       aria-disabled={isTransitioning}
       style={{
         ...style,

@@ -209,6 +209,48 @@ function FieldRenderer({ field, value, onChange, token }: FieldRendererProps) {
         </div>
       );
 
+    case "toggle": {
+      const checked = value === true || value === "true";
+      return (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-stone-700">{field.label}</label>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={checked}
+            onClick={() => onChange(!checked)}
+            className={`relative h-6 w-11 rounded-full transition-colors ${checked ? "bg-amber-600" : "bg-stone-300"}`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-5" : "translate-x-0"}`}
+            />
+          </button>
+        </div>
+      );
+    }
+
+    case "color":
+      return (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-stone-700">{field.label}</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              value={((value as string) || "#ffffff").startsWith("#") ? (value as string) : "#ffffff"}
+              onChange={(event) => onChange(event.target.value)}
+              className="h-10 w-12 cursor-pointer rounded border border-stone-300 bg-white p-1"
+            />
+            <input
+              type="text"
+              value={(value as string) ?? ""}
+              onChange={(event) => onChange(event.target.value)}
+              placeholder={field.placeholder || "#FFFFFF"}
+              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+        </div>
+      );
+
     default:
       return null;
   }

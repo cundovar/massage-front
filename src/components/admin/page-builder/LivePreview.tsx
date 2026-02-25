@@ -3,6 +3,7 @@
 import { useMemo, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { PageSection } from "@/lib/api-admin";
+import type { GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
 import { getImageUrl } from "@/lib/api";
 
 const GenericHeroSection = dynamic(() => import("@/components/dynamic/GenericHeroSection").then((mod) => mod.GenericHeroSection), { ssr: false });
@@ -92,9 +93,9 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
     case "hero-home":
       return withWrapper(<Hero content={content as never} />);
     case "hero":
-      return withWrapper(<GenericHeroSection content={content as { title?: string; subtitle?: string; image?: string }} />);
+      return withWrapper(<GenericHeroSection content={content as GenericHeroContent} />);
     case "hero-compact":
-      return withWrapper(<GenericHeroSection content={{ ...(content as { title?: string; subtitle?: string; image?: string }), compact: true }} />);
+      return withWrapper(<GenericHeroSection content={{ ...(content as GenericHeroContent), compact: true }} />);
     case "presentation":
       return withWrapper(<Presentation content={content as never} />);
     case "approche":

@@ -11,7 +11,7 @@ export interface BlockDefinition {
 export interface FieldDefinition {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "array" | "page-link" | "select";
+  type: "text" | "textarea" | "image" | "array" | "page-link" | "select" | "color" | "toggle";
   placeholder?: string;
   arrayItemType?: "text" | "textarea" | "image" | "object";
   objectFields?: FieldDefinition[];
@@ -36,6 +36,15 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     category: "header",
     defaultContent: {
       siteTitle: "Helene - Massages & Ayurveda",
+      siteSubtitle: "",
+      buttonText: "",
+      buttonLink: "",
+      backgroundType: "image",
+      gradientStart: "#FFCE67",
+      gradientEnd: "#F67E54",
+      textColor: "#F5F5F4",
+      backgroundBlur: "0",
+      overlayOpacity: "45",
       slides: [
         {
           image: "",
@@ -46,6 +55,43 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     },
     fields: [
       { key: "siteTitle", label: "Titre du site", type: "text", placeholder: "Les Massages d'Helene" },
+      { key: "siteSubtitle", label: "Sous-titre du site", type: "text", placeholder: "Massages, rituels et bien-etre" },
+      { key: "buttonText", label: "Texte du bouton (optionnel)", type: "text", placeholder: "Decouvrir la carte" },
+      { key: "buttonLink", label: "Lien du bouton (optionnel)", type: "page-link", placeholder: "/soins" },
+      {
+        key: "backgroundType",
+        label: "Type de fond",
+        type: "select",
+        options: [
+          { value: "image", label: "Photo (slides)" },
+          { value: "gradient", label: "Gradient" },
+        ],
+      },
+      { key: "gradientStart", label: "Gradient debut", type: "color" },
+      { key: "gradientEnd", label: "Gradient fin", type: "color" },
+      { key: "textColor", label: "Couleur du texte", type: "color" },
+      {
+        key: "backgroundBlur",
+        label: "Flou du fond",
+        type: "select",
+        options: [
+          { value: "0", label: "Aucun" },
+          { value: "2", label: "Leger" },
+          { value: "4", label: "Moyen" },
+          { value: "6", label: "Fort" },
+        ],
+      },
+      {
+        key: "overlayOpacity",
+        label: "Opacite de l'overlay",
+        type: "select",
+        options: [
+          { value: "20", label: "20%" },
+          { value: "35", label: "35%" },
+          { value: "45", label: "45%" },
+          { value: "60", label: "60%" },
+        ],
+      },
       {
         key: "slides",
         label: "Slides",
@@ -69,9 +115,49 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       title: "",
       subtitle: "",
       image: null,
+      backgroundType: "image",
+      gradientStart: "#FFCE67",
+      gradientEnd: "#F67E54",
+      textColor: "#FFFFFF",
+      backgroundBlur: "0",
+      overlayOpacity: "45",
     },
     fields: [
+      {
+        key: "backgroundType",
+        label: "Type de fond",
+        type: "select",
+        options: [
+          { value: "image", label: "Photo" },
+          { value: "gradient", label: "Gradient" },
+        ],
+      },
       { key: "image", label: "Image de fond", type: "image" },
+      { key: "gradientStart", label: "Gradient debut", type: "color" },
+      { key: "gradientEnd", label: "Gradient fin", type: "color" },
+      { key: "textColor", label: "Couleur du texte", type: "color" },
+      {
+        key: "backgroundBlur",
+        label: "Flou du fond",
+        type: "select",
+        options: [
+          { value: "0", label: "Aucun" },
+          { value: "2", label: "Leger" },
+          { value: "4", label: "Moyen" },
+          { value: "6", label: "Fort" },
+        ],
+      },
+      {
+        key: "overlayOpacity",
+        label: "Opacite de l'overlay",
+        type: "select",
+        options: [
+          { value: "20", label: "20%" },
+          { value: "35", label: "35%" },
+          { value: "45", label: "45%" },
+          { value: "60", label: "60%" },
+        ],
+      },
       { key: "title", label: "Titre principal", type: "text", placeholder: "Bienvenue" },
       { key: "subtitle", label: "Sous-titre", type: "text", placeholder: "Massage & Bien-etre" },
     ],
@@ -87,9 +173,49 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       subtitle: "",
       image: null,
       compact: true,
+      backgroundType: "image",
+      gradientStart: "#FFCE67",
+      gradientEnd: "#F67E54",
+      textColor: "#FFFFFF",
+      backgroundBlur: "0",
+      overlayOpacity: "35",
     },
     fields: [
+      {
+        key: "backgroundType",
+        label: "Type de fond",
+        type: "select",
+        options: [
+          { value: "image", label: "Photo" },
+          { value: "gradient", label: "Gradient" },
+        ],
+      },
       { key: "image", label: "Image de fond", type: "image" },
+      { key: "gradientStart", label: "Gradient debut", type: "color" },
+      { key: "gradientEnd", label: "Gradient fin", type: "color" },
+      { key: "textColor", label: "Couleur du texte", type: "color" },
+      {
+        key: "backgroundBlur",
+        label: "Flou du fond",
+        type: "select",
+        options: [
+          { value: "0", label: "Aucun" },
+          { value: "2", label: "Leger" },
+          { value: "4", label: "Moyen" },
+          { value: "6", label: "Fort" },
+        ],
+      },
+      {
+        key: "overlayOpacity",
+        label: "Opacite de l'overlay",
+        type: "select",
+        options: [
+          { value: "20", label: "20%" },
+          { value: "35", label: "35%" },
+          { value: "45", label: "45%" },
+          { value: "60", label: "60%" },
+        ],
+      },
       { key: "title", label: "Titre principal", type: "text", placeholder: "Titre de page" },
       { key: "subtitle", label: "Sous-titre", type: "text", placeholder: "Description optionnelle" },
     ],
@@ -207,11 +333,15 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     defaultContent: {
       title: "Tarifs",
       subtitle: "",
+      bookingLink: "/reservation",
+      bookingLinkNewTab: false,
       offers: [{ title: "", description: "", prices: [""] }],
     },
     fields: [
       { key: "title", label: "Titre", type: "text" },
       { key: "subtitle", label: "Sous-titre", type: "text" },
+      { key: "bookingLink", label: "Lien du bouton Reserver (optionnel)", type: "page-link", placeholder: "/reservation" },
+      { key: "bookingLinkNewTab", label: "Ouvrir en nouvel onglet", type: "toggle" },
       {
         key: "offers",
         label: "Offres",
@@ -469,11 +599,15 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     defaultContent: {
       title: "Carte & tarifs",
       subtitle: "",
+      bookingLink: "/reservation",
+      bookingLinkNewTab: false,
       offers: [{ title: "", description: "", prices: [""] }],
     },
     fields: [
       { key: "title", label: "Titre", type: "text" },
       { key: "subtitle", label: "Sous-titre", type: "text" },
+      { key: "bookingLink", label: "Lien du bouton Reserver (optionnel)", type: "page-link", placeholder: "/reservation" },
+      { key: "bookingLinkNewTab", label: "Ouvrir en nouvel onglet", type: "toggle" },
       {
         key: "offers",
         label: "Offres",
@@ -496,8 +630,6 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     defaultContent: {
       subtitle: "Mes soins",
       title: "Une gamme de soins pour votre bien-être",
-      buttonText: "Voir tous les soins",
-      buttonLink: "/soins",
       items: [
         { name: "", category: "", description: "", price: "", image: null, link: "/soins" },
       ],
@@ -519,8 +651,6 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
           { key: "link", label: "Lien", type: "page-link", placeholder: "/soins" },
         ],
       },
-      { key: "buttonText", label: "Texte du bouton", type: "text", placeholder: "Voir tous les soins" },
-      { key: "buttonLink", label: "Lien du bouton", type: "page-link", placeholder: "/soins" },
     ],
   },
   {
@@ -541,6 +671,10 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
 ];
 
 export function getBlockDefinition(type: string): BlockDefinition | undefined {
+  if (type === "hero-simple") {
+    return BLOCK_CATALOG.find((block) => block.type === "hero");
+  }
+
   return BLOCK_CATALOG.find((block) => block.type === type);
 }
 

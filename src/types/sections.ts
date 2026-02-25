@@ -40,6 +40,8 @@ export interface TarifOffer {
 export interface TarifsContent {
   title: string;
   subtitle?: string;
+  bookingLink?: string;
+  bookingLinkNewTab?: boolean | "true" | "false";
   offers: TarifOffer[];
 }
 

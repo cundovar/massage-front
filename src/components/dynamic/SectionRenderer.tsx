@@ -6,7 +6,7 @@ import { BenefitsGridSection, type BenefitsGridContent } from "@/components/dyna
 import { ContactInfoSection } from "@/components/dynamic/ContactInfoSection";
 import { FormationsSection } from "@/components/dynamic/FormationsSection";
 import { GenericGallerySection } from "@/components/dynamic/GenericGallerySection";
-import { GenericHeroSection } from "@/components/dynamic/GenericHeroSection";
+import { GenericHeroSection, type GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
 import { GenericTextSection } from "@/components/dynamic/GenericTextSection";
 import { GoogleMapSection } from "@/components/dynamic/GoogleMapSection";
 import { ImageSection } from "@/components/dynamic/ImageSection";
@@ -95,11 +95,7 @@ export function SectionRenderer({
               <GenericHeroSection
                 key={key}
                 content={{
-                  ...(section.content as unknown as {
-                    title?: string;
-                    subtitle?: string;
-                    image?: string;
-                  }),
+                  ...(section.content as unknown as GenericHeroContent),
                   compact: sectionType === "hero-compact",
                 }}
               />

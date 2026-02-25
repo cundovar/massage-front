@@ -61,6 +61,8 @@ export const DEFAULT_SOINS = {
   tarifs: {
     title: "Carte & tarifs",
     subtitle: "Une selection de soins ayurvediques, reflexologie plantaire, Kobido et massage prenatal.",
+    bookingLink: "/reservation",
+    bookingLinkNewTab: false,
     offers: [
       {
         title: "Ayurveda",

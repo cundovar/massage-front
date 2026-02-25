@@ -14,6 +14,7 @@ export interface ServiceCardProps {
   description: string;
   prices: ServicePrice[];
   bookingUrl?: string;
+  bookingLinkNewTab?: boolean;
   showBookingButton?: boolean;
   className?: string;
 }
@@ -28,6 +29,7 @@ export function ServiceCard({
   description,
   prices,
   bookingUrl = "/reservation",
+  bookingLinkNewTab = false,
   showBookingButton = true,
   className = "",
 }: ServiceCardProps) {
@@ -109,6 +111,8 @@ export function ServiceCard({
         <div className="mt-8">
           <TransitionLink
             href={bookingUrl}
+            target={bookingLinkNewTab ? "_blank" : undefined}
+            rel={bookingLinkNewTab ? "noopener noreferrer" : undefined}
             className="
               inline-flex w-full items-center justify-center
               rounded-full
