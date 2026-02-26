@@ -55,6 +55,7 @@ export interface AppearanceSettings {
   customAccentColor: string | null;
   headerStyle: HeaderStyle;
   showDarkModeToggle: boolean;
+  bodyBackgroundImage: string | null;
 }
 
 export interface FooterSettings {

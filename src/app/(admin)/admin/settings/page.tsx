@@ -44,6 +44,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
     customAccentColor: null,
     headerStyle: "sticky",
     showDarkModeToggle: true,
+    bodyBackgroundImage: null,
   },
   footer: {
     copyrightText: "© 2024 Helene Massage & Ayurveda",
@@ -166,6 +167,7 @@ export default function AdminSettingsPage() {
       {error ? <p className="rounded-md border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</p> : null}
       {success ? <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">{success}</p> : null}
       <SettingsForm
+        token={token}
         settings={settings}
         saving={saving}
         uploadingLogo={uploadingLogo}

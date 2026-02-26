@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePreviewMode } from "@/contexts/PreviewModeContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,8 +15,13 @@ interface ScrollRevealProps {
 
 export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const isPreview = usePreviewMode();
 
   useLayoutEffect(() => {
+    if (isPreview) {
+      return;
+    }
+
     const element = containerRef.current;
 
     if (!element) {
@@ -45,7 +51,7 @@ export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealPro
     return () => {
       context.revert();
     };
-  }, [delay]);
+  }, [delay, isPreview]);
 
   return (
     <div ref={containerRef} className={className}>

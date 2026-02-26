@@ -14,10 +14,12 @@ import {
   Textarea,
   ThemeSelector,
 } from "@/components/admin/ui";
+import { MediaPicker } from "@/components/admin/media/MediaPicker";
 import { getImageUrl } from "@/lib/api";
 import type { HeaderStyle, SiteSettings, ThemePreset } from "@/types/settings";
 
 interface SettingsFormProps {
+  token: string;
   settings: SiteSettings;
   saving: boolean;
   uploadingLogo: boolean;
@@ -29,6 +31,7 @@ interface SettingsFormProps {
 }
 
 export function SettingsForm({
+  token,
   settings,
   saving,
   uploadingLogo,
@@ -289,6 +292,24 @@ export function SettingsForm({
             })
           }
         />
+
+        <FormField label="Image de fond du body (optionnel)">
+          <div className="space-y-2">
+            <MediaPicker
+              token={token}
+              value={settings.appearance.bodyBackgroundImage}
+              onChange={(path) =>
+                onChange({
+                  ...settings,
+                  appearance: { ...settings.appearance, bodyBackgroundImage: path },
+                })
+              }
+            />
+            <p className="text-xs text-stone-500">
+              Cette image s&apos;affiche en fond global du site public.
+            </p>
+          </div>
+        </FormField>
       </FormSection>
 
       <Button type="button" loading={saving} onClick={() => void onSave()}>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
-import { getNavigation, getSettings } from "@/lib/api";
+import { getImageUrl, getNavigation, getSettings } from "@/lib/api";
 import { THEME_PRESETS, generateThemeCSS } from "@/lib/themes";
 import "./globals.css";
 
@@ -53,6 +53,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     initialSettings = await getSettings();
   }
 
+  const bodyBackgroundImage = getImageUrl(initialSettings.appearance.bodyBackgroundImage);
+
   return (
     <html lang="fr" className={`${dmSerif.variable} ${inter.variable}`}>
       <head>
@@ -60,7 +62,19 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
       <body className="font-sans antialiased">
         {/* Background fixe - ne bouge jamais entre les pages */}
-        <div className="fixed-background" aria-hidden="true" />
+        <div
+          className="fixed-background"
+          aria-hidden="true"
+          style={
+            bodyBackgroundImage
+              ? {
+                  backgroundImage: `linear-gradient(to bottom, color-mix(in srgb, var(--color-background) 78%, transparent), color-mix(in srgb, var(--color-background) 72%, transparent)), url(${bodyBackgroundImage})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : undefined
+          }
+        />
 
         <AppShell initialNavItems={initialNavigation.items} initialSettings={initialSettings}>
           {children}

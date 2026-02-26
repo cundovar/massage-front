@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import type { PageSection } from "@/lib/api-admin";
 import type { GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
 import { getImageUrl } from "@/lib/api";
+import { PreviewModeProvider } from "@/contexts/PreviewModeContext";
 
 const GenericHeroSection = dynamic(() => import("@/components/dynamic/GenericHeroSection").then((mod) => mod.GenericHeroSection), { ssr: false });
 const Hero = dynamic(() => import("@/components/home/Hero").then((mod) => mod.Hero), { ssr: false });
@@ -37,28 +38,30 @@ export function LivePreview({ sections, activeSection, onSelectSection }: LivePr
   const sortedSections = useMemo(() => [...sections].sort((a, b) => a.sortOrder - b.sortOrder), [sections]);
 
   return (
-    <div className="min-h-full">
-      <div className="sticky top-0 z-10 border-b bg-stone-100 px-4 py-2 text-sm text-stone-500">
-        Apercu en temps reel - Cliquez sur une section pour la modifier
-      </div>
+    <PreviewModeProvider>
+      <div className="min-h-full">
+        <div className="sticky top-0 z-10 border-b bg-stone-100 px-4 py-2 text-sm text-stone-500">
+          Apercu en temps reel - Cliquez sur une section pour la modifier
+        </div>
 
-      <div className="origin-top-left p-4" style={{ transform: "scale(0.7)", width: "142.85%" }}>
-        {sortedSections.map((section) => (
-          <PreviewSection
-            key={section.key}
-            section={section}
-            isActive={activeSection === section.key}
-            onClick={() => onSelectSection(section.key)}
-          />
-        ))}
+        <div className="origin-top-left p-4" style={{ transform: "scale(0.7)", width: "142.85%" }}>
+          {sortedSections.map((section) => (
+            <PreviewSection
+              key={section.key}
+              section={section}
+              isActive={activeSection === section.key}
+              onClick={() => onSelectSection(section.key)}
+            />
+          ))}
 
-        {sortedSections.length === 0 ? (
-          <div className="flex h-96 items-center justify-center text-stone-400">
-            <p>Ajoutez des blocs pour voir l&apos;apercu</p>
-          </div>
-        ) : null}
+          {sortedSections.length === 0 ? (
+            <div className="flex h-96 items-center justify-center text-stone-400">
+              <p>Ajoutez des blocs pour voir l&apos;apercu</p>
+            </div>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </PreviewModeProvider>
   );
 }
 

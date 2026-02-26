@@ -30,7 +30,7 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
       <div className="min-h-screen overflow-x-hidden bg-(--color-background) text-(--color-text-primary)">
         <Header initialNavItems={initialNavItems} initialSettings={initialSettings} />
         <PageWrapper>
-          <main className="px-4 pt-0 pb-24 sm:px-8 md:px-12 md:pb-8 lg:px-20 xl:pt-20">{children}</main>
+          <main className="pt-0 pb-24 sm:px-8 md:px-12 md:pb-8 lg:px-20 xl:pt-20">{children}</main>
         </PageWrapper>
         <Footer initialSettings={initialSettings} />
       </div>
