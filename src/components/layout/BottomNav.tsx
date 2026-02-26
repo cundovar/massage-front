@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Home, Calendar, Moon, Phone, Sun } from "lucide-react";
+import { Flower2, CalendarHeart, MessageCircle, Moon, Sun } from "lucide-react";
 import { MobileNavButton, MobileNavLinkButton } from "@/components/ui/MobileNavButton";
 
 interface BottomNavProps {
@@ -61,6 +61,24 @@ export function BottomNav({ showThemeToggle = true }: BottomNavProps) {
     window.localStorage.setItem("front_theme", nextTheme);
   }
 
+  const isDark = theme === "dark";
+
+  const navStyle: React.CSSProperties = isDark
+    ? {
+        background: "linear-gradient(135deg, rgba(41,37,36,0.95) 0%, rgba(28,25,23,0.98) 100%)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        border: "1px solid rgba(255,206,103,0.15)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
+      }
+    : {
+        background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(253,248,243,0.98) 100%)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        border: "1px solid rgba(255,206,103,0.3)",
+        boxShadow: "0 8px 32px rgba(246,126,84,0.15), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
+      };
+
   return (
     <nav
       className={`fixed right-0 bottom-0 left-0 z-50 safe-bottom transition-transform duration-300 md:hidden ${
@@ -68,16 +86,19 @@ export function BottomNav({ showThemeToggle = true }: BottomNavProps) {
       }`}
       aria-label="Navigation mobile"
     >
-      <div className="flex items-center justify-around rounded-t-3xl border border-white/25 bg-white/55 px-2 py-3 shadow-lg shadow-black/10 backdrop-blur-2xl backdrop-saturate-150 dark:border-white/15 dark:bg-stone-900/55">
+      <div
+        className="mx-3 mb-3 flex items-center justify-around rounded-2xl px-2 py-3 transition-all duration-300"
+        style={navStyle}
+      >
         <MobileNavLinkButton
           href="/"
-          icon={<Home className="h-5 w-5" />}
+          icon={<Flower2 className="h-5 w-5" strokeWidth={1.75} />}
           label="Accueil"
           isActive={isActive("/")}
         />
         <MobileNavLinkButton
           href="/reservation"
-          icon={<Calendar className="h-5 w-5" />}
+          icon={<CalendarHeart className="h-5 w-5" strokeWidth={1.75} />}
           label="Réserver"
           variant="primary"
           isActive={isActive("/reservation")}
@@ -85,7 +106,7 @@ export function BottomNav({ showThemeToggle = true }: BottomNavProps) {
         />
         <MobileNavLinkButton
           href="/contact"
-          icon={<Phone className="h-5 w-5" />}
+          icon={<MessageCircle className="h-5 w-5" strokeWidth={1.75} />}
           label="Contact"
           variant="outline"
           isActive={isActive("/contact")}
@@ -94,10 +115,10 @@ export function BottomNav({ showThemeToggle = true }: BottomNavProps) {
 
         {showThemeToggle ? (
           <MobileNavButton
-            icon={theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            icon={isDark ? <Sun className="h-5 w-5" strokeWidth={1.75} /> : <Moon className="h-5 w-5" strokeWidth={1.75} />}
             label="Mode"
             onClick={toggleTheme}
-            ariaLabel={theme === "light" ? "Passer en mode sombre" : "Passer en mode clair"}
+            ariaLabel={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
           />
         ) : null}
       </div>
