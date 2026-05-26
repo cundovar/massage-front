@@ -73,7 +73,7 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       radius: "1rem",
     },
     footer: {
-      bg: "#1C1917",
+      bg: "#292524",
       text: "#FFFFFF",
       textMuted: "#A8A29E",
       border: "#292524",
@@ -92,6 +92,7 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       backgroundAlt: "#F5F5F4",
       cardBg: "#FFFFFF",
       cardBorder: "#E7E5E4",
+      
     },
     dark: {
       primaryStart: "#D4A574",

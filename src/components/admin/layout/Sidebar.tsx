@@ -11,6 +11,7 @@ const links = [
   { href: "/admin/footer", label: "Footer" },
   { href: "/admin/media", label: "Media" },
   { href: "/admin/settings", label: "Settings" },
+  { href: "/admin/account", label: "Compte" },
 ];
 
 export function Sidebar() {

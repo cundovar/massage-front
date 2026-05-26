@@ -108,7 +108,7 @@ export function BottomNav({ showThemeToggle = true }: BottomNavProps) {
           href="/contact"
           icon={<MessageCircle className="h-5 w-5" strokeWidth={1.75} />}
           label="Contact"
-          variant="outline"
+       
           isActive={isActive("/contact")}
           ariaLabel="Contacter le cabinet"
         />

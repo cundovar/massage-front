@@ -20,6 +20,15 @@ export interface AdminMeResponse {
   roles: string[];
 }
 
+export interface UpdateAccountResponse extends AdminMeResponse {
+  requiresLogin: boolean;
+}
+
+export interface UpdatePasswordResponse {
+  message: string;
+  requiresLogin: boolean;
+}
+
 export interface CountNewResponse {
   count: number;
 }
@@ -536,4 +545,55 @@ export async function fetchAdminApi<T>(path: string, token: string): Promise<T> 
   }
 
   return (await response.json()) as T;
+}
+
+export async function updateAdminAccount(
+  token: string,
+  payload: { name: string; email: string; currentPassword?: string },
+): Promise<UpdateAccountResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/me`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("UNAUTHORIZED");
+    }
+    if (response.status === 409) {
+      throw new Error("Cette adresse email est deja utilisee.");
+    }
+    throw new Error("Impossible de modifier le compte.");
+  }
+
+  return (await response.json()) as UpdateAccountResponse;
+}
+
+export async function updateAdminPassword(
+  token: string,
+  payload: { currentPassword: string; newPassword: string },
+): Promise<UpdatePasswordResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/me/password`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("UNAUTHORIZED");
+    }
+    throw new Error("Impossible de modifier le mot de passe.");
+  }
+
+  return (await response.json()) as UpdatePasswordResponse;
 }

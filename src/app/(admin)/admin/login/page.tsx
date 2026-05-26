@@ -7,8 +7,8 @@ import { loginAdmin } from "@/lib/api-admin";
 import { setTokenInStorage } from "@/lib/auth";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("admin@helene-massage.fr");
-  const [password, setPassword] = useState("ChangeMe123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
