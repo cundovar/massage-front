@@ -24,7 +24,7 @@ interface MobileNavButtonProps extends MobileNavBaseProps {
 
 function getVariantClasses(variant: MobileNavVariant, isActive: boolean): string {
   if (variant === "primary") {
-    return "text-white font-semibold";
+    return "border font-semibold";
   }
 
   if (variant === "outline") {
@@ -40,8 +40,9 @@ function getVariantClasses(variant: MobileNavVariant, isActive: boolean): string
 function getVariantStyle(variant: MobileNavVariant, isActive: boolean): CSSProperties {
   if (variant === "primary") {
     return {
-      background: "var(--gradient-primary)",
-      boxShadow: "0 4px 14px color-mix(in srgb, var(--primary-end) 40%, transparent)",
+      borderColor: "color-mix(in srgb, var(--text-primary) 55%, transparent)",
+      color: "var(--text-primary)",
+      background: "transparent",
     };
   }
 
@@ -68,7 +69,7 @@ function getVariantStyle(variant: MobileNavVariant, isActive: boolean): CSSPrope
 }
 
 function getBaseClasses(variant: MobileNavVariant, isActive: boolean): string {
-  const radius = variant === "default" ? "rounded-xl" : "rounded-full";
+  const radius = variant === "primary" ? "rounded-lg" : variant === "default" ? "rounded-xl" : "rounded-full";
   const padding = variant === "primary" ? "px-5 py-2.5" : "px-3 py-2";
 
   return `relative flex flex-col items-center gap-0.5 ${radius} ${padding} transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-[var(--primary-start)] focus-visible:ring-offset-2 focus-visible:outline-none ${getVariantClasses(
