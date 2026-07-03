@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, type ReactNode } from "react";
+import { Component, useMemo, type ErrorInfo, type ReactNode } from "react";
 import dynamic from "next/dynamic";
+import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 import type { PageSection } from "@/lib/api-admin";
 import type { GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
 import { getImageUrl } from "@/lib/api";
@@ -22,7 +23,9 @@ const ContactInfoSection = dynamic(() => import("@/components/dynamic/ContactInf
 const BenefitsGridSection = dynamic(() => import("@/components/dynamic/BenefitsGridSection").then((mod) => mod.BenefitsGridSection), { ssr: false });
 const GoogleMapSection = dynamic(() => import("@/components/dynamic/GoogleMapSection").then((mod) => mod.GoogleMapSection), { ssr: false });
 const TextSection = dynamic(() => import("@/components/dynamic/TextSection").then((mod) => mod.TextSection), { ssr: false });
+const NeutralSection = dynamic(() => import("@/components/dynamic/NeutralSection").then((mod) => mod.NeutralSection), { ssr: false });
 const QuoteSection = dynamic(() => import("@/components/dynamic/QuoteSection").then((mod) => mod.QuoteSection), { ssr: false });
+const SpacerSection = dynamic(() => import("@/components/dynamic/SpacerSection").then((mod) => mod.SpacerSection), { ssr: false });
 const ImageSection = dynamic(() => import("@/components/dynamic/ImageSection").then((mod) => mod.ImageSection), { ssr: false });
 const GenericGallerySection = dynamic(() => import("@/components/dynamic/GenericGallerySection").then((mod) => mod.GenericGallerySection), { ssr: false });
 const ParcoursSection = dynamic(() => import("@/components/dynamic/ParcoursSection").then((mod) => mod.ParcoursSection), { ssr: false });
@@ -32,6 +35,30 @@ interface LivePreviewProps {
   sections: PageSection[];
   activeSection: string | null;
   onSelectSection: (key: string) => void;
+}
+
+class PreviewErrorBoundary extends Component<{ children: ReactNode; sectionType: string }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error(`Erreur apercu bloc ${this.props.sectionType}`, error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="rounded-lg border border-rose-200 bg-rose-50 px-6 py-8 text-center text-sm text-rose-700">
+          Apercu indisponible pour ce bloc.
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
 }
 
 export function LivePreview({ sections, activeSection, onSelectSection }: LivePreviewProps) {
@@ -46,12 +73,13 @@ export function LivePreview({ sections, activeSection, onSelectSection }: LivePr
 
         <div className="origin-top-left p-4" style={{ transform: "scale(0.7)", width: "142.85%" }}>
           {sortedSections.map((section) => (
-            <PreviewSection
-              key={section.key}
-              section={section}
-              isActive={activeSection === section.key}
-              onClick={() => onSelectSection(section.key)}
-            />
+            <PreviewErrorBoundary key={section.key} sectionType={section.type}>
+              <PreviewSection
+                section={section}
+                isActive={activeSection === section.key}
+                onClick={() => onSelectSection(section.key)}
+              />
+            </PreviewErrorBoundary>
           ))}
 
           {sortedSections.length === 0 ? (
@@ -74,6 +102,8 @@ interface PreviewSectionProps {
 function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
   const content = section.content as Record<string, unknown>;
   const sectionType = section.type ?? "text";
+  const isVisible = section.visible ?? true;
+  const blockAppearance = content._appearance as BlockAppearance | undefined;
 
   function withWrapper(children: ReactNode) {
     return (
@@ -82,9 +112,15 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
         className={[
           "relative mb-4 cursor-pointer transition-all",
           isActive ? "ring-inset ring-4 ring-amber-500" : "hover:ring-2 hover:ring-inset hover:ring-amber-300",
+          !isVisible ? "opacity-45 grayscale" : "",
         ].join(" ")}
       >
-        {children}
+        <BlockAppearanceFrame appearance={blockAppearance}>
+          {children}
+        </BlockAppearanceFrame>
+        {!isVisible ? (
+          <div className="absolute left-2 top-2 z-10 rounded bg-stone-900 px-2 py-1 text-xs text-white">Masque sur le site</div>
+        ) : null}
         {isActive ? (
           <div className="absolute right-2 top-2 z-10 rounded bg-amber-500 px-2 py-1 text-xs text-white">En edition</div>
         ) : null}
@@ -123,6 +159,15 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
       return withWrapper(<BenefitsGridSection content={content as never} />);
     case "text":
       return withWrapper(<TextSection content={content as never} />);
+    case "neutral":
+      return withWrapper(<NeutralSection content={content as never} />);
+    case "spacer":
+      return withWrapper(
+        <div className="relative bg-stone-100/70">
+          <SpacerSection content={content as never} />
+          <div className="absolute inset-x-0 top-1/2 border-t border-dashed border-stone-300" />
+        </div>,
+      );
     case "quote":
     case "philosophie":
       return withWrapper(<QuoteSection content={content as never} />);

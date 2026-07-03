@@ -1,6 +1,6 @@
 import type { PageSection } from "@/lib/api-admin";
 
-type SectionTemplate = Omit<PageSection, "updatedAt">;
+type SectionTemplate = Omit<PageSection, "updatedAt" | "visible"> & { visible?: boolean };
 
 interface PageTemplate {
   slug: string;

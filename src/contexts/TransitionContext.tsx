@@ -60,69 +60,79 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
 
       timelineRef.current = tl;
 
+      // Helper: only animate if elements exist
+      const animateIfExists = (
+        selector: string,
+        vars: gsap.TweenVars,
+        position?: string,
+      ) => {
+        if (document.querySelector(selector)) {
+          tl.to(selector, vars, position);
+        }
+      };
+
       // ============================================
       // SORTIE - Slide vers la gauche, désynchronisé
       // ============================================
 
-      // Le titre part en premier, rapide et loin
-      tl.to("[data-animate='title']", {
+      animateIfExists("[data-animate='title']", {
         x: -180,
         opacity: 0,
         scale: 0.95,
         duration: 0.45,
         ease: "power3.in",
-      })
-        // Les images partent plus lentement avec rotation subtile
-        .to(
-          "[data-animate='image']",
-          {
-            x: -120,
-            opacity: 0,
-            scale: 0.92,
-            rotation: -2,
-            duration: 0.55,
-            ease: "power2.in",
+      });
+
+      animateIfExists(
+        "[data-animate='image']",
+        {
+          x: -120,
+          opacity: 0,
+          scale: 0.92,
+          rotation: -2,
+          duration: 0.55,
+          ease: "power2.in",
+        },
+        "-=0.35",
+      );
+
+      animateIfExists(
+        "[data-animate='text']",
+        {
+          x: -150,
+          opacity: 0,
+          duration: 0.5,
+          ease: "power3.in",
+        },
+        "-=0.45",
+      );
+
+      animateIfExists(
+        "[data-animate='section']",
+        {
+          x: -80,
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.in",
+          stagger: {
+            each: 0.06,
+            from: "start",
           },
-          "-=0.35",
-        )
-        // Le texte part avec un délai différent
-        .to(
-          "[data-animate='text']",
-          {
-            x: -150,
-            opacity: 0,
-            duration: 0.5,
-            ease: "power3.in",
-          },
-          "-=0.45",
-        )
-        // Les sections partent en cascade
-        .to(
-          "[data-animate='section']",
-          {
-            x: -80,
-            opacity: 0,
-            duration: 0.4,
-            ease: "power2.in",
-            stagger: {
-              each: 0.06,
-              from: "start",
-            },
-          },
-          "-=0.4",
-        )
-        // Les boutons/CTA partent en dernier
-        .to(
-          "[data-animate='cta']",
-          {
-            x: -100,
-            opacity: 0,
-            scale: 0.9,
-            duration: 0.35,
-            ease: "power3.in",
-          },
-          "-=0.3",
-        );
+        },
+        "-=0.4",
+      );
+
+      animateIfExists(
+        "[data-animate='cta']",
+        {
+          x: -100,
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.35,
+          ease: "power3.in",
+        },
+        "-=0.3",
+      );
     },
     [isTransitioning, pathname, router],
   );
@@ -132,18 +142,6 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       {children}
     </TransitionContext.Provider>
   );
-}
-
-export function useTransition(): TransitionContextType {
-  const ctx = useContext(TransitionContext);
-  // Return fallback for components rendered outside TransitionProvider (e.g., admin preview)
-  if (!ctx) {
-    return {
-      isTransitioning: false,
-      navigateTo: () => {},
-    };
-  }
-  return ctx;
 }
 
 export function useTransitionSafe(): TransitionContextType | null {

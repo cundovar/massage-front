@@ -5,6 +5,7 @@ import {
   DEFAULT_HOME,
   DEFAULT_MENTIONS,
   DEFAULT_SOINS,
+  FALLBACK_SETTINGS,
   fallbackServices,
 } from "@/lib/defaultContent";
 import type { NavigationResponse } from "@/types/navigation";
@@ -59,50 +60,6 @@ async function fetchWithTimeout(
 interface ServicesResponse {
   items: ServiceItem[];
 }
-
-const FALLBACK_SETTINGS: PublicSettings = {
-  general: {
-    siteName: "Helene Massage & Ayurveda",
-    logo: null,
-    favicon: null,
-    defaultMetaDescription: "Massages ayurvediques, reflexologie et Kobido a Paris.",
-  },
-  contact: {
-    address: { street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
-    phone: "06 12 34 56 78",
-    email: "contact@helene-massage.fr",
-    googleMapsUrl: null,
-    googleMapsEmbed: null,
-  },
-  hours: {
-    schedule: [
-      { days: "Lundi - Vendredi", hours: "10h - 20h" },
-      { days: "Samedi", hours: "10h - 18h" },
-    ],
-    closedMessage: "Ferme le dimanche",
-  },
-  social: { instagram: null, facebook: null, linkedin: null },
-  booking: { minDelayHours: 24, confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h." },
-  appearance: {
-    themePreset: "ayurveda",
-    useCustomAccent: false,
-    customAccentColor: null,
-    headerStyle: "sticky",
-    showDarkModeToggle: true,
-    bodyBackgroundImage: null,
-  },
-  footer: {
-    copyrightText: "© 2024 Helene Massage & Ayurveda",
-    quickLinks: [],
-    showSocialLinks: true,
-    showContactInfo: true,
-    showHours: false,
-    customDescription: null,
-    mentionsLegalesText: "Mentions legales",
-    showMentionsLegales: true,
-  },
-  navigation: { externalLinks: [] },
-};
 
 function normalizeSettingsPayload(raw: unknown): PublicSettings {
   if (!raw || typeof raw !== "object") {

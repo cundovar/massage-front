@@ -406,6 +406,86 @@ body.is-transitioning .page-content {
 }
 
 /* Footer theming */
+.site-footer {
+  color: var(--footer-text, #ffffff);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--footer-bg, #1c1917) 94%, transparent) 0%, color-mix(in srgb, var(--footer-surface, #1c1917) 92%, transparent) 58%, color-mix(in srgb, var(--footer-accent, #ffce67) 16%, var(--footer-bg, #1c1917) 84%) 100%);
+  border: 1px solid color-mix(in srgb, var(--footer-border, #292524) 52%, transparent);
+  border-radius: var(--footer-radius, 1.5rem);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--footer-text, #ffffff) 8%, transparent),
+    0 -12px 42px -18px color-mix(in srgb, var(--footer-glow, #ffce67) 30%, transparent);
+}
+
+.footer-pattern {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: var(--footer-pattern-opacity, 0.12);
+}
+
+.footer-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 82% 48% at 92% 100%, color-mix(in srgb, var(--footer-glow, #ffce67) 70%, transparent), transparent 68%);
+  opacity: 0.2;
+}
+
+.footer-theme-ayurveda .footer-pattern {
+  background:
+    radial-gradient(circle at 18% 20%, color-mix(in srgb, var(--footer-accent, #ffce67) 22%, transparent) 0 2px, transparent 2px 100%),
+    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--footer-glow, #f67e54) 20%, transparent) 0 3px, transparent 3px 100%);
+  background-size: 38px 38px, 54px 54px;
+}
+
+.footer-theme-spa-luxe {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--footer-bg, #292524) 96%, transparent) 0%, var(--footer-surface, #1c1917) 100%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--footer-accent, #d4a574) 24%, transparent),
+    0 -10px 36px -22px color-mix(in srgb, var(--footer-accent, #d4a574) 34%, transparent);
+}
+
+.footer-theme-spa-luxe .footer-pattern {
+  background: linear-gradient(90deg, transparent 0 48%, color-mix(in srgb, var(--footer-accent, #d4a574) 36%, transparent) 48% 52%, transparent 52% 100%);
+  background-size: 120px 100%;
+}
+
+.footer-theme-nature {
+  background:
+    radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--footer-accent, #34d399) 16%, transparent), transparent 48%),
+    linear-gradient(150deg, var(--footer-surface, #022c22) 0%, var(--footer-bg, #064e3b) 100%);
+}
+
+.footer-theme-nature .footer-pattern {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--footer-accent, #34d399) 18%, transparent) 0 1px, transparent 1px 100%),
+    linear-gradient(45deg, color-mix(in srgb, var(--footer-accent, #34d399) 12%, transparent) 0 1px, transparent 1px 100%);
+  background-size: 42px 42px;
+}
+
+.footer-theme-zen {
+  background: var(--footer-bg, #fafaf9);
+  box-shadow: none;
+}
+
+.footer-theme-zen .footer-pattern {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--footer-border, #e7e5e4) 70%, transparent) 0 1px, transparent 1px 100%);
+  background-size: 100% 28px;
+}
+
+.footer-theme-energique {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--footer-glow, #dc2626) 30%, var(--footer-bg, #7c2d12) 70%) 0%, var(--footer-surface, #431407) 100%);
+}
+
+.footer-theme-energique .footer-pattern {
+  background:
+    linear-gradient(120deg, transparent 0 38%, color-mix(in srgb, var(--footer-accent, #fb923c) 26%, transparent) 38% 42%, transparent 42% 100%);
+  background-size: 72px 100%;
+}
+
 .footer-link {
   color: inherit;
 }

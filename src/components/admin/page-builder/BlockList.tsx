@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, ChevronUp, GripVertical, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, EyeOff, GripVertical, Trash2 } from "lucide-react";
 import type { PageSection } from "@/lib/api-admin";
 import { BlockEditor } from "./BlockEditor";
 import { getBlockDefinition } from "./block-catalog";
@@ -62,6 +62,7 @@ function SortableBlock({ section, isActive, onSelect, onUpdate, onDelete, token 
   };
 
   const definition = getBlockDefinition(section.type);
+  const isVisible = section.visible ?? true;
 
   return (
     <div
@@ -71,6 +72,7 @@ function SortableBlock({ section, isActive, onSelect, onUpdate, onDelete, token 
         "rounded-xl border bg-white transition-all",
         isDragging ? "border-amber-500 opacity-90 shadow-xl" : "border-stone-200",
         isActive ? "ring-2 ring-amber-500" : "",
+        !isVisible ? "opacity-75" : "",
       ].join(" ")}
     >
       <div className="flex items-center gap-3 border-b border-stone-100 px-4 py-3">
@@ -85,6 +87,18 @@ function SortableBlock({ section, isActive, onSelect, onUpdate, onDelete, token 
 
         <span className="text-xl">{definition?.icon ?? "📄"}</span>
         <span className="flex-1 font-medium text-stone-900">{definition?.label ?? section.type}</span>
+        {!isVisible ? (
+          <span className="rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-600">Masque</span>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={() => onUpdate({ visible: !isVisible })}
+          title={isVisible ? "Masquer le bloc" : "Afficher le bloc"}
+          className="p-1 text-stone-400 hover:text-amber-600"
+        >
+          {isVisible ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+        </button>
 
         <button type="button" onClick={onSelect} className="p-1 text-stone-400 hover:text-stone-600">
           {isActive ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}

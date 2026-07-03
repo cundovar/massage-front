@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { AnimationWrapper, type AnimationEffect } from "@/components/animations/AnimationWrapper";
+import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 import { BenefitsGridSection, type BenefitsGridContent } from "@/components/dynamic/BenefitsGridSection";
 import { ContactInfoSection } from "@/components/dynamic/ContactInfoSection";
 import { FormationsSection } from "@/components/dynamic/FormationsSection";
@@ -10,8 +11,10 @@ import { GenericHeroSection, type GenericHeroContent } from "@/components/dynami
 import { GenericTextSection } from "@/components/dynamic/GenericTextSection";
 import { GoogleMapSection } from "@/components/dynamic/GoogleMapSection";
 import { ImageSection } from "@/components/dynamic/ImageSection";
+import { NeutralSection, type NeutralSectionContent } from "@/components/dynamic/NeutralSection";
 import { ParcoursSection } from "@/components/dynamic/ParcoursSection";
 import { QuoteSection } from "@/components/dynamic/QuoteSection";
+import { SpacerSection, type SpacerSectionContent } from "@/components/dynamic/SpacerSection";
 import { TextSection } from "@/components/dynamic/TextSection";
 import { MassageAmma } from "@/components/entreprise/MassageAmma";
 import { Approche } from "@/components/home/Approche";
@@ -70,35 +73,41 @@ export function SectionRenderer({
         const sectionType = section.type ?? section.sectionKey;
         const animation = section.content.animation ?? "fade-up";
         const animationDelay = section.content.animationDelay ?? 0;
+        const blockAppearance = section.content._appearance as BlockAppearance | undefined;
 
         const withAnimation = (component: ReactNode) => {
+          const framedComponent = (
+            <BlockAppearanceFrame appearance={blockAppearance}>
+              {component}
+            </BlockAppearanceFrame>
+          );
           const noAnimationTypes = ["hero-home", "hero", "hero-simple", "hero-compact"];
           if (noAnimationTypes.includes(sectionType)) {
-            return component;
+            return framedComponent;
           }
 
           return (
             <AnimationWrapper effect={animation} delay={animationDelay}>
-              {component}
+              {framedComponent}
             </AnimationWrapper>
           );
         };
 
         switch (sectionType) {
           case "hero-home":
-            return <Hero key={key} content={section.content as unknown as HeroContent} />;
+            return withAnimation(<Hero key={key} content={section.content as unknown as HeroContent} />);
 
           case "hero":
           case "hero-simple":
           case "hero-compact":
-            return (
+            return withAnimation(
               <GenericHeroSection
                 key={key}
                 content={{
                   ...(section.content as unknown as GenericHeroContent),
                   compact: sectionType === "hero-compact",
                 }}
-              />
+              />,
             );
 
           case "presentation":
@@ -120,7 +129,7 @@ export function SectionRenderer({
             );
 
           case "benefits-grid":
-            return <BenefitsGridSection key={key} content={section.content as BenefitsGridContent} />;
+            return withAnimation(<BenefitsGridSection key={key} content={section.content as BenefitsGridContent} />);
 
           case "text":
             return withAnimation(
@@ -133,6 +142,12 @@ export function SectionRenderer({
                 }}
               />,
             );
+
+          case "neutral":
+            return withAnimation(<NeutralSection key={key} content={section.content as unknown as NeutralSectionContent} />);
+
+          case "spacer":
+            return withAnimation(<SpacerSection key={key} content={section.content as unknown as SpacerSectionContent} />);
 
           case "image":
             return withAnimation(

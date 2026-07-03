@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
-import { useTransitionSafe } from "@/context/TransitionContext";
+import { useTransitionSafe } from "@/contexts/TransitionContext";
 
 interface TransitionLinkProps {
   href: string;

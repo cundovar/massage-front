@@ -90,6 +90,96 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
       ))}
 
       <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
+        <h4 className="text-sm font-medium text-stone-700">Apparence du bloc</h4>
+
+        <FieldRenderer
+          field={{
+            key: "_appearance.background",
+            label: "Fond",
+            type: "select",
+            options: [
+              { value: "transparent", label: "Transparent" },
+              { value: "soft", label: "Leger" },
+              { value: "surface", label: "Surface / carte" },
+              { value: "accent", label: "Accent theme" },
+            ],
+          }}
+          value={getValue("_appearance.background") ?? "transparent"}
+          onChange={(value) => setValue("_appearance.background", value)}
+          token={token}
+        />
+
+        <FieldRenderer
+          field={{
+            key: "_appearance.width",
+            label: "Largeur",
+            type: "select",
+            options: [
+              { value: "full", label: "Pleine largeur" },
+              { value: "wide", label: "Large" },
+              { value: "normal", label: "Normale" },
+              { value: "narrow", label: "Etroite" },
+            ],
+          }}
+          value={getValue("_appearance.width") ?? "full"}
+          onChange={(value) => setValue("_appearance.width", value)}
+          token={token}
+        />
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <FieldRenderer
+            field={{
+              key: "_appearance.paddingTop",
+              label: "Espace au-dessus",
+              type: "select",
+              options: [
+                { value: "none", label: "Aucun" },
+                { value: "sm", label: "Petit" },
+                { value: "md", label: "Moyen" },
+                { value: "lg", label: "Grand" },
+              ],
+            }}
+            value={getValue("_appearance.paddingTop") ?? "none"}
+            onChange={(value) => setValue("_appearance.paddingTop", value)}
+            token={token}
+          />
+
+          <FieldRenderer
+            field={{
+              key: "_appearance.paddingBottom",
+              label: "Espace en-dessous",
+              type: "select",
+              options: [
+                { value: "none", label: "Aucun" },
+                { value: "sm", label: "Petit" },
+                { value: "md", label: "Moyen" },
+                { value: "lg", label: "Grand" },
+              ],
+            }}
+            value={getValue("_appearance.paddingBottom") ?? "none"}
+            onChange={(value) => setValue("_appearance.paddingBottom", value)}
+            token={token}
+          />
+        </div>
+
+        <FieldRenderer
+          field={{
+            key: "_appearance.radius",
+            label: "Arrondi",
+            type: "select",
+            options: [
+              { value: "none", label: "Aucun" },
+              { value: "md", label: "Moyen" },
+              { value: "lg", label: "Grand" },
+            ],
+          }}
+          value={getValue("_appearance.radius") ?? "none"}
+          onChange={(value) => setValue("_appearance.radius", value)}
+          token={token}
+        />
+      </div>
+
+      <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
         <h4 className="text-sm font-medium text-stone-700">Animation d&apos;entree</h4>
 
         <div>

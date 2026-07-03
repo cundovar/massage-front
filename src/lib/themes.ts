@@ -34,6 +34,11 @@ export interface ThemeConfig {
     textMuted: string;
     border: string;
     linkHover: string;
+    accent: string;
+    surface: string;
+    glow: string;
+    radius: string;
+    patternOpacity: string;
   };
 }
 
@@ -78,6 +83,11 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       textMuted: "#A8A29E",
       border: "#292524",
       linkHover: "#FFCE67",
+      accent: "#FFCE67",
+      surface: "#1C1917",
+      glow: "#F67E54",
+      radius: "1.5rem",
+      patternOpacity: "0.14",
     },
   },
   "spa-luxe": {
@@ -121,6 +131,11 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       textMuted: "#A8A29E",
       border: "#44403C",
       linkHover: "#D4A574",
+      accent: "#D4A574",
+      surface: "#1C1917",
+      glow: "#C4956A",
+      radius: "0.75rem",
+      patternOpacity: "0.10",
     },
   },
   nature: {
@@ -163,6 +178,11 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       textMuted: "#A7F3D0",
       border: "#047857",
       linkHover: "#34D399",
+      accent: "#34D399",
+      surface: "#022C22",
+      glow: "#10B981",
+      radius: "1.5rem",
+      patternOpacity: "0.16",
     },
   },
   zen: {
@@ -206,6 +226,11 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       textMuted: "#78716C",
       border: "#E7E5E4",
       linkHover: "#57534E",
+      accent: "#78716C",
+      surface: "#FFFFFF",
+      glow: "#E7E5E4",
+      radius: "0",
+      patternOpacity: "0.06",
     },
   },
   energique: {
@@ -248,6 +273,11 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       textMuted: "#FDBA74",
       border: "#9A3412",
       linkHover: "#FB923C",
+      accent: "#FB923C",
+      surface: "#431407",
+      glow: "#DC2626",
+      radius: "1rem",
+      patternOpacity: "0.18",
     },
   },
 };
@@ -293,6 +323,11 @@ export function generateThemeCSS(theme: ThemeConfig, customAccentColor?: string)
       --footer-text-muted: ${theme.footer.textMuted};
       --footer-border: ${theme.footer.border};
       --footer-link-hover: ${theme.footer.linkHover};
+      --footer-accent: ${customAccentColor || theme.footer.accent};
+      --footer-surface: ${theme.footer.surface};
+      --footer-glow: ${customAccentColor || theme.footer.glow};
+      --footer-radius: ${theme.footer.radius};
+      --footer-pattern-opacity: ${theme.footer.patternOpacity};
     }
 
     [data-theme="dark"] {
@@ -315,6 +350,11 @@ export function generateThemeCSS(theme: ThemeConfig, customAccentColor?: string)
       --color-text-secondary: ${theme.dark.textSecondary};
       --color-background: ${theme.dark.background};
       --color-background-alt: ${theme.dark.backgroundAlt};
+
+      --footer-bg: ${theme.footer.surface};
+      --footer-text: ${theme.dark.textPrimary};
+      --footer-text-muted: ${theme.dark.textSecondary};
+      --footer-border: ${theme.dark.cardBorder};
     }
   `;
 }

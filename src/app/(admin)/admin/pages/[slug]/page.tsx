@@ -72,6 +72,7 @@ export default function PageEditorPage() {
           title: section.title,
           content: section.content,
           sortOrder: section.sortOrder,
+          visible: section.visible,
         });
       } else {
         await createSection(token, params.slug, {
@@ -80,6 +81,7 @@ export default function PageEditorPage() {
           title: section.title,
           content: section.content,
           sortOrder: section.sortOrder,
+          visible: section.visible,
         });
       }
     }

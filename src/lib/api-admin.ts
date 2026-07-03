@@ -91,6 +91,7 @@ export interface PageSection {
   title: string | null;
   content: Record<string, unknown>;
   sortOrder: number;
+  visible: boolean;
   updatedAt: string;
 }
 
@@ -276,6 +277,7 @@ export interface CreateSectionPayload {
   title?: string | null;
   content?: Record<string, unknown>;
   sortOrder?: number;
+  visible?: boolean;
 }
 
 export interface UpdatePagePayload {
@@ -409,7 +411,7 @@ export async function updateSection(
   token: string,
   slug: string,
   sectionKey: string,
-  data: { title?: string | null; content?: Record<string, unknown>; sortOrder?: number },
+  data: { title?: string | null; content?: Record<string, unknown>; sortOrder?: number; visible?: boolean },
 ): Promise<PageSection> {
   const response = await fetch(`${API_BASE_URL}/api/admin/pages/${slug}/sections/${sectionKey}`, {
     method: "PUT",

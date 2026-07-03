@@ -1,4 +1,6 @@
 import type { ServiceItem } from "@/types";
+import type { NavItem } from "@/types/navigation";
+import type { PublicSettings } from "@/types/settings";
 
 export const DEFAULT_HOME = {
   seo: {
@@ -197,3 +199,67 @@ export const fallbackServices: ServiceItem[] = [
     sortOrder: 1,
   },
 ];
+
+// ============================================================
+// Layout fallbacks (Header, Footer, API)
+// ============================================================
+
+export const FALLBACK_NAV: NavItem[] = [
+  { slug: "home", title: "Accueil", path: "/" },
+  { slug: "soins", title: "Carte & tarifs", path: "/soins" },
+  { slug: "entreprise", title: "Entreprise", path: "/entreprise" },
+  { slug: "about", title: "A propos", path: "/a-propos" },
+  { slug: "contact", title: "Contact", path: "/contact" },
+];
+
+export const FALLBACK_SETTINGS: PublicSettings = {
+  general: {
+    siteName: "Helene Massage & Ayurveda",
+    logo: null,
+    favicon: null,
+    defaultMetaDescription: "Massages ayurvediques, reflexologie et Kobido a Paris.",
+  },
+  contact: {
+    address: { street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
+    phone: "06 12 34 56 78",
+    email: "contact@helene-massage.fr",
+    googleMapsUrl: null,
+    googleMapsEmbed: null,
+  },
+  hours: {
+    schedule: [
+      { days: "Lundi - Vendredi", hours: "10h - 20h" },
+      { days: "Samedi", hours: "10h - 18h" },
+    ],
+    closedMessage: "Ferme le dimanche",
+  },
+  social: { instagram: null, facebook: null, linkedin: null },
+  booking: {
+    minDelayHours: 24,
+    confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h.",
+  },
+  appearance: {
+    themePreset: "ayurveda",
+    useCustomAccent: false,
+    customAccentColor: null,
+    headerStyle: "sticky",
+    showDarkModeToggle: true,
+    bodyBackgroundImage: null,
+  },
+  footer: {
+    copyrightText: "© 2024 Helene Massage & Ayurveda",
+    quickLinks: [
+      { label: "Accueil", url: "/" },
+      { label: "Soins", url: "/soins" },
+      { label: "À propos", url: "/a-propos" },
+      { label: "Contact", url: "/contact" },
+    ],
+    showSocialLinks: true,
+    showContactInfo: true,
+    showHours: false,
+    customDescription: null,
+    mentionsLegalesText: "Mentions legales",
+    showMentionsLegales: true,
+  },
+  navigation: { externalLinks: [] },
+};

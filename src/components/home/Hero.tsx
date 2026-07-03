@@ -10,7 +10,7 @@ interface HeroVisualOptions {
   siteSubtitle?: string;
   buttonText?: string;
   buttonLink?: string;
-  backgroundType?: "image" | "gradient";
+  backgroundType?: "image" | "gradient" | "transparent";
   gradientStart?: string;
   gradientEnd?: string;
   textColor?: string;
@@ -36,7 +36,8 @@ export function Hero({ content }: HeroProps) {
           ],
     [content.slides],
   );
-  const backgroundType = content.backgroundType === "gradient" ? "gradient" : "image";
+  const backgroundType = content.backgroundType === "gradient" || content.backgroundType === "transparent" ? content.backgroundType : "image";
+  const isTransparent = backgroundType === "transparent";
   const imageSlides = useMemo(
     () =>
       slides
@@ -48,7 +49,10 @@ export function Hero({ content }: HeroProps) {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const gradientStart = content.gradientStart || "var(--primary-start)";
   const gradientEnd = content.gradientEnd || "var(--primary-end)";
-  const textColor = content.textColor || "#F5F5F4";
+  const configuredTextColor = content.textColor || "#F5F5F4";
+  const textColor = isTransparent && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
+    ? "var(--color-text-primary)"
+    : configuredTextColor;
 
   const blurValue = Number.parseInt(String(content.backgroundBlur ?? "0"), 10);
   const backgroundBlur = Number.isFinite(blurValue) ? Math.max(0, Math.min(8, blurValue)) : 0;
@@ -75,11 +79,14 @@ export function Hero({ content }: HeroProps) {
 
   return (
     <section
-      className="glass-panel w-full overflow-hidden rounded-3xl px-4 sm:px-6 md:px-12 min-h-[60vh] md:min-h-[70vh] lg:min-h-[80vh]"
+      className={[
+        "relative w-full overflow-hidden px-4 sm:px-6 md:px-12 min-h-[60vh] md:min-h-[70vh] lg:min-h-[80vh]",
+        isTransparent ? "bg-transparent" : "glass-panel rounded-3xl",
+      ].join(" ")}
       data-animate="section"
     >
       <div className="absolute inset-0">
-        {useImageBackground ? (
+        {isTransparent ? null : useImageBackground ? (
           imageSlides.map((slide, index) => (
             <div
               key={`${slide.title ?? "slide"}-${index}`}
@@ -102,8 +109,12 @@ export function Hero({ content }: HeroProps) {
             style={{ background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})` }}
           />
         )}
-        <div className="absolute inset-0" />
-        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/30 to-black/90" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
+        {!isTransparent ? (
+          <>
+            <div className="absolute inset-0" />
+            <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/30 to-black/90" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
+          </>
+        ) : null}
       </div>
 
       <div className="js-hero-content relative z-10 mx-auto flex min-h-[60vh] md:min-h-[65vh] max-w-4xl flex-col items-center justify-center py-8 text-center md:py-12" style={{ color: textColor }}>

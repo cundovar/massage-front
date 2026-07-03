@@ -7,7 +7,7 @@ export interface GenericHeroContent {
   subtitle?: string;
   image?: string;
   compact?: boolean;
-  backgroundType?: "image" | "gradient";
+  backgroundType?: "image" | "gradient" | "transparent";
   gradientStart?: string;
   gradientEnd?: string;
   textColor?: string;
@@ -19,11 +19,15 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   const imageUrl = getImageUrl(content.image);
   const isCompact = content.compact ?? false;
   const hasImage = Boolean(imageUrl);
-  const backgroundType = content.backgroundType === "gradient" ? "gradient" : "image";
+  const backgroundType = content.backgroundType === "gradient" || content.backgroundType === "transparent" ? content.backgroundType : "image";
+  const isTransparent = backgroundType === "transparent";
   const useImageBackground = backgroundType === "image" && hasImage;
   const gradientStart = content.gradientStart || "var(--primary-start)";
   const gradientEnd = content.gradientEnd || "var(--primary-end)";
-  const textColor = content.textColor || (useImageBackground ? "#FFFFFF" : "var(--color-text-primary)");
+  const configuredTextColor = content.textColor || (useImageBackground ? "#FFFFFF" : "var(--color-text-primary)");
+  const textColor = isTransparent && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
+    ? "var(--color-text-primary)"
+    : configuredTextColor;
 
   const blurValue = Number.parseInt(String(content.backgroundBlur ?? "0"), 10);
   const backgroundBlur = Number.isFinite(blurValue) ? Math.max(0, Math.min(8, blurValue)) : 0;
@@ -34,7 +38,7 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   if (isCompact) {
     return (
       <section className="relative overflow-hidden py-20">
-        {useImageBackground ? (
+        {isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
             alt={content.title ?? ""}
@@ -50,7 +54,9 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
             style={{ background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})` }}
           />
         )}
-        <div className="absolute inset-0 bg-black" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.4 }} />
+        {!isTransparent ? (
+          <div className="absolute inset-0 bg-black" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.4 }} />
+        ) : null}
         <div className="relative mx-auto max-w-7xl px-6" style={{ color: textColor }}>
           {content.title ? <h1 className="heading-hero">{content.title}</h1> : null}
           {content.subtitle ? (
@@ -64,9 +70,9 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   }
 
   return (
-    <section className="relative min-h-[60vh] w-full overflow-hidden rounded-3xl">
+    <section className={`relative min-h-[60vh] w-full overflow-hidden ${isTransparent ? "" : "rounded-3xl"}`}>
       <div className="absolute inset-0">
-        {useImageBackground ? (
+        {isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
             alt=""
@@ -81,7 +87,9 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
             style={{ background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})` }}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
+        {!isTransparent ? (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
+        ) : null}
       </div>
       <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
         {content.title ? (

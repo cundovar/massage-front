@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
-import { TransitionProvider } from "@/context/TransitionContext";
+import { TransitionProvider } from "@/contexts/TransitionContext";
 import { PageWrapper } from "@/components/transitions/PageWrapper";
 import type { NavItem } from "@/types/navigation";
 import type { PublicSettings } from "@/types/settings";

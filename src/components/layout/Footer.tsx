@@ -1,65 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { FALLBACK_SETTINGS } from "@/lib/defaultContent";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { PublicSettings } from "@/types/settings";
 
-const FALLBACK_SETTINGS: PublicSettings = {
-  general: {
-    siteName: "Helene Massage & Ayurveda",
-    logo: null,
-    favicon: null,
-    defaultMetaDescription: "Massages ayurvediques, reflexologie et Kobido a Paris.",
-  },
-  contact: {
-    address: { street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
-    phone: "06 12 34 56 78",
-    email: "contact@helene-massage.fr",
-    googleMapsUrl: null,
-    googleMapsEmbed: null,
-  },
-  hours: {
-    schedule: [
-      { days: "Lundi - Vendredi", hours: "10h - 20h" },
-      { days: "Samedi", hours: "10h - 18h" },
-    ],
-    closedMessage: "Ferme le dimanche",
-  },
-  social: { instagram: null, facebook: null, linkedin: null },
-  booking: {
-    minDelayHours: 24,
-    confirmationMessage: "Merci pour votre demande. Je vous recontacte dans les 24h.",
-  },
-  appearance: {
-    themePreset: "ayurveda",
-    useCustomAccent: false,
-    customAccentColor: null,
-    headerStyle: "sticky",
-    showDarkModeToggle: true,
-    bodyBackgroundImage: null,
-  },
-  footer: {
-    copyrightText: "© 2024 Helene Massage & Ayurveda",
-    quickLinks: [
-      { label: "Accueil", url: "/" },
-      { label: "Soins", url: "/soins" },
-      { label: "À propos", url: "/a-propos" },
-      { label: "Contact", url: "/contact" },
-    ],
-    showSocialLinks: true,
-    showContactInfo: true,
-    showHours: false,
-    customDescription: null,
-    mentionsLegalesText: "Mentions legales",
-    showMentionsLegales: true,
-  },
-  navigation: {
-    externalLinks: [],
-  },
-};
-
 function isInternalUrl(url: string): boolean {
   return url.startsWith("/");
+}
+
+function getFooterClassName(themePreset: PublicSettings["appearance"]["themePreset"]): string {
+  const themeClasses: Record<PublicSettings["appearance"]["themePreset"], string> = {
+    ayurveda: "footer-theme-ayurveda",
+    "spa-luxe": "footer-theme-spa-luxe",
+    nature: "footer-theme-nature",
+    zen: "footer-theme-zen",
+    energique: "footer-theme-energique",
+  };
+
+  return themeClasses[themePreset] ?? themeClasses.ayurveda;
 }
 
 interface FooterProps {
@@ -99,17 +58,13 @@ export function Footer({ initialSettings }: FooterProps) {
 
   const addressLine = [settings.contact.address.postalCode, settings.contact.address.city].filter(Boolean).join(" ");
   const telHref = settings.contact.phone.replace(/\s+/g, "");
+  const footerThemeClassName = getFooterClassName(settings.appearance.themePreset);
 
   return (
     <footer
-      className="relative mx-4 mb-4 overflow-hidden rounded-3xl py-16 backdrop-blur-2xl md:mx-6"
-      style={{
-        background: "linear-gradient(160deg, color-mix(in srgb, var(--footer-bg, #1C1917) 92%, transparent) 0%, color-mix(in srgb, var(--footer-bg, #1C1917) 85%, transparent) 60%, color-mix(in srgb, var(--primary-start, #FFCE67) 12%, var(--footer-bg, #1C1917) 88%) 100%)",
-        color: "var(--footer-text, #FFFFFF)",
-        border: "1px solid color-mix(in srgb, var(--footer-border, #292524) 40%, transparent)",
-        boxShadow: "inset 0 1px 0 0 color-mix(in srgb, var(--footer-text, #FFFFFF) 8%, transparent), 0 -10px 40px -10px color-mix(in srgb, var(--primary-start, #FFCE67) 10%, transparent)",
-      }}
+      className={`site-footer ${footerThemeClassName} relative mx-4 mb-4 overflow-hidden py-16 md:mx-6`}
     >
+      <div className="footer-pattern" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <div className="grid gap-12 md:grid-cols-4">
           {/* Titre + Description + Réseaux sociaux */}
@@ -222,7 +177,7 @@ export function Footer({ initialSettings }: FooterProps) {
         <div
           className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 text-sm md:flex-row"
           style={{
-            borderColor: "color-mix(in srgb, var(--footer-border, #292524) 40%, transparent)",
+            borderColor: "color-mix(in srgb, var(--footer-border, #292524) 52%, transparent)",
             color: "var(--footer-text-muted, #A8A29E)",
           }}
         >
@@ -237,10 +192,7 @@ export function Footer({ initialSettings }: FooterProps) {
 
       {/* Decorative gradient overlay */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.12]"
-        style={{
-          background: "radial-gradient(ellipse 80% 50% at 90% 100%, var(--primary-start, #FFCE67), transparent)",
-        }}
+        className="footer-glow"
         aria-hidden="true"
       />
     </footer>

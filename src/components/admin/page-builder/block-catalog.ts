@@ -21,6 +21,7 @@ export interface FieldDefinition {
 export const BLOCK_CATEGORIES = [
   { id: "header", label: "En-tete", icon: "📌" },
   { id: "content", label: "Contenu", icon: "📝" },
+  { id: "layout", label: "Mise en page", icon: "↕️" },
   { id: "services", label: "Services & Tarifs", icon: "💰" },
   { id: "about", label: "A propos", icon: "👤" },
   { id: "contact", label: "Contact", icon: "📍" },
@@ -65,6 +66,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         options: [
           { value: "image", label: "Photo (slides)" },
           { value: "gradient", label: "Gradient" },
+          { value: "transparent", label: "Transparent" },
         ],
       },
       { key: "gradientStart", label: "Gradient debut", type: "color" },
@@ -106,6 +108,96 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     ],
   },
   {
+    type: "neutral",
+    label: "Bloc neutre",
+    description: "Section simple et polyvalente avec fond, largeur et alignement reglables",
+    icon: "▫️",
+    category: "content",
+    defaultContent: {
+      eyebrow: "",
+      title: "",
+      subtitle: "",
+      paragraphs: [""],
+      buttonText: "",
+      buttonLink: "",
+      align: "left",
+      width: "normal",
+      background: "transparent",
+      spacing: "normal",
+    },
+    fields: [
+      { key: "eyebrow", label: "Petit libelle", type: "text", placeholder: "A retenir" },
+      { key: "title", label: "Titre", type: "text", placeholder: "Titre de section" },
+      { key: "subtitle", label: "Sous-titre", type: "textarea", placeholder: "Phrase courte optionnelle" },
+      { key: "paragraphs", label: "Paragraphes", type: "array", arrayItemType: "textarea" },
+      { key: "buttonText", label: "Texte du bouton", type: "text", placeholder: "En savoir plus" },
+      { key: "buttonLink", label: "Lien du bouton", type: "page-link", placeholder: "/contact" },
+      {
+        key: "align",
+        label: "Alignement",
+        type: "select",
+        options: [
+          { value: "left", label: "Gauche" },
+          { value: "center", label: "Centre" },
+        ],
+      },
+      {
+        key: "width",
+        label: "Largeur",
+        type: "select",
+        options: [
+          { value: "narrow", label: "Etroite" },
+          { value: "normal", label: "Normale" },
+          { value: "wide", label: "Large" },
+        ],
+      },
+      {
+        key: "background",
+        label: "Fond",
+        type: "select",
+        options: [
+          { value: "transparent", label: "Transparent" },
+          { value: "soft", label: "Leger" },
+          { value: "card", label: "Carte" },
+        ],
+      },
+      {
+        key: "spacing",
+        label: "Espacement",
+        type: "select",
+        options: [
+          { value: "compact", label: "Compact" },
+          { value: "normal", label: "Normal" },
+          { value: "large", label: "Large" },
+        ],
+      },
+    ],
+  },
+  {
+    type: "spacer",
+    label: "Espacement",
+    description: "Ajoute un espace vertical entre deux blocs",
+    icon: "↕️",
+    category: "layout",
+    defaultContent: {
+      size: "md",
+    },
+    fields: [
+      {
+        key: "size",
+        label: "Hauteur",
+        type: "select",
+        options: [
+          { value: "xs", label: "Tres petit" },
+          { value: "sm", label: "Petit" },
+          { value: "md", label: "Moyen" },
+          { value: "lg", label: "Grand" },
+          { value: "xl", label: "Tres grand" },
+        ],
+      },
+    ],
+  },
+  {
     type: "hero",
     label: "Banniere simple",
     description: "Grande image avec titre et sous-titre centre",
@@ -130,6 +222,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         options: [
           { value: "image", label: "Photo" },
           { value: "gradient", label: "Gradient" },
+          { value: "transparent", label: "Transparent" },
         ],
       },
       { key: "image", label: "Image de fond", type: "image" },
@@ -188,6 +281,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         options: [
           { value: "image", label: "Photo" },
           { value: "gradient", label: "Gradient" },
+          { value: "transparent", label: "Transparent" },
         ],
       },
       { key: "image", label: "Image de fond", type: "image" },

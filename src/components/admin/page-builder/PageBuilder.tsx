@@ -61,6 +61,7 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
         title: null,
         content: JSON.parse(JSON.stringify(definition.defaultContent)) as Record<string, unknown>,
         sortOrder: sections.length,
+        visible: true,
         updatedAt: new Date().toISOString(),
       };
 
@@ -78,6 +79,7 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
     const now = new Date().toISOString();
     const newSections: PageSection[] = template.map((section) => ({
       ...section,
+      visible: section.visible ?? true,
       updatedAt: now,
     }));
 
