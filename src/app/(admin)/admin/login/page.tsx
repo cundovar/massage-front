@@ -43,6 +43,11 @@ export default function AdminLoginPage() {
           <button type="submit" className="w-full rounded-md bg-amber-500 px-4 py-2 text-white hover:bg-amber-600">Se connecter</button>
         </form>
         <p className="mt-4 text-sm text-stone-600">
+          <Link href="/admin/forgot-password" className="font-medium text-amber-700 hover:text-amber-800">
+            Mot de passe oublie ?
+          </Link>
+        </p>
+        <p className="mt-4 text-sm text-stone-600">
           Pas de compte admin ? <Link href="/register" className="font-medium text-amber-700 hover:text-amber-800">Creer un compte</Link>
         </p>
       </section>
