@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { SwipeMenu } from "@/components/layout/SwipeMenu";
 import { TransitionProvider } from "@/contexts/TransitionContext";
 import { PageWrapper } from "@/components/transitions/PageWrapper";
 import type { NavItem } from "@/types/navigation";
@@ -36,6 +37,7 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
       </div>
 
       <BottomNav showThemeToggle={showMobileToggle} />
+      <SwipeMenu initialNavItems={initialNavItems} />
     </TransitionProvider>
   );
 }
