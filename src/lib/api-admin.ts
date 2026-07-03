@@ -29,6 +29,10 @@ export interface UpdatePasswordResponse {
   requiresLogin: boolean;
 }
 
+export interface PasswordResetResponse {
+  message: string;
+}
+
 export interface CountNewResponse {
   count: number;
 }
@@ -528,6 +532,36 @@ export async function registerAdmin(name: string, email: string, password: strin
   }
 
   return (await response.json()) as RegisterResponse;
+}
+
+export async function requestAdminPasswordReset(email: string): Promise<PasswordResetResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/password/forgot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Impossible d'envoyer la demande de reinitialisation.");
+  }
+
+  return (await response.json()) as PasswordResetResponse;
+}
+
+export async function resetAdminPassword(token: string, password: string): Promise<PasswordResetResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/password/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Le lien de reinitialisation est invalide ou expire.");
+  }
+
+  return (await response.json()) as PasswordResetResponse;
 }
 
 export async function fetchAdminApi<T>(path: string, token: string): Promise<T> {
