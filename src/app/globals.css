@@ -493,3 +493,357 @@ body.is-transitioning .page-content {
 .footer-link:hover {
   color: var(--footer-link-hover, #FFCE67);
 }
+
+/* ============================================================
+   Hero ensō + encens (sumi-e) — styles du composant EnsoBackdrop
+   ============================================================ */
+.enso-hero {
+  --washi: #f5efe3;
+  --washi-deep: #ece3d1;
+  --sumi: #33302a;
+  --sumi-soft: #55504699;
+  --ocre: #b0721e;
+  --smoke: #6b655c;
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 10%, #faf6ec 0%, var(--washi) 55%, var(--washi-deep) 100%);
+}
+
+/* grain washi très léger */
+.enso-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.enso-hero .enso-wrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.enso-hero .enso {
+  width: min(78vmin, 640px);
+  height: min(78vmin, 640px);
+  opacity: 0.9;
+}
+
+.enso-hero .enso path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 1520;
+  stroke-dashoffset: 1520;
+}
+
+.enso-hero .enso .trait-principal {
+  stroke: var(--sumi);
+  stroke-width: 10;
+  filter: url(#enso-brosse);
+}
+
+.enso-hero .enso .trait-seconde {
+  stroke: var(--sumi-soft);
+  stroke-width: 17;
+  filter: url(#enso-brosse2);
+}
+
+.enso-hero .enso.draw .trait-seconde {
+  animation: enso-dessiner 3.4s cubic-bezier(0.55, 0.06, 0.28, 0.99) 0.5s forwards;
+}
+
+.enso-hero .enso.draw .trait-principal {
+  animation: enso-dessiner 3.4s cubic-bezier(0.55, 0.06, 0.28, 0.99) 0.62s forwards;
+}
+
+@keyframes enso-dessiner {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.enso-hero .encens {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 62vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.enso-hero .encens svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.enso-hero .baton {
+  stroke: #4a4238;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.enso-hero .braise {
+  fill: var(--ocre);
+  animation: enso-braiser 3.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.enso-hero .braise-halo {
+  fill: var(--ocre);
+  opacity: 0.25;
+  animation: enso-braiser 3.2s ease-in-out infinite reverse;
+}
+
+@keyframes enso-braiser {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.enso-hero .volute {
+  fill: none;
+  stroke: var(--smoke);
+  stroke-linecap: round;
+  opacity: 0;
+  animation: enso-fumer 1.8s ease 0.8s forwards;
+}
+
+@keyframes enso-fumer {
+  to {
+    opacity: 1;
+  }
+}
+
+.enso-hero .volute.v1 {
+  stroke-width: 2.2;
+  stroke-opacity: 0.3;
+}
+.enso-hero .volute.v2 {
+  stroke-width: 1.4;
+  stroke-opacity: 0.22;
+}
+.enso-hero .volute.v3 {
+  stroke-width: 3.2;
+  stroke-opacity: 0.14;
+}
+
+@media (max-width: 640px) {
+  .enso-hero .encens {
+    width: 200px;
+    height: 55vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enso-hero .enso path {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  .enso-hero .braise,
+  .enso-hero .braise-halo {
+    animation: none !important;
+    opacity: 0.8;
+  }
+  .enso-hero .volute {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   Hero vagues & ondes — styles du composant WavesBackdrop
+   ============================================================ */
+.waves-hero {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Ciel dérivé du thème choisi par l'admin (fond + accent) */
+  background: linear-gradient(
+    180deg,
+    var(--background-alt) 0%,
+    var(--background) 50%,
+    color-mix(in srgb, var(--primary-start) 12%, var(--background)) 100%
+  );
+}
+
+/* Ondes concentriques */
+.waves-hero .gouttes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.waves-hero .goutte {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--primary-end) 40%, transparent);
+  opacity: 0;
+  animation: waves-onde 7s ease-out infinite;
+}
+
+.waves-hero .goutte::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--primary-end) 22%, transparent);
+  animation: inherit;
+  animation-delay: 0.9s;
+}
+
+.waves-hero .g1 {
+  width: 140px;
+  height: 140px;
+  top: 24%;
+  left: 16%;
+  animation-delay: 0s;
+}
+.waves-hero .g2 {
+  width: 100px;
+  height: 100px;
+  top: 60%;
+  left: 74%;
+  animation-delay: 2.4s;
+}
+.waves-hero .g3 {
+  width: 170px;
+  height: 170px;
+  top: 14%;
+  left: 68%;
+  animation-delay: 4.8s;
+}
+
+@keyframes waves-onde {
+  0% {
+    transform: scale(0.25);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.8;
+  }
+  55% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Vagues */
+.waves-hero .vagues {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34vh;
+  min-height: 210px;
+  z-index: 1;
+}
+
+.waves-hero .vague {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%; /* deux périodes => boucle sans couture */
+  height: 100%;
+  /* La forme vient d'un mask SVG ; la couleur vient du thème (background-color) */
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 50% 100%;
+  mask-size: 50% 100%;
+  -webkit-mask-position: bottom;
+  mask-position: bottom;
+  animation: waves-houle linear infinite;
+  will-change: transform;
+}
+
+.waves-hero .vague.l1 {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 160 C 200 120, 400 200, 600 160 C 800 120, 1000 200, 1200 160 L1200 320 L0 320 Z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 160 C 200 120, 400 200, 600 160 C 800 120, 1000 200, 1200 160 L1200 320 L0 320 Z' fill='%23000'/%3E%3C/svg%3E");
+  background-color: color-mix(in srgb, var(--primary-start) 26%, var(--background));
+  animation-duration: 26s;
+  opacity: 0.9;
+}
+.waves-hero .vague.l2 {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 190 C 250 150, 350 235, 600 195 C 850 155, 950 240, 1200 190 L1200 320 L0 320 Z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 190 C 250 150, 350 235, 600 195 C 850 155, 950 240, 1200 190 L1200 320 L0 320 Z' fill='%23000'/%3E%3C/svg%3E");
+  background-color: color-mix(in srgb, var(--primary-start) 44%, var(--background));
+  animation-duration: 19s;
+  animation-direction: reverse;
+  opacity: 0.9;
+}
+.waves-hero .vague.l3 {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 230 C 180 200, 420 265, 600 235 C 780 205, 1020 270, 1200 230 L1200 320 L0 320 Z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 230 C 180 200, 420 265, 600 235 C 780 205, 1020 270, 1200 230 L1200 320 L0 320 Z' fill='%23000'/%3E%3C/svg%3E");
+  background-color: color-mix(in srgb, var(--primary-end) 60%, var(--background));
+  animation-duration: 13s;
+}
+
+@keyframes waves-houle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Léger balancement vertical par couche */
+.waves-hero .vague-osc {
+  position: absolute;
+  inset: 0;
+  animation: waves-tangage 9s ease-in-out infinite alternate;
+}
+.waves-hero .vague-osc.o2 {
+  animation-duration: 11s;
+  animation-delay: -3s;
+}
+.waves-hero .vague-osc.o3 {
+  animation-duration: 7s;
+  animation-delay: -1.5s;
+}
+
+@keyframes waves-tangage {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 640px) {
+  .waves-hero .vagues {
+    height: 26vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waves-hero .vague,
+  .waves-hero .vague-osc,
+  .waves-hero .goutte,
+  .waves-hero .goutte::after {
+    animation: none !important;
+  }
+  .waves-hero .goutte {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+}

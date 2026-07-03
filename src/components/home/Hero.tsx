@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/api";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
+import { getAnimationMeta } from "@/lib/heroAnimations";
+import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
 import type { HeroContent } from "@/lib/api";
 
 interface HeroVisualOptions {
@@ -16,6 +18,7 @@ interface HeroVisualOptions {
   textColor?: string;
   backgroundBlur?: string | number;
   overlayOpacity?: string | number;
+  animation?: string;
 }
 
 interface HeroProps {
@@ -49,8 +52,14 @@ export function Hero({ content }: HeroProps) {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const gradientStart = content.gradientStart || "var(--primary-start)";
   const gradientEnd = content.gradientEnd || "var(--primary-end)";
+  const animationMeta = getAnimationMeta(content.animation);
+  const AnimationComponent = HERO_ANIMATION_COMPONENTS[animationMeta.id];
+  // Une animation "background" remplace le fond (image/gradient) : fond souvent clair -> texte foncé.
+  const isBackgroundAnimation = animationMeta.mode === "background" && Boolean(AnimationComponent);
+
   const configuredTextColor = content.textColor || "#F5F5F4";
-  const textColor = isTransparent && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
+  const useThemeText = isTransparent || isBackgroundAnimation;
+  const textColor = useThemeText && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
     ? "var(--color-text-primary)"
     : configuredTextColor;
 
@@ -81,11 +90,15 @@ export function Hero({ content }: HeroProps) {
     <section
       className={[
         "relative w-full overflow-hidden px-4 sm:px-6 md:px-12 min-h-[60vh] md:min-h-[70vh] lg:min-h-[80vh]",
-        isTransparent ? "bg-transparent" : "glass-panel rounded-3xl",
+        isBackgroundAnimation ? "rounded-3xl" : isTransparent ? "bg-transparent" : "glass-panel rounded-3xl",
       ].join(" ")}
       data-animate="section"
     >
       <div className="absolute inset-0">
+        {isBackgroundAnimation ? (
+          <AnimationComponent />
+        ) : (
+          <>
         {isTransparent ? null : useImageBackground ? (
           imageSlides.map((slide, index) => (
             <div
@@ -115,6 +128,9 @@ export function Hero({ content }: HeroProps) {
             <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/30 to-black/90" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
           </>
         ) : null}
+        {AnimationComponent && animationMeta.mode === "overlay" ? <AnimationComponent /> : null}
+          </>
+        )}
       </div>
 
       <div className="js-hero-content relative z-10 mx-auto flex min-h-[60vh] md:min-h-[65vh] max-w-4xl flex-col items-center justify-center py-8 text-center md:py-12" style={{ color: textColor }}>

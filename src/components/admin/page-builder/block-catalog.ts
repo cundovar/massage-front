@@ -1,3 +1,5 @@
+import { ANIMATION_OPTIONS } from "@/lib/heroAnimations";
+
 export interface BlockDefinition {
   type: string;
   label: string;
@@ -41,6 +43,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       buttonText: "",
       buttonLink: "",
       backgroundType: "image",
+      animation: "none",
       gradientStart: "#FFCE67",
       gradientEnd: "#F67E54",
       textColor: "#F5F5F4",
@@ -68,6 +71,12 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
           { value: "gradient", label: "Gradient" },
           { value: "transparent", label: "Transparent" },
         ],
+      },
+      {
+        key: "animation",
+        label: "Animation de fond",
+        type: "select",
+        options: ANIMATION_OPTIONS,
       },
       { key: "gradientStart", label: "Gradient debut", type: "color" },
       { key: "gradientEnd", label: "Gradient fin", type: "color" },
