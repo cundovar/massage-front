@@ -100,13 +100,22 @@ export function PetalsBackdrop() {
       };
     };
 
-    const init = () => {
+    const resizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
+      const nextWidth = canvas.clientWidth;
+      const nextHeight = canvas.clientHeight;
+      if (nextWidth <= 0 || nextHeight <= 0) return false;
+
+      width = nextWidth;
+      height = nextHeight;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return true;
+    };
+
+    const init = () => {
+      if (!resizeCanvas()) return;
       prev = null;
       elements = [];
       ondes = [];
@@ -117,6 +126,43 @@ export function PetalsBackdrop() {
       if (reduced) {
         elements = elements.map((element) => ({ ...element, etat: "flotte", y: element.surfaceY }));
       }
+    };
+
+    const resizePreserve = () => {
+      const previousWidth = width;
+      const previousHeight = height;
+      if (!resizeCanvas() || previousWidth <= 0 || previousHeight <= 0) return;
+
+      const scaleX = width / previousWidth;
+      const scaleY = height / previousHeight;
+      const scaleSize = Math.min(scaleX, scaleY);
+      const targetCount = nbElements();
+
+      for (const element of elements) {
+        element.x *= scaleX;
+        element.y *= scaleY;
+        element.surfaceY *= scaleY;
+        element.taille *= scaleSize;
+        element.swayAmp *= scaleX;
+        element.vy *= scaleY;
+        element.driftX *= scaleX;
+        element.profondeur = (element.surfaceY - height * 0.58) / (height * 0.32);
+      }
+
+      for (const onde of ondes) {
+        onde.x *= scaleX;
+        onde.y *= scaleY;
+        onde.r *= scaleSize;
+      }
+
+      while (elements.length < targetCount) {
+        elements.push(creer(true));
+      }
+      if (elements.length > targetCount) {
+        elements = elements.slice(0, targetCount);
+      }
+
+      prev = null;
     };
 
     const dessinerPetale = (element: FloatingElement) => {
@@ -249,7 +295,7 @@ export function PetalsBackdrop() {
 
     const onResize = () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(init, 180);
+      resizeTimer = window.setTimeout(resizePreserve, 180);
     };
 
     init();
