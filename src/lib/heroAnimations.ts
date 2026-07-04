@@ -20,6 +20,8 @@ export interface HeroAnimationMeta {
 export const HERO_ANIMATIONS: HeroAnimationMeta[] = [
   { id: "none", label: "Aucune", mode: "overlay" },
   { id: "enso", label: "Ensō & encens (sumi-e)", mode: "background" },
+  { id: "karesansui", label: "Jardin zen karesansui", mode: "background" },
+  { id: "oil", label: "Goutte d'huile doree", mode: "background" },
   { id: "waves", label: "Vagues & ondes", mode: "background" },
 ];
 

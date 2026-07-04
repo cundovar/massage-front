@@ -851,3 +851,265 @@ body.is-transitioning .page-content {
     transform: scale(0.7);
   }
 }
+
+/* ============================================================
+   Hero goutte d'huile — styles du composant OilBackdrop
+   ============================================================ */
+.oil-hero {
+  --oil-linen: color-mix(in srgb, var(--background) 88%, #f6f1e6);
+  --oil-gold-pale: color-mix(in srgb, var(--primary-start) 48%, #ecd9ae);
+  --oil-gold: color-mix(in srgb, var(--primary-start) 68%, #d9a441);
+  --oil-amber: color-mix(in srgb, var(--primary-end) 42%, #b97b2a);
+  --oil-ink: color-mix(in srgb, var(--text-primary) 78%, #3a3226);
+  --oil-rose: #d9a8a0;
+  --oil-olive: #a8a878;
+  --oil-drop-duration: 1.9s;
+  --oil-impact-time: 2.1s;
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--oil-linen);
+}
+
+.oil-hero .nappe {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 240vmax;
+  height: 240vmax;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background:
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--oil-gold-pale) 90%, transparent) 0%,
+      color-mix(in srgb, var(--oil-gold-pale) 60%, transparent) 26%,
+      color-mix(in srgb, var(--oil-gold-pale) 34%, transparent) 46%,
+      color-mix(in srgb, var(--oil-gold-pale) 14%, transparent) 66%,
+      transparent 78%
+    );
+  animation: oil-deployer 3.2s cubic-bezier(0.16, 0.6, 0.28, 1) var(--oil-impact-time) forwards;
+  z-index: 0;
+}
+
+@keyframes oil-deployer {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.oil-hero .irise {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160vmax;
+  height: 160vmax;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      color-mix(in srgb, var(--oil-rose) 18%, transparent) 70deg,
+      transparent 140deg,
+      color-mix(in srgb, var(--oil-olive) 15%, transparent) 210deg,
+      transparent 280deg,
+      color-mix(in srgb, var(--oil-gold-pale) 20%, transparent) 330deg,
+      transparent 360deg
+    );
+  mix-blend-mode: multiply;
+  filter: blur(46px);
+  opacity: 0;
+  animation:
+    oil-apparaitre 2.5s ease calc(var(--oil-impact-time) + 0.8s) forwards,
+    oil-tourner-irise 60s linear infinite;
+  z-index: 0;
+}
+
+@keyframes oil-tourner-irise {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.oil-hero .goutte-scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 3;
+}
+
+.oil-hero .goutte {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  width: 26px;
+  height: 34px;
+  margin-left: -13px;
+  background:
+    radial-gradient(circle at 34% 28%, #f3d896 0%, var(--oil-gold) 46%, var(--oil-amber) 100%);
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  box-shadow:
+    inset -3px -5px 8px color-mix(in srgb, #9c6620 12%, transparent),
+    0 0 14px color-mix(in srgb, var(--oil-gold) 34%, transparent);
+  animation: oil-chuter var(--oil-drop-duration) cubic-bezier(0.42, 0, 0.9, 0.62) 0.35s forwards;
+  opacity: 0;
+}
+
+@keyframes oil-chuter {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scaleY(1);
+  }
+  6% {
+    opacity: 1;
+  }
+  82% {
+    transform: translateY(48vh) scaleY(1.18) scaleX(0.92);
+  }
+  96% {
+    transform: translateY(50vh) scaleY(0.5) scaleX(1.7);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(50vh) scaleY(0.2) scaleX(2.4);
+    opacity: 0;
+  }
+}
+
+.oil-hero .ondes {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.oil-hero .onde {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.6px solid color-mix(in srgb, var(--oil-amber) 40%, transparent);
+  opacity: 0;
+  animation: oil-propager 3.6s cubic-bezier(0.15, 0.55, 0.3, 1) forwards;
+}
+
+.oil-hero .onde.o1 {
+  animation-delay: var(--oil-impact-time);
+}
+.oil-hero .onde.o2 {
+  animation-delay: calc(var(--oil-impact-time) + 0.45s);
+  border-color: color-mix(in srgb, var(--oil-gold) 34%, transparent);
+}
+.oil-hero .onde.o3 {
+  animation-delay: calc(var(--oil-impact-time) + 0.95s);
+  border-color: color-mix(in srgb, var(--oil-rose) 30%, transparent);
+}
+.oil-hero .onde.o4 {
+  animation-delay: calc(var(--oil-impact-time) + 1.5s);
+  border-color: color-mix(in srgb, var(--oil-amber) 20%, transparent);
+}
+
+@keyframes oil-propager {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  8% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(26);
+  }
+}
+
+.oil-hero .onde.loop {
+  animation: oil-propager-doux 9s ease-out infinite;
+}
+.oil-hero .onde.loop.l1 {
+  animation-delay: 6.5s;
+}
+.oil-hero .onde.loop.l2 {
+  animation-delay: 11s;
+  border-color: color-mix(in srgb, var(--oil-gold) 25%, transparent);
+}
+
+@keyframes oil-propager-doux {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  7% {
+    opacity: 0.45;
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(20);
+  }
+}
+
+@keyframes oil-apparaitre {
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oil-hero .goutte,
+  .oil-hero .onde {
+    display: none;
+  }
+  .oil-hero .nappe {
+    animation: none;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .oil-hero .irise {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   Hero jardin zen karesansui — styles du composant KaresansuiBackdrop
+   ============================================================ */
+.karesansui-hero {
+  --zen-sable: #efe7d6;
+  --zen-sable-ombre: #e4d9c2;
+  --zen-encre: #3c362c;
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(160deg, #f4edde 0%, var(--zen-sable) 50%, var(--zen-sable-ombre) 100%);
+}
+
+.karesansui-hero canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.karesansui-hero .texte-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(56rem, 92vw);
+  height: min(30rem, 62vh);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(239 231 214 / 90%) 0%, rgb(239 231 214 / 60%) 55%, transparent 75%);
+  z-index: 1;
+}
