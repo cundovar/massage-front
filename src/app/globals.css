@@ -530,9 +530,17 @@ body.is-transitioning .page-content {
 }
 
 .enso-hero .enso {
-  width: min(78vmin, 640px);
-  height: min(78vmin, 640px);
+  /* mobile-first : l'ensō remplit quasi toute la largeur du composant */
+  width: min(92vmin, 560px);
+  height: min(92vmin, 560px);
   opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .enso-hero .enso {
+    width: min(72vmin, 640px);
+    height: min(72vmin, 640px);
+  }
 }
 
 .enso-hero .enso path {

@@ -89,7 +89,7 @@ export function Hero({ content }: HeroProps) {
   return (
     <section
       className={[
-        "relative w-full overflow-hidden px-4 sm:px-6 md:px-12 min-h-[60vh] md:min-h-[70vh] lg:min-h-[80vh]",
+        "relative w-full overflow-hidden px-4 sm:px-6 md:px-12 min-h-[100svh] md:min-h-[70vh] lg:min-h-[80vh]",
         isBackgroundAnimation ? "rounded-3xl" : isTransparent ? "bg-transparent" : "glass-panel rounded-3xl",
       ].join(" ")}
       data-animate="section"
@@ -133,7 +133,7 @@ export function Hero({ content }: HeroProps) {
         )}
       </div>
 
-      <div className="js-hero-content relative z-10 mx-auto flex min-h-[60vh] md:min-h-[65vh] max-w-4xl flex-col items-center justify-center py-8 text-center md:py-12" style={{ color: textColor }}>
+      <div className="js-hero-content relative z-10 mx-auto flex md:min-h-[65vh] max-w-4xl flex-col items-center justify-start pt-20 pb-8 text-center md:justify-center md:py-12" style={{ color: textColor }}>
         <div className="h-px w-24 bg-gold-default" />
         <h1 data-animate="title" className="mt-6 font-serif text-5xl leading-[0.95] font-extralight md:text-7xl">
           {content.siteTitle ?? "Les Massages d'Helene"}
