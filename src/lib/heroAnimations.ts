@@ -22,6 +22,7 @@ export const HERO_ANIMATIONS: HeroAnimationMeta[] = [
   { id: "enso", label: "Ensō & encens (sumi-e)", mode: "background" },
   { id: "karesansui", label: "Jardin zen karesansui", mode: "background" },
   { id: "oil", label: "Goutte d'huile doree", mode: "background" },
+  { id: "petals", label: "Petales sur l'eau", mode: "background" },
   { id: "waves", label: "Vagues & ondes", mode: "background" },
 ];
 
