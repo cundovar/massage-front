@@ -89,7 +89,7 @@ export function Hero({ content }: HeroProps) {
   return (
     <section
       className={[
-        "relative w-full overflow-hidden px-4 sm:px-6 md:px-12 min-h-[100svh] md:min-h-[70vh] lg:min-h-[80vh]",
+        "relative w-full overflow-hidden px-4 sm:px-6 md:px-12 min-h-[calc(100svh-109px)] md:min-h-[70vh] lg:min-h-[80vh]",
         isBackgroundAnimation ? "rounded-3xl" : isTransparent ? "bg-transparent" : "glass-panel rounded-3xl",
       ].join(" ")}
       data-animate="section"
