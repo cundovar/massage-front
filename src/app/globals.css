@@ -509,7 +509,8 @@ body.is-transitioning .page-content {
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 10%, #faf6ec 0%, var(--washi) 55%, var(--washi-deep) 100%);
+  /* Fond transparent : l'ensō se pose sur le fond du thème / de la page */
+  background: transparent;
 }
 
 /* grain washi très léger */
@@ -680,13 +681,8 @@ body.is-transitioning .page-content {
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  /* Ciel dérivé du thème choisi par l'admin (fond + accent) */
-  background: linear-gradient(
-    180deg,
-    var(--background-alt) 0%,
-    var(--background) 50%,
-    color-mix(in srgb, var(--primary-start) 12%, var(--background)) 100%
-  );
+  /* Fond transparent : les vagues se posent sur le fond du thème / de la page */
+  background: transparent;
 }
 
 /* Ondes concentriques */
