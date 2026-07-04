@@ -31,13 +31,13 @@ type Ripple = {
   alpha: number;
 };
 
-const COULEURS_PETALE = [
+const DEFAULT_PETAL_COLORS = [
   ["#ecc9bd", "#dfae9f"],
   ["#e8bfa8", "#cd8f6b"],
   ["#f0d4c6", "#e0b39c"],
 ] as const;
 
-const COULEURS_FEUILLE = [
+const DEFAULT_LEAF_COLORS = [
   ["#a7b596", "#97a687"],
   ["#97a687", "#7c8b6e"],
 ] as const;
@@ -64,15 +64,37 @@ export function PetalsBackdrop() {
     let raf = 0;
     let resizeTimer = 0;
     let prev: number | null = null;
+    let petalColors: [string, string][] = DEFAULT_PETAL_COLORS.map((colors) => [...colors]);
+    let leafColors: [string, string][] = DEFAULT_LEAF_COLORS.map((colors) => [...colors]);
+    let rippleColor = "120, 108, 84";
+    let shadowColor = "120, 108, 84";
 
     const nbElements = () => (width < 640 ? 8 : 14);
+    const cssVar = (name: string, fallback: string) => {
+      const style = window.getComputedStyle(canvas.parentElement ?? canvas);
+      return style.getPropertyValue(name).trim() || fallback;
+    };
+
+    const readPalette = () => {
+      petalColors = [
+        [cssVar("--petals-petal-1a", "#ecc9bd"), cssVar("--petals-petal-1b", "#dfae9f")],
+        [cssVar("--petals-petal-2a", "#e8bfa8"), cssVar("--petals-petal-2b", "#cd8f6b")],
+        [cssVar("--petals-petal-3a", "#f0d4c6"), cssVar("--petals-petal-3b", "#e0b39c")],
+      ];
+      leafColors = [
+        [cssVar("--petals-leaf-1a", "#a7b596"), cssVar("--petals-leaf-1b", "#97a687")],
+        [cssVar("--petals-leaf-2a", "#97a687"), cssVar("--petals-leaf-2b", "#7c8b6e")],
+      ];
+      rippleColor = cssVar("--petals-ripple-rgb", "120, 108, 84");
+      shadowColor = cssVar("--petals-shadow-rgb", "120, 108, 84");
+    };
 
     const creer = (initial: boolean): FloatingElement => {
       const type = Math.random() > 0.42 ? "petale" : "feuille";
       const couleurs =
         type === "petale"
-          ? COULEURS_PETALE[Math.floor(Math.random() * COULEURS_PETALE.length)]
-          : COULEURS_FEUILLE[Math.floor(Math.random() * COULEURS_FEUILLE.length)];
+          ? petalColors[Math.floor(Math.random() * petalColors.length)]
+          : leafColors[Math.floor(Math.random() * leafColors.length)];
       const surfaceY = height * (0.58 + Math.random() * 0.32);
       const profondeur = (surfaceY - height * 0.58) / (height * 0.32);
       const taille = (type === "petale" ? 13 : 17) * (0.7 + profondeur * 0.6);
@@ -101,6 +123,7 @@ export function PetalsBackdrop() {
     };
 
     const resizeCanvas = () => {
+      readPalette();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const nextWidth = canvas.clientWidth;
       const nextHeight = canvas.clientHeight;
@@ -223,7 +246,7 @@ export function PetalsBackdrop() {
         }
         ctx.beginPath();
         ctx.ellipse(onde.x, onde.y, onde.r, onde.r * 0.3, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(120, 108, 84, ${onde.alpha * 0.4})`;
+        ctx.strokeStyle = `rgba(${rippleColor}, ${onde.alpha * 0.4})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -269,7 +292,7 @@ export function PetalsBackdrop() {
             0,
             Math.PI * 2,
           );
-          ctx.fillStyle = `rgba(120, 108, 84, ${0.16 * proche * element.alpha})`;
+          ctx.fillStyle = `rgba(${shadowColor}, ${0.16 * proche * element.alpha})`;
           ctx.fill();
         }
 

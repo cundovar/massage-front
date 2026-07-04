@@ -873,6 +873,15 @@ body.is-transitioning .page-content {
   background: var(--oil-linen);
 }
 
+[data-theme="dark"] .oil-hero {
+  --oil-linen: color-mix(in srgb, var(--background) 86%, #2f261b);
+  --oil-gold-pale: color-mix(in srgb, var(--primary-start) 42%, #5b4524);
+  --oil-gold: color-mix(in srgb, var(--primary-start) 76%, #d9a441);
+  --oil-amber: color-mix(in srgb, var(--primary-end) 62%, #b97b2a);
+  --oil-rose: #8f625b;
+  --oil-olive: #6f7457;
+}
+
 .oil-hero .nappe {
   position: absolute;
   left: 50%;
@@ -1086,12 +1095,35 @@ body.is-transitioning .page-content {
   --zen-sable: #efe7d6;
   --zen-sable-ombre: #e4d9c2;
   --zen-encre: #3c362c;
+  --zen-sillon-rgb: 201, 187, 158;
+  --zen-relief-rgb: 255, 252, 243;
+  --zen-cercle-rgb: 176, 160, 128;
+  --zen-ombre-rgb: 90, 80, 62;
+  --zen-pierre-start: #6b655a;
+  --zen-pierre-mid: #5c564d;
+  --zen-pierre-end: #47423a;
+  --zen-mousse-rgb: 138, 148, 120;
 
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   background: linear-gradient(160deg, #f4edde 0%, var(--zen-sable) 50%, var(--zen-sable-ombre) 100%);
+}
+
+[data-theme="dark"] .karesansui-hero {
+  --zen-sable: color-mix(in srgb, var(--background) 82%, #332d24);
+  --zen-sable-ombre: color-mix(in srgb, var(--background-alt) 72%, #1c1917);
+  --zen-sillon-rgb: 128, 113, 89;
+  --zen-relief-rgb: 80, 70, 55;
+  --zen-cercle-rgb: 152, 134, 104;
+  --zen-ombre-rgb: 0, 0, 0;
+  --zen-pierre-start: #8a8377;
+  --zen-pierre-mid: #6f685e;
+  --zen-pierre-end: #46413a;
+  --zen-mousse-rgb: 124, 139, 110;
+
+  background: linear-gradient(160deg, color-mix(in srgb, var(--background-alt) 54%, #3b3327) 0%, var(--zen-sable) 52%, var(--zen-sable-ombre) 100%);
 }
 
 .karesansui-hero canvas {
@@ -1114,18 +1146,53 @@ body.is-transitioning .page-content {
   z-index: 1;
 }
 
+[data-theme="dark"] .karesansui-hero .texte-halo {
+  background: radial-gradient(ellipse, rgb(28 25 23 / 82%) 0%, rgb(28 25 23 / 56%) 55%, transparent 75%);
+}
+
 /* ============================================================
    Hero petales sur l'eau — styles du composant PetalsBackdrop
    ============================================================ */
 .petals-hero {
   --petals-creme: #f8f3ea;
   --petals-eau: #eee7d9;
+  --petals-petal-1a: #ecc9bd;
+  --petals-petal-1b: #dfae9f;
+  --petals-petal-2a: #e8bfa8;
+  --petals-petal-2b: #cd8f6b;
+  --petals-petal-3a: #f0d4c6;
+  --petals-petal-3b: #e0b39c;
+  --petals-leaf-1a: #a7b596;
+  --petals-leaf-1b: #97a687;
+  --petals-leaf-2a: #97a687;
+  --petals-leaf-2b: #7c8b6e;
+  --petals-ripple-rgb: 120, 108, 84;
+  --petals-shadow-rgb: 120, 108, 84;
 
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   background: linear-gradient(180deg, var(--petals-creme) 0%, var(--petals-creme) 52%, var(--petals-eau) 100%);
+}
+
+[data-theme="dark"] .petals-hero {
+  --petals-creme: color-mix(in srgb, var(--background) 86%, #2e261f);
+  --petals-eau: color-mix(in srgb, var(--background-alt) 76%, #253027);
+  --petals-petal-1a: #d9a598;
+  --petals-petal-1b: #a76359;
+  --petals-petal-2a: #c98f7d;
+  --petals-petal-2b: #9a5d43;
+  --petals-petal-3a: #e1b6aa;
+  --petals-petal-3b: #b57f6b;
+  --petals-leaf-1a: #849777;
+  --petals-leaf-1b: #64755f;
+  --petals-leaf-2a: #75876c;
+  --petals-leaf-2b: #4f614e;
+  --petals-ripple-rgb: 174, 157, 124;
+  --petals-shadow-rgb: 10, 8, 6;
+
+  background: linear-gradient(180deg, var(--petals-creme) 0%, var(--petals-creme) 50%, var(--petals-eau) 100%);
 }
 
 .petals-hero canvas {

@@ -51,6 +51,34 @@ export function KaresansuiBackdrop() {
     let raf = 0;
     let resizeTimer = 0;
     let t0: number | null = null;
+    let palette = {
+      sillon: "201, 187, 158",
+      relief: "255, 252, 243",
+      cercle: "176, 160, 128",
+      ombre: "90, 80, 62",
+      pierreStart: "#6b655a",
+      pierreMid: "#5c564d",
+      pierreEnd: "#47423a",
+      mousse: "138, 148, 120",
+    };
+
+    const cssVar = (name: string, fallback: string) => {
+      const style = window.getComputedStyle(canvas.parentElement ?? canvas);
+      return style.getPropertyValue(name).trim() || fallback;
+    };
+
+    const readPalette = () => {
+      palette = {
+        sillon: cssVar("--zen-sillon-rgb", "201, 187, 158"),
+        relief: cssVar("--zen-relief-rgb", "255, 252, 243"),
+        cercle: cssVar("--zen-cercle-rgb", "176, 160, 128"),
+        ombre: cssVar("--zen-ombre-rgb", "90, 80, 62"),
+        pierreStart: cssVar("--zen-pierre-start", "#6b655a"),
+        pierreMid: cssVar("--zen-pierre-mid", "#5c564d"),
+        pierreEnd: cssVar("--zen-pierre-end", "#47423a"),
+        mousse: cssVar("--zen-mousse-rgb", "138, 148, 120"),
+      };
+    };
 
     const deviationRochers = (x: number, y: number) => {
       let deviation = 0;
@@ -66,6 +94,7 @@ export function KaresansuiBackdrop() {
     };
 
     const resizeCanvas = () => {
+      readPalette();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const nextWidth = canvas.clientWidth;
       const nextHeight = canvas.clientHeight;
@@ -183,7 +212,7 @@ export function KaresansuiBackdrop() {
             ctx.lineTo(point.x, point.y);
           }
         }
-        ctx.strokeStyle = `rgba(201, 187, 158, ${line.alpha})`;
+        ctx.strokeStyle = `rgba(${palette.sillon}, ${line.alpha})`;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
@@ -198,7 +227,7 @@ export function KaresansuiBackdrop() {
             ctx.lineTo(point.x, point.y + 2.5);
           }
         }
-        ctx.strokeStyle = `rgba(255, 252, 243, ${line.alpha * 0.8})`;
+        ctx.strokeStyle = `rgba(${palette.relief}, ${line.alpha * 0.8})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -210,7 +239,7 @@ export function KaresansuiBackdrop() {
           if (fin <= 0) continue;
           ctx.beginPath();
           ctx.ellipse(rock.x, rock.y, rock.r + i * 14, (rock.r + i * 14) * 0.82, rock.rot, -Math.PI / 2, -Math.PI / 2 + fin);
-          ctx.strokeStyle = `rgba(176, 160, 128, ${0.5 - i * 0.11})`;
+          ctx.strokeStyle = `rgba(${palette.cercle}, ${0.5 - i * 0.11})`;
           ctx.lineWidth = 1.3;
           ctx.stroke();
         }
@@ -225,7 +254,7 @@ export function KaresansuiBackdrop() {
 
         ctx.beginPath();
         ctx.ellipse(4, rock.r * 0.5, rock.r * 1.05, rock.r * 0.38, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(90, 80, 62, .18)";
+        ctx.fillStyle = `rgba(${palette.ombre}, .18)`;
         ctx.fill();
 
         ctx.beginPath();
@@ -235,15 +264,15 @@ export function KaresansuiBackdrop() {
         ctx.bezierCurveTo(rock.r * 0.7, rock.r * 0.68, -rock.r * 0.3, rock.r * 0.72, -rock.r * 0.75, rock.r * 0.5);
         ctx.bezierCurveTo(-rock.r * 1.02, rock.r * 0.35, -rock.r, rock.r * 0.1, -rock.r, rock.r * 0.1);
         const grad = ctx.createLinearGradient(-rock.r, -rock.r, rock.r * 0.6, rock.r);
-        grad.addColorStop(0, "#6b655a");
-        grad.addColorStop(0.55, "#5c564d");
-        grad.addColorStop(1, "#47423a");
+        grad.addColorStop(0, palette.pierreStart);
+        grad.addColorStop(0.55, palette.pierreMid);
+        grad.addColorStop(1, palette.pierreEnd);
         ctx.fillStyle = grad;
         ctx.fill();
 
         ctx.beginPath();
         ctx.ellipse(-rock.r * 0.38, -rock.r * 0.52, rock.r * 0.3, rock.r * 0.14, -0.4, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(138, 148, 120, .55)";
+        ctx.fillStyle = `rgba(${palette.mousse}, .55)`;
         ctx.fill();
 
         ctx.restore();
