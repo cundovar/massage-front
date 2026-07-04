@@ -65,13 +65,22 @@ export function KaresansuiBackdrop() {
       return deviation;
     };
 
-    const init = () => {
+    const resizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
+      const nextWidth = canvas.clientWidth;
+      const nextHeight = canvas.clientHeight;
+      if (nextWidth <= 0 || nextHeight <= 0) return false;
+
+      width = nextWidth;
+      height = nextHeight;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return true;
+    };
+
+    const init = () => {
+      if (!resizeCanvas()) return;
       t0 = null;
 
       rochers = [
@@ -99,6 +108,37 @@ export function KaresansuiBackdrop() {
 
         lignes.push({ pts, delai: i * 0.05, alpha: 0.55 + Math.random() * 0.2 });
       }
+    };
+
+    const resizePreserve = () => {
+      const previousWidth = width;
+      const previousHeight = height;
+      if (!resizeCanvas() || previousWidth <= 0 || previousHeight <= 0) return;
+
+      const scaleX = width / previousWidth;
+      const scaleY = height / previousHeight;
+      const scaleSize = Math.min(scaleX, scaleY);
+
+      for (const rock of rochers) {
+        rock.x *= scaleX;
+        rock.y *= scaleY;
+        rock.r *= scaleSize;
+      }
+
+      for (const line of lignes) {
+        for (const point of line.pts) {
+          point.x *= scaleX;
+          point.rest *= scaleY;
+          point.y *= scaleY;
+          point.creux *= scaleY;
+        }
+      }
+
+      souris.actif = false;
+      souris.x = -9999;
+      souris.y = -9999;
+      souris.sx = -9999;
+      souris.sy = -9999;
     };
 
     const dessiner = (ts: number) => {
@@ -223,7 +263,7 @@ export function KaresansuiBackdrop() {
 
     const onResize = () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(init, 180);
+      resizeTimer = window.setTimeout(resizePreserve, 180);
     };
 
     init();
