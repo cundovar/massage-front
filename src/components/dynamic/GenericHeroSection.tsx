@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { getImageUrl } from "@/lib/api";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
+import { getAnimationMeta } from "@/lib/heroAnimations";
 
 export interface GenericHeroContent {
   title?: string;
@@ -13,6 +15,7 @@ export interface GenericHeroContent {
   textColor?: string;
   backgroundBlur?: string | number;
   overlayOpacity?: string | number;
+  animation?: string;
 }
 
 export function GenericHeroSection({ content }: { content: GenericHeroContent }) {
@@ -24,8 +27,12 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   const useImageBackground = backgroundType === "image" && hasImage;
   const gradientStart = content.gradientStart || "var(--primary-start)";
   const gradientEnd = content.gradientEnd || "var(--primary-end)";
+  const animationMeta = getAnimationMeta(content.animation);
+  const AnimationComponent = HERO_ANIMATION_COMPONENTS[animationMeta.id];
+  const isBackgroundAnimation = animationMeta.mode === "background" && Boolean(AnimationComponent);
   const configuredTextColor = content.textColor || (useImageBackground ? "#FFFFFF" : "var(--color-text-primary)");
-  const textColor = isTransparent && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
+  const useThemeText = isTransparent || isBackgroundAnimation;
+  const textColor = useThemeText && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
     ? "var(--color-text-primary)"
     : configuredTextColor;
 
@@ -38,7 +45,11 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   if (isCompact) {
     return (
       <section className="relative overflow-hidden py-20">
-        {isTransparent ? null : useImageBackground ? (
+        {isBackgroundAnimation ? (
+          <div className="absolute inset-0">
+            <AnimationComponent />
+          </div>
+        ) : isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
             alt={content.title ?? ""}
@@ -54,10 +65,11 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
             style={{ background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})` }}
           />
         )}
-        {!isTransparent ? (
+        {!isTransparent && !isBackgroundAnimation ? (
           <div className="absolute inset-0 bg-black" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.4 }} />
         ) : null}
-        <div className="relative mx-auto max-w-7xl px-6" style={{ color: textColor }}>
+        {AnimationComponent && animationMeta.mode === "overlay" ? <AnimationComponent /> : null}
+        <div className="relative z-10 mx-auto max-w-7xl px-6" style={{ color: textColor }}>
           {content.title ? <h1 className="heading-hero">{content.title}</h1> : null}
           {content.subtitle ? (
             <p className="mt-4 text-xl opacity-90">
@@ -72,7 +84,9 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   return (
     <section className={`relative min-h-[60vh] w-full overflow-hidden ${isTransparent ? "" : "rounded-3xl"}`}>
       <div className="absolute inset-0">
-        {isTransparent ? null : useImageBackground ? (
+        {isBackgroundAnimation ? (
+          <AnimationComponent />
+        ) : isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
             alt=""
@@ -87,9 +101,10 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
             style={{ background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})` }}
           />
         )}
-        {!isTransparent ? (
+        {!isTransparent && !isBackgroundAnimation ? (
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
         ) : null}
+        {AnimationComponent && animationMeta.mode === "overlay" ? <AnimationComponent /> : null}
       </div>
       <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
         {content.title ? (
