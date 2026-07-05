@@ -793,11 +793,15 @@ body.is-transitioning .page-content {
 }
 
 .wind-tree--menu {
+  position: absolute;
+  inset: 68px 0 0;
+  z-index: 0;
+  opacity: 0.52;
   background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--primary-start) 7%, transparent) 100%);
 }
 
 .wind-tree--menu svg {
-  transform: translateX(-34px) scale(1.06);
+  transform: translate(-42px, 34px) scale(1.08);
   transform-origin: 50% 100%;
 }
 
