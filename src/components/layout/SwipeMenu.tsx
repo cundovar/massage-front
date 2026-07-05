@@ -202,15 +202,14 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
         onClick={() => setOpen(true)}
         aria-label="Ouvrir le menu de navigation"
         aria-expanded={open}
-        className={`fixed top-1/2 left-0 z-40 flex h-20 w-9 -translate-y-1/2 items-center justify-center overflow-hidden rounded-r-xl bg-[var(--background-alt)] text-white shadow-lg ring-1 ring-[var(--card-border)] transition-[opacity,transform] duration-300 ${
+        className={`fixed top-1/2 left-0 z-40 flex h-16 w-7 -translate-y-1/2 items-center justify-center rounded-r-xl text-white shadow-lg transition-[opacity,transform] duration-300 ${
           headerHidden && !open
             ? "translate-x-0 opacity-100"
             : "pointer-events-none -translate-x-full opacity-0"
         }`}
+        style={{ background: "var(--gradient-primary)" }}
       >
-        <WindTreeAnimation compact className="absolute inset-0 opacity-80" />
-        <span className="absolute inset-y-0 right-0 w-3" style={{ background: "var(--gradient-primary)" }} />
-        <ChevronRight className="relative z-10 h-5 w-5 drop-shadow-sm" strokeWidth={2.5} />
+        <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
       </button>
 
       {/* Voile / backdrop */}
@@ -239,7 +238,7 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
           transition: panelTransition,
         }}
       >
-        <WindTreeAnimation className="absolute right-[-46px] bottom-[-18px] h-72 w-72 opacity-20" />
+        <WindTreeAnimation className="absolute right-[-50px] bottom-[-16px] z-0 h-80 w-80 opacity-24" />
         <div
           className="relative z-10 flex items-center justify-between px-5 py-4"
           style={{ background: "var(--gradient-primary)" }}

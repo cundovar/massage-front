@@ -792,6 +792,16 @@ body.is-transitioning .page-content {
   overflow: visible;
 }
 
+[data-theme="dark"] .wind-tree {
+  --wind-tree-trunk: #d9b897;
+  --wind-tree-trunk-dark: #c6a17d;
+  --wind-tree-light: #d8efd2;
+  --wind-tree-mid: #bdddb7;
+  --wind-tree-dark: #9fca99;
+  --wind-tree-shadow: #ece7dc;
+  filter: saturate(1.08) brightness(1.16);
+}
+
 .wind-tree--compact .wind-tree-ground {
   opacity: 0.08;
 }
