@@ -276,7 +276,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       image: null,
       compact: true,
       backgroundType: "image",
-      animation: "none",
+      backgroundAnimation: "none",
       gradientStart: "#FFCE67",
       gradientEnd: "#F67E54",
       textColor: "#FFFFFF",
@@ -296,7 +296,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       },
       { key: "image", label: "Image de fond", type: "image" },
       {
-        key: "animation",
+        key: "backgroundAnimation",
         label: "Animation de fond",
         type: "select",
         options: ANIMATION_OPTIONS,

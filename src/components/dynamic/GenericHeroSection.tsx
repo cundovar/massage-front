@@ -16,6 +16,7 @@ export interface GenericHeroContent {
   backgroundBlur?: string | number;
   overlayOpacity?: string | number;
   animation?: string;
+  backgroundAnimation?: string;
 }
 
 export function GenericHeroSection({ content }: { content: GenericHeroContent }) {
@@ -27,7 +28,7 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   const useImageBackground = backgroundType === "image" && hasImage;
   const gradientStart = content.gradientStart || "var(--primary-start)";
   const gradientEnd = content.gradientEnd || "var(--primary-end)";
-  const animationMeta = getAnimationMeta(content.animation);
+  const animationMeta = getAnimationMeta(content.backgroundAnimation ?? content.animation);
   const AnimationComponent = HERO_ANIMATION_COMPONENTS[animationMeta.id];
   const isBackgroundAnimation = animationMeta.mode === "background" && Boolean(AnimationComponent);
   const configuredTextColor = content.textColor || (useImageBackground ? "#FFFFFF" : "var(--color-text-primary)");

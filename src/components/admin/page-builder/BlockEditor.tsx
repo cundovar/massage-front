@@ -25,6 +25,8 @@ interface BlockEditorProps {
 }
 
 export function BlockEditor({ section, definition, onUpdate, token }: BlockEditorProps) {
+  const isHeroType = ["hero-home", "hero", "hero-simple", "hero-compact"].includes(section.type);
+
   // S'assurer que le contenu est un objet valide (pas un tableau vide ou undefined)
   const safeContent = (
     section.content && typeof section.content === "object" && !Array.isArray(section.content)
@@ -179,6 +181,7 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
         />
       </div>
 
+      {!isHeroType ? (
       <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
         <h4 className="text-sm font-medium text-stone-700">Animation d&apos;entree</h4>
 
@@ -210,6 +213,7 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
           />
         </div>
       </div>
+      ) : null}
     </div>
   );
 }
