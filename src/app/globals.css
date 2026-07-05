@@ -794,14 +794,17 @@ body.is-transitioning .page-content {
 
 .wind-tree--menu {
   position: absolute;
-  inset: 68px 0 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 0;
+  height: min(52vh, 390px);
   opacity: 0.52;
   background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--primary-start) 7%, transparent) 100%);
 }
 
 .wind-tree--menu svg {
-  transform: translate(-42px, 34px) scale(1.08);
+  transform: translate(-42px, 8px) scale(1.08);
   transform-origin: 50% 100%;
 }
 
