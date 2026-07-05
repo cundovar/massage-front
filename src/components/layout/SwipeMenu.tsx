@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronRight, X } from "lucide-react";
 import { FALLBACK_NAV } from "@/lib/defaultContent";
+import { WindTreeAnimation } from "@/components/animations/WindTreeAnimation";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { NavItem } from "@/types/navigation";
 
@@ -201,14 +202,15 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
         onClick={() => setOpen(true)}
         aria-label="Ouvrir le menu de navigation"
         aria-expanded={open}
-        className={`fixed top-1/2 left-0 z-40 flex h-16 w-7 -translate-y-1/2 items-center justify-center rounded-r-xl text-white shadow-lg transition-[opacity,transform] duration-300 ${
+        className={`fixed top-1/2 left-0 z-40 flex h-20 w-9 -translate-y-1/2 items-center justify-center overflow-hidden rounded-r-xl bg-[var(--background-alt)] text-white shadow-lg ring-1 ring-[var(--card-border)] transition-[opacity,transform] duration-300 ${
           headerHidden && !open
             ? "translate-x-0 opacity-100"
             : "pointer-events-none -translate-x-full opacity-0"
         }`}
-        style={{ background: "var(--gradient-primary)" }}
       >
-        <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
+        <WindTreeAnimation compact className="absolute inset-0 opacity-80" />
+        <span className="absolute inset-y-0 right-0 w-3" style={{ background: "var(--gradient-primary)" }} />
+        <ChevronRight className="relative z-10 h-5 w-5 drop-shadow-sm" strokeWidth={2.5} />
       </button>
 
       {/* Voile / backdrop */}
@@ -230,15 +232,16 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
         aria-modal="true"
         aria-label="Menu de navigation"
         aria-hidden={!overlayActive}
-        className="fixed top-0 left-0 z-50 flex h-full max-w-[85vw] flex-col border-r border-[var(--card-border)] bg-[var(--background-alt)] shadow-2xl"
+        className="fixed top-0 left-0 z-50 flex h-full max-w-[85vw] flex-col overflow-hidden border-r border-[var(--card-border)] bg-[var(--background-alt)] shadow-2xl"
         style={{
           width: PANEL_WIDTH,
           transform: `translateX(${translate}px)`,
           transition: panelTransition,
         }}
       >
+        <WindTreeAnimation className="absolute right-[-46px] bottom-[-18px] h-72 w-72 opacity-20" />
         <div
-          className="flex items-center justify-between px-5 py-4"
+          className="relative z-10 flex items-center justify-between px-5 py-4"
           style={{ background: "var(--gradient-primary)" }}
         >
           <span className="text-lg font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>
@@ -254,7 +257,7 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Navigation principale">
+        <nav className="relative z-10 flex-1 overflow-y-auto px-3 py-4" aria-label="Navigation principale">
           <ul className="flex flex-col gap-1">
             {navItems.map((item) => {
               const active = !item.isExternal && isActive(item.path);

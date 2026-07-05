@@ -674,6 +674,146 @@ body.is-transitioning .page-content {
 }
 
 /* ============================================================
+   Arbre au vent — styles du composant WindTreeAnimation
+   ============================================================ */
+.wind-tree {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--text-primary);
+  --wind-tree-trunk: #8a6a4f;
+  --wind-tree-trunk-dark: #6e5340;
+  --wind-tree-light: #a8c1a0;
+  --wind-tree-mid: #8fae8b;
+  --wind-tree-dark: #7a9c76;
+  --wind-tree-shadow: #5c5a52;
+}
+
+.wind-tree svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wind-tree-arbre {
+  transform-origin: 250px 470px;
+  animation: wind-tree-sway 7.5s ease-in-out infinite alternate;
+}
+
+@keyframes wind-tree-sway {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.4deg);
+  }
+}
+
+.wind-tree-ground {
+  fill: var(--wind-tree-shadow);
+  opacity: 0.14;
+  transform-origin: center;
+  animation: wind-tree-shadow 7.5s ease-in-out infinite alternate;
+}
+
+@keyframes wind-tree-shadow {
+  from {
+    transform: translateX(-4px) scaleX(1);
+    opacity: 0.16;
+  }
+  to {
+    transform: translateX(5px) scaleX(1.04);
+    opacity: 0.12;
+  }
+}
+
+.wind-tree-trunk {
+  fill: var(--wind-tree-trunk);
+}
+
+.wind-tree-branch {
+  fill: var(--wind-tree-trunk-dark);
+  opacity: 0.55;
+}
+
+.wind-tree-mass {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wind-tree-rustle ease-in-out infinite alternate;
+}
+
+.wind-tree-m1 {
+  fill: var(--wind-tree-mid);
+  animation-duration: 4.8s;
+  animation-delay: -1.2s;
+}
+
+.wind-tree-m2 {
+  fill: var(--wind-tree-dark);
+  animation-duration: 5.6s;
+  animation-delay: -3s;
+}
+
+.wind-tree-m3 {
+  fill: var(--wind-tree-light);
+  animation-duration: 4.2s;
+  animation-delay: -0.6s;
+}
+
+.wind-tree-m4 {
+  fill: var(--wind-tree-mid);
+  opacity: 0.85;
+  animation-duration: 6.4s;
+  animation-delay: -2.2s;
+}
+
+@keyframes wind-tree-rustle {
+  from {
+    transform: translate(-2px, 1px) rotate(-0.6deg);
+  }
+  to {
+    transform: translate(2.5px, -1.5px) rotate(0.7deg);
+  }
+}
+
+.wind-tree-leaf {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.wind-tree-leaf svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wind-tree--compact .wind-tree-ground {
+  opacity: 0.08;
+}
+
+.wind-tree--compact .wind-tree-leaf {
+  width: 8px;
+  height: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wind-tree-arbre,
+  .wind-tree-mass,
+  .wind-tree-ground {
+    animation: none !important;
+  }
+
+  .wind-tree-leaf {
+    display: none;
+  }
+}
+
+/* ============================================================
    Hero vagues & ondes — styles du composant WavesBackdrop
    ============================================================ */
 .waves-hero {
