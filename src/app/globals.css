@@ -681,11 +681,11 @@ body.is-transitioning .page-content {
   overflow: hidden;
   pointer-events: none;
   color: var(--text-primary);
-  --wind-tree-trunk: #8a6a4f;
-  --wind-tree-trunk-dark: #6e5340;
-  --wind-tree-light: #a8c1a0;
-  --wind-tree-mid: #8fae8b;
-  --wind-tree-dark: #7a9c76;
+  --wind-tree-trunk: #9b704f;
+  --wind-tree-trunk-dark: #744e35;
+  --wind-tree-light: #b9d88d;
+  --wind-tree-mid: #8fbd74;
+  --wind-tree-dark: #65965c;
   --wind-tree-shadow: #5c5a52;
 }
 
@@ -790,6 +790,15 @@ body.is-transitioning .page-content {
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.wind-tree--menu {
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--primary-start) 7%, transparent) 100%);
+}
+
+.wind-tree--menu svg {
+  transform: translateX(-34px) scale(1.06);
+  transform-origin: 50% 100%;
 }
 
 [data-theme="dark"] .wind-tree {

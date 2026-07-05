@@ -238,7 +238,7 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
           transition: panelTransition,
         }}
       >
-        <WindTreeAnimation className="absolute right-[-50px] bottom-[-16px] z-0 h-80 w-80 opacity-24" />
+        <WindTreeAnimation className="wind-tree--menu absolute inset-0 z-0 opacity-[0.46]" />
         <div
           className="relative z-10 flex items-center justify-between px-5 py-4"
           style={{ background: "var(--gradient-primary)" }}
