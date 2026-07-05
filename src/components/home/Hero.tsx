@@ -6,6 +6,7 @@ import { getImageUrl } from "@/lib/api";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { getAnimationMeta } from "@/lib/heroAnimations";
 import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
+import { ViewportAnimation } from "@/components/animations/ViewportAnimation";
 import type { HeroContent } from "@/lib/api";
 
 interface HeroVisualOptions {
@@ -96,7 +97,9 @@ export function Hero({ content }: HeroProps) {
     >
       <div className="absolute inset-0">
         {isBackgroundAnimation ? (
-          <AnimationComponent />
+          <ViewportAnimation className="absolute inset-0">
+            <AnimationComponent />
+          </ViewportAnimation>
         ) : (
           <>
         {isTransparent ? null : useImageBackground ? (
@@ -128,7 +131,11 @@ export function Hero({ content }: HeroProps) {
             <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/30 to-black/90" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
           </>
         ) : null}
-        {AnimationComponent && animationMeta.mode === "overlay" ? <AnimationComponent /> : null}
+        {AnimationComponent && animationMeta.mode === "overlay" ? (
+          <ViewportAnimation className="absolute inset-0">
+            <AnimationComponent />
+          </ViewportAnimation>
+        ) : null}
           </>
         )}
       </div>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getImageUrl } from "@/lib/api";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
+import { ViewportAnimation } from "@/components/animations/ViewportAnimation";
 import { getAnimationMeta } from "@/lib/heroAnimations";
 
 export interface GenericHeroContent {
@@ -47,9 +48,9 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
     return (
       <section className="relative overflow-hidden py-20">
         {isBackgroundAnimation ? (
-          <div className="absolute inset-0">
+          <ViewportAnimation className="absolute inset-0">
             <AnimationComponent />
-          </div>
+          </ViewportAnimation>
         ) : isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
@@ -69,7 +70,11 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
         {!isTransparent && !isBackgroundAnimation ? (
           <div className="absolute inset-0 bg-black" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.4 }} />
         ) : null}
-        {AnimationComponent && animationMeta.mode === "overlay" ? <AnimationComponent /> : null}
+        {AnimationComponent && animationMeta.mode === "overlay" ? (
+          <ViewportAnimation className="absolute inset-0">
+            <AnimationComponent />
+          </ViewportAnimation>
+        ) : null}
         <div className="relative z-10 mx-auto max-w-7xl px-6" style={{ color: textColor }}>
           {content.title ? <h1 className="heading-hero">{content.title}</h1> : null}
           {content.subtitle ? (
@@ -86,7 +91,9 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
     <section className={`relative min-h-[60vh] w-full overflow-hidden ${isTransparent ? "" : "rounded-3xl"}`}>
       <div className="absolute inset-0">
         {isBackgroundAnimation ? (
-          <AnimationComponent />
+          <ViewportAnimation className="absolute inset-0">
+            <AnimationComponent />
+          </ViewportAnimation>
         ) : isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
@@ -105,7 +112,11 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
         {!isTransparent && !isBackgroundAnimation ? (
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" style={{ opacity: useImageBackground ? overlayOpacity : overlayOpacity * 0.35 }} />
         ) : null}
-        {AnimationComponent && animationMeta.mode === "overlay" ? <AnimationComponent /> : null}
+        {AnimationComponent && animationMeta.mode === "overlay" ? (
+          <ViewportAnimation className="absolute inset-0">
+            <AnimationComponent />
+          </ViewportAnimation>
+        ) : null}
       </div>
       <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
         {content.title ? (
