@@ -59,10 +59,17 @@ export function Hero({ content }: HeroProps) {
   const isBackgroundAnimation = animationMeta.mode === "background" && Boolean(AnimationComponent);
 
   const configuredTextColor = content.textColor || "#F5F5F4";
-  const useThemeText = isTransparent || isBackgroundAnimation;
-  const textColor = useThemeText && ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase())
-    ? "var(--color-text-primary)"
-    : configuredTextColor;
+  const isWhiteish = ["#ffffff", "#fff", "#f5f5f4"].includes(configuredTextColor.toLowerCase());
+  // Couleur choisie explicitement dans le back-office (hors valeur claire par défaut).
+  const hasCustomText = Boolean(content.textColor) && !isWhiteish;
+  // Fond d'animation sombre -> le texte reste clair (thème indépendant), sauf couleur perso.
+  const isDarkAnimation = isBackgroundAnimation && animationMeta.surface === "dark";
+  const useThemeText = (isTransparent || isBackgroundAnimation) && !isDarkAnimation;
+  const textColor = isDarkAnimation
+    ? (hasCustomText ? configuredTextColor : "#f1ece1")
+    : useThemeText && isWhiteish
+      ? "var(--color-text-primary)"
+      : configuredTextColor;
 
   const blurValue = Number.parseInt(String(content.backgroundBlur ?? "0"), 10);
   const backgroundBlur = Number.isFinite(blurValue) ? Math.max(0, Math.min(8, blurValue)) : 0;

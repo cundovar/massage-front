@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { ConstellationBackdrop } from "@/components/animations/ConstellationBackdrop";
 import { EnsoBackdrop } from "@/components/animations/EnsoBackdrop";
 import { KaresansuiBackdrop } from "@/components/animations/KaresansuiBackdrop";
 import { OilBackdrop } from "@/components/animations/OilBackdrop";
@@ -11,6 +12,7 @@ import { WavesBackdrop } from "@/components/animations/WavesBackdrop";
  * Chaque composant doit se positionner en `absolute inset-0`.
  */
 export const HERO_ANIMATION_COMPONENTS: Record<string, ComponentType> = {
+  constellation: ConstellationBackdrop,
   enso: EnsoBackdrop,
   karesansui: KaresansuiBackdrop,
   oil: OilBackdrop,
