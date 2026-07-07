@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@/lib/api";
-import { FALLBACK_NAV, FALLBACK_SETTINGS } from "@/lib/defaultContent";
+import { FALLBACK_SETTINGS } from "@/lib/defaultContent";
 import { HorizontalNav } from "@/components/layout/HorizontalNav";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
@@ -17,27 +17,12 @@ interface HeaderProps {
 
 export function Header({ initialNavItems, initialSettings }: HeaderProps) {
   const pathname = usePathname();
-  const [navItems, setNavItems] = useState<NavItem[]>(
-    initialNavItems?.length ? initialNavItems : FALLBACK_NAV,
-  );
   const [settings, setSettings] = useState<PublicSettings>(initialSettings ?? FALLBACK_SETTINGS);
+  const navItems = initialNavItems ?? [];
 
   useEffect(() => {
     let cancelled = false;
     const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
-
-    async function refreshNavigation() {
-      try {
-        const response = await fetch(`${baseUrl}/api/navigation`, { cache: "no-store" });
-        if (!response.ok) return;
-        const data = (await response.json()) as { items?: NavItem[] };
-        if (!cancelled && Array.isArray(data.items) && data.items.length > 0) {
-          setNavItems(data.items);
-        }
-      } catch {
-        // Keep initial/fallback navigation if refresh fails
-      }
-    }
 
     async function refreshSettings() {
       try {
@@ -52,7 +37,6 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
       }
     }
 
-    void refreshNavigation();
     void refreshSettings();
 
     return () => {

@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronRight, X } from "lucide-react";
-import { FALLBACK_NAV } from "@/lib/defaultContent";
 import { WindTreeAnimation } from "@/components/animations/WindTreeAnimation";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { NavItem } from "@/types/navigation";
@@ -24,9 +23,7 @@ interface SwipeMenuProps {
  */
 export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
   const pathname = usePathname();
-  const [navItems, setNavItems] = useState<NavItem[]>(
-    initialNavItems?.length ? initialNavItems : FALLBACK_NAV,
-  );
+  const navItems = initialNavItems ?? [];
   const [open, setOpen] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
   // Décalage du doigt pendant le geste (0..PANEL_WIDTH), null quand on ne glisse pas.
@@ -39,30 +36,6 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
   const pendingDrag = useRef<number | null>(null);
 
   const isAdmin = pathname?.startsWith("/admin") ?? false;
-
-  // Rafraîchit la navigation depuis l'API (même logique que le Header).
-  useEffect(() => {
-    if (isAdmin) return;
-    let cancelled = false;
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
-
-    (async () => {
-      try {
-        const response = await fetch(`${baseUrl}/api/navigation`, { cache: "no-store" });
-        if (!response.ok) return;
-        const data = (await response.json()) as { items?: NavItem[] };
-        if (!cancelled && Array.isArray(data.items) && data.items.length > 0) {
-          setNavItems(data.items);
-        }
-      } catch {
-        // On garde la navigation initiale / fallback en cas d'échec.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isAdmin]);
 
   // Détecte si le header est masqué par le scroll.
   useEffect(() => {
