@@ -4,6 +4,7 @@ import { EnsoBackdrop } from "@/components/animations/EnsoBackdrop";
 import { KaresansuiBackdrop } from "@/components/animations/KaresansuiBackdrop";
 import { OilBackdrop } from "@/components/animations/OilBackdrop";
 import { PetalsBackdrop } from "@/components/animations/PetalsBackdrop";
+import { RootsBackdrop } from "@/components/animations/RootsBackdrop";
 import { WavesBackdrop } from "@/components/animations/WavesBackdrop";
 
 /**
@@ -17,5 +18,6 @@ export const HERO_ANIMATION_COMPONENTS: Record<string, ComponentType> = {
   karesansui: KaresansuiBackdrop,
   oil: OilBackdrop,
   petals: PetalsBackdrop,
+  racines: RootsBackdrop,
   waves: WavesBackdrop,
 };

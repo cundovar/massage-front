@@ -27,6 +27,7 @@ export const HERO_ANIMATIONS: HeroAnimationMeta[] = [
   { id: "petals", label: "Petales sur l'eau", mode: "background" },
   { id: "waves", label: "Vagues & ondes", mode: "background" },
   { id: "constellation", label: "Constellation réflexo", mode: "background", surface: "dark" },
+  { id: "racines", label: "Racines plantaires", mode: "background" },
 ];
 
 /** Options prêtes pour un champ `select` du page-builder. */

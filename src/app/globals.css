@@ -1533,3 +1533,127 @@ body.is-transitioning .page-content {
     opacity: 0.18;
   }
 }
+
+/* ============================================================
+   Hero racines plantaires — styles du composant RootsBackdrop
+   ============================================================ */
+.racines-hero {
+  --lin: #f5f1e7;
+  --terre: #ede5d2; /* sous la ligne de sol */
+  --trait: #4a4234; /* le pied, trait fin */
+  --racine: #8a6f52;
+  --racine-fine: #a08762;
+  --energie: #c9a24b;
+  --energie-claire: #e6cc8a;
+  --sol: #b7a888;
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(110% 90% at 30% 20%, #f9f6ee 0%, var(--lin) 60%);
+}
+
+[data-theme="dark"] .racines-hero {
+  --lin: color-mix(in srgb, var(--background) 88%, #201c16);
+  --terre: color-mix(in srgb, var(--background-alt) 80%, #17140f);
+  --trait: #d8cdb8;
+  --racine: #b8996f;
+  --racine-fine: #caa878;
+  --energie: #e6cc8a;
+  --energie-claire: #f4e3b4;
+  --sol: #6b6350;
+
+  background: radial-gradient(110% 90% at 30% 20%, color-mix(in srgb, var(--background) 82%, #262019) 0%, var(--lin) 60%);
+}
+
+.racines-hero svg {
+  width: min(62vmin, 420px);
+  height: auto;
+  overflow: visible;
+  opacity: 0.55;
+}
+
+.racines-hero .racines-terre {
+  fill: var(--terre);
+  opacity: 0.5;
+}
+
+.racines-hero .racines-cailloux {
+  fill: var(--sol);
+  opacity: 0.5;
+}
+
+/* tracé progressif générique — activé quand le conteneur reçoit `.draw` */
+.racines-hero .trace {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+}
+
+.racines-hero.draw .trace {
+  animation: racines-tracer var(--d, 1.5s) cubic-bezier(0.4, 0.1, 0.35, 1) var(--t, 0s) forwards;
+}
+
+@keyframes racines-tracer {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.racines-hero .pied {
+  stroke: var(--trait);
+  stroke-width: 2;
+}
+.racines-hero .sol-ligne {
+  stroke: var(--sol);
+  stroke-width: 1.6;
+}
+.racines-hero .detail {
+  stroke: var(--trait);
+  stroke-width: 1.2;
+  opacity: 0.55;
+}
+
+.racines-hero .ombre-contact {
+  fill: var(--racine);
+  opacity: 0;
+  animation: racines-poserOmbre 1.2s ease 3.6s forwards;
+}
+@keyframes racines-poserOmbre {
+  to {
+    opacity: 0.16;
+  }
+}
+
+/* énergie : lignes lumineuses + particules */
+.racines-hero .energie-groupe {
+  filter: drop-shadow(0 0 4px rgba(201, 162, 75, 0.55));
+}
+.racines-hero .flux {
+  fill: none;
+  stroke: var(--energie);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+.racines-hero .particule {
+  fill: var(--energie-claire);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .racines-hero .trace {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .racines-hero .ombre-contact {
+    animation: none !important;
+    opacity: 0.16;
+  }
+  .racines-hero .energie-groupe {
+    display: none;
+  }
+}
