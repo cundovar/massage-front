@@ -63,8 +63,8 @@ export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
               : "max-w-6xl md:grid-cols-2 xl:grid-cols-3"
         }`}
       >
-        {content.offers.map((offer, index) => (
-          <ScrollReveal key={offer.title} delay={index * 100}>
+        {content.offers.map((offer) => (
+          <ScrollReveal key={offer.title} className="h-full">
             <div className="js-offer-card h-full">
               <ServiceCard
                 category={content.title}
