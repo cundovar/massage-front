@@ -31,9 +31,8 @@ export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealPro
     const context = gsap.context(() => {
       gsap.fromTo(
         element,
-        { autoAlpha: 0, y: 28, scale: 0.98 },
+        { y: 28, scale: 0.98 },
         {
-          autoAlpha: 1,
           y: 0,
           scale: 1,
           duration: 0.8,
