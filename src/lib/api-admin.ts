@@ -122,6 +122,7 @@ export interface PageDetail {
   showInNav: boolean;
   navOrder: number;
   navTitle: string | null;
+  slugEditable?: boolean;
   sections: PageSection[];
   updatedAt: string;
 }
@@ -282,11 +283,22 @@ export interface CreateSectionPayload {
 
 export interface UpdatePagePayload {
   title?: string;
+  slug?: string;
   metaTitle?: string | null;
   metaDescription?: string | null;
   showInNav?: boolean;
   navOrder?: number;
   navTitle?: string | null;
+}
+
+export class PageUpdateError extends Error {
+  constructor(
+    public readonly field: "title" | "slug" | null,
+    message: string,
+  ) {
+    super(message);
+    this.name = "PageUpdateError";
+  }
 }
 
 export async function createSection(token: string, pageSlug: string, payload: CreateSectionPayload): Promise<PageSection> {
@@ -335,8 +347,12 @@ export async function updatePage(token: string, pageSlug: string, payload: Updat
 
   if (response.status === 401) throw new Error("UNAUTHORIZED");
   if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(data?.error ?? "Failed to update page");
+    const data = (await response.json().catch(() => null)) as {
+      error?: string;
+      errors?: Partial<Record<"title" | "slug", string>>;
+    } | null;
+    const field = data?.errors?.slug ? "slug" : data?.errors?.title ? "title" : null;
+    throw new PageUpdateError(field, field ? data?.errors?.[field] ?? "Valeur invalide" : data?.error ?? "Impossible de modifier la page");
   }
 
   return (await response.json()) as PageDetail;

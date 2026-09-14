@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
 import { getPage } from "@/lib/api";
+import { getPublicPagePath } from "@/lib/page-paths";
 
 const DEDICATED_ROUTES = new Set(["mentions-legales", "admin", "register"]);
 const SLUG_ALIASES: Record<string, string> = {
@@ -41,6 +42,10 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
   const page = await getPage(resolvedSlug, { fallback: false });
   if (!page) {
     notFound();
+  }
+
+  if (page.slug !== resolvedSlug) {
+    permanentRedirect(getPublicPagePath(page.slug));
   }
 
   const sections = Object.entries(page.sections)

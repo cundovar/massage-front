@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { PageBuilder } from "@/components/admin/page-builder/PageBuilder";
 import { Alert, Card, Spinner } from "@/components/admin/ui";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
+import { getPublicPagePath } from "@/lib/page-paths";
 import {
   createSection,
   deleteSection,
@@ -24,6 +25,7 @@ export default function PageEditorPage() {
   const [token] = useState<string | null>(() => (typeof window === "undefined" ? null : getTokenFromStorage()));
   const [page, setPage] = useState<PageDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const skipNextFetchForSlug = useRef<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -33,6 +35,11 @@ export default function PageEditorPage() {
 
   useEffect(() => {
     if (!token || !params.slug) {
+      return;
+    }
+
+    if (skipNextFetchForSlug.current === params.slug) {
+      skipNextFetchForSlug.current = null;
       return;
     }
 
@@ -110,6 +117,27 @@ export default function PageEditorPage() {
     await revalidateFrontend("/");
   }
 
+  async function handleUpdatePageDetails(details: { title: string; slug?: string }) {
+    if (!token || !page) {
+      return;
+    }
+
+    const previousSlug = page.slug;
+    const updated = await updatePage(token, previousSlug, details);
+    setPage((currentPage) => currentPage ? { ...updated, sections: currentPage.sections } : updated);
+
+    await Promise.all([
+      revalidateFrontend(getPublicPagePath(previousSlug)),
+      revalidateFrontend(getPublicPagePath(updated.slug)),
+      revalidateFrontend("/"),
+    ]);
+
+    if (updated.slug !== previousSlug) {
+      skipNextFetchForSlug.current = updated.slug;
+      router.replace(`/admin/pages/${updated.slug}`);
+    }
+  }
+
   if (!token || (!page && !error)) {
     return (
       <Card>
@@ -133,10 +161,12 @@ export default function PageEditorPage() {
       token={token}
       pageSlug={page.slug}
       pageTitle={page.title}
+      slugEditable={page.slugEditable !== false}
       initialSections={page.sections}
       showInNav={page.showInNav}
       onSave={handleSave}
       onToggleNav={handleToggleNav}
+      onUpdatePageDetails={handleUpdatePageDetails}
     />
   );
 }

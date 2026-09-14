@@ -10,18 +10,21 @@ import { BlockPalette } from "./BlockPalette";
 import { getBlockDefinition } from "./block-catalog";
 import { LivePreview } from "./LivePreview";
 import { getPageTemplate, hasPageTemplate } from "./page-templates";
+import { PageDetailsModal } from "./PageDetailsModal";
 
 interface PageBuilderProps {
   token: string;
   pageSlug: string;
   pageTitle: string;
+  slugEditable: boolean;
   initialSections: PageSection[];
   showInNav: boolean;
   onSave: (sections: PageSection[]) => Promise<void>;
   onToggleNav: (showInNav: boolean) => Promise<void>;
+  onUpdatePageDetails: (details: { title: string; slug?: string }) => Promise<void>;
 }
 
-export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showInNav, onSave, onToggleNav }: PageBuilderProps) {
+export function PageBuilder({ token, pageSlug, pageTitle, slugEditable, initialSections, showInNav, onSave, onToggleNav, onUpdatePageDetails }: PageBuilderProps) {
   const [sections, setSections] = useState<PageSection[]>(initialSections);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -29,6 +32,7 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
   const [error, setError] = useState<string | null>(null);
   const [isInNav, setIsInNav] = useState(showInNav);
   const [isTogglingNav, setIsTogglingNav] = useState(false);
+  const [isPageDetailsOpen, setIsPageDetailsOpen] = useState(false);
 
   const handleToggleNav = useCallback(async () => {
     setIsTogglingNav(true);
@@ -153,7 +157,14 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
           <p className="text-sm text-stone-500">/{pageSlug}</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-end gap-4">
+          <button
+            type="button"
+            onClick={() => setIsPageDetailsOpen(true)}
+            className="rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+          >
+            Informations de la page
+          </button>
           {/* Toggle afficher dans le menu */}
           <label className="flex cursor-pointer items-center gap-2">
             <span className="text-sm text-stone-600">Afficher dans le menu</span>
@@ -190,6 +201,16 @@ export function PageBuilder({ token, pageSlug, pageTitle, initialSections, showI
         <div className="border-b bg-white px-6 py-3">
           <Alert variant="error">{error}</Alert>
         </div>
+      ) : null}
+
+      {isPageDetailsOpen ? (
+        <PageDetailsModal
+          pageTitle={pageTitle}
+          pageSlug={pageSlug}
+          slugEditable={slugEditable}
+          onClose={() => setIsPageDetailsOpen(false)}
+          onSave={onUpdatePageDetails}
+        />
       ) : null}
 
       <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
