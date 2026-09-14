@@ -71,13 +71,13 @@ export function SectionRenderer({
       {sections.map((section, index) => {
         const key = `${section.sectionKey}-${section.sortOrder ?? index}`;
         const sectionType = section.type ?? section.sectionKey;
-        const animation = section.content.animation ?? "fade-up";
+        const animation = section.content.animation ?? "none";
         const animationDelay = section.content.animationDelay ?? 0;
         const blockAppearance = section.content._appearance as BlockAppearance | undefined;
 
         const withAnimation = (component: ReactNode) => {
           const framedComponent = (
-            <BlockAppearanceFrame appearance={blockAppearance}>
+            <BlockAppearanceFrame key={key} appearance={blockAppearance}>
               {component}
             </BlockAppearanceFrame>
           );

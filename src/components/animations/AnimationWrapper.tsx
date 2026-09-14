@@ -102,7 +102,7 @@ export function AnimationWrapper({
   }
 
   return (
-    <div ref={containerRef} className={className} style={{ visibility: "hidden" }}>
+    <div ref={containerRef} className={className}>
       {children}
     </div>
   );
