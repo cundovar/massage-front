@@ -34,9 +34,14 @@ export function ContactForm() {
       });
 
       if (!response.ok) {
-        const data = (await response.json().catch(() => null)) as { errors?: Record<string, string> } | null;
+        const data = (await response.json().catch(() => null)) as {
+          error?: string;
+          errors?: Record<string, string>;
+        } | null;
         if (data?.errors) {
           setErrorMessage(Object.values(data.errors).join(", "));
+        } else if (data?.error) {
+          setErrorMessage(data.error);
         } else {
           setErrorMessage("Une erreur est survenue.");
         }
