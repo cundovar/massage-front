@@ -1,7 +1,45 @@
+import type { Metadata } from "next";
 import { HeroCompact } from "@/components/sections/HeroCompact";
+import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
+import { getPage } from "@/lib/api";
 import { DEFAULT_MENTIONS } from "@/lib/defaultContent";
 
-export default function MentionsLegalesPage() {
+const SLUG = "mentions-legales";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage(SLUG, { fallback: false });
+  return {
+    title: page?.metaTitle || page?.title || DEFAULT_MENTIONS.content.title,
+    description: page?.metaDescription ?? undefined,
+  };
+}
+
+export default async function MentionsLegalesPage() {
+  // Contenu edite dans l'admin (Gestion des pages > Mentions legales).
+  const page = await getPage(SLUG, { fallback: false });
+
+  const sections = page
+    ? Object.entries(page.sections)
+        .filter(([, section]) => Boolean(section.type))
+        .map(([key, section]) => ({
+          sectionKey: key,
+          type: section.type,
+          title: section.title,
+          content: section.content,
+          sortOrder: section.sortOrder ?? 0,
+        }))
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+    : [];
+
+  if (sections.length > 0) {
+    return (
+      <main className="page-transition">
+        <SectionRenderer sections={sections} />
+      </main>
+    );
+  }
+
+  // Secours si l'API est indisponible ou la page vide.
   return (
     <main className="page-transition">
       <HeroCompact title={DEFAULT_MENTIONS.content.title} />

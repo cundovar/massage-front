@@ -91,7 +91,7 @@ export function SectionRenderer({
           }
 
           return (
-            <AnimationWrapper effect={animation} delay={animationDelay}>
+            <AnimationWrapper key={key} effect={animation} delay={animationDelay}>
               {framedComponent}
             </AnimationWrapper>
           );
