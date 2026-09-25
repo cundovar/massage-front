@@ -13,7 +13,6 @@ import {
   Scale,
   Share2,
   Trash2,
-  type LucideIcon,
 } from "lucide-react";
 import {
   Button,
@@ -21,6 +20,7 @@ import {
   ChoiceCards,
   ColorPicker,
   FieldLabel,
+  IconButton,
   FormField,
   FormSection,
   Input,
@@ -59,38 +59,6 @@ function FooterSwatch({ background, textColor, dashed = false }: { background: s
       <span className="absolute top-7 left-3 h-1 w-24 rounded-full opacity-60" style={{ background: textColor }} />
       <span className="absolute top-10 left-3 h-1 w-12 rounded-full opacity-40" style={{ background: textColor }} />
     </span>
-  );
-}
-
-/** Petit bouton icone (monter, descendre, supprimer) avec libelle accessible. */
-function IconAction({
-  icon: Icon,
-  label,
-  onClick,
-  disabled = false,
-  tone = "neutral",
-}: {
-  icon: LucideIcon;
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  tone?: "neutral" | "danger";
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={[
-        "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-stone-400 transition-colors",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-30",
-        tone === "danger" ? "hover:bg-red-50 hover:text-red-600" : "hover:bg-stone-100 hover:text-stone-700",
-      ].join(" ")}
-    >
-      <Icon className="h-4 w-4" aria-hidden="true" />
-    </button>
   );
 }
 
@@ -301,22 +269,28 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
                       {position}
                     </span>
                     <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800">{name}</span>
-                    <IconAction
-                      icon={ArrowUp}
+                    <IconButton
+                      icon={<ArrowUp className="h-4 w-4" />}
                       label={`Monter le lien ${position}`}
+                      title={`Monter le lien ${position}`}
+                      variant="ghost"
                       disabled={index === 0}
                       onClick={() => moveLink(index, -1)}
                     />
-                    <IconAction
-                      icon={ArrowDown}
+                    <IconButton
+                      icon={<ArrowDown className="h-4 w-4" />}
                       label={`Descendre le lien ${position}`}
+                      title={`Descendre le lien ${position}`}
+                      variant="ghost"
                       disabled={index === quickLinks.length - 1}
                       onClick={() => moveLink(index, 1)}
                     />
-                    <IconAction
-                      icon={Trash2}
+                    <IconButton
+                      icon={<Trash2 className="h-4 w-4" />}
                       label={`Supprimer le lien ${position}`}
-                      tone="danger"
+                      title={`Supprimer le lien ${position}`}
+                      variant="ghost"
+                      className="hover:bg-rose-50 hover:text-rose-600"
                       onClick={() => updateFooter({ quickLinks: quickLinks.filter((_, i) => i !== index) })}
                     />
                   </div>
@@ -335,7 +309,7 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
                             ...(!link.label.trim() && pageLabel ? { label: pageLabel } : {}),
                           })
                         }
-                      />
+                    />
                     </div>
                     <div className="min-w-0">
                       <FieldLabel label="Texte affiché" htmlFor={`footer-link-label-${index}`} />
@@ -344,7 +318,7 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
                         placeholder="Ex. Accueil"
                         value={link.label}
                         onChange={(event) => updateLink(index, { label: event.target.value })}
-                      />
+                    />
                     </div>
                   </div>
                 </li>
