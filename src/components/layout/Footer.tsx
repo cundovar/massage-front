@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { hexToRgb, prefersDarkText } from "@/lib/color";
+import { isConsentEnabled, openCookieSettings } from "@/lib/consent";
 import { FALLBACK_SETTINGS } from "@/lib/defaultContent";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { PublicSettings } from "@/types/settings";
@@ -219,11 +220,18 @@ export function Footer({ initialSettings }: FooterProps) {
           }}
         >
           <p>{settings.footer.copyrightText || FALLBACK_SETTINGS.footer.copyrightText}</p>
-          {(settings.footer.showMentionsLegales ?? true) && (
-            <TransitionLink href="/mentions-legales" className="footer-link transition">
-              {settings.footer.mentionsLegalesText || "Mentions legales"}
-            </TransitionLink>
-          )}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {(settings.footer.showMentionsLegales ?? true) && (
+              <TransitionLink href="/mentions-legales" className="footer-link transition">
+                {settings.footer.mentionsLegalesText || "Mentions legales"}
+              </TransitionLink>
+            )}
+            {isConsentEnabled && (
+              <button type="button" onClick={openCookieSettings} className="footer-link transition">
+                Gestion des cookies
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
