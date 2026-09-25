@@ -219,11 +219,25 @@ export function Footer({ initialSettings }: FooterProps) {
           }}
         >
           <p>{settings.footer.copyrightText || FALLBACK_SETTINGS.footer.copyrightText}</p>
-          {(settings.footer.showMentionsLegales ?? true) && (
-            <TransitionLink href="/mentions-legales" className="footer-link transition">
-              {settings.footer.mentionsLegalesText || "Mentions legales"}
-            </TransitionLink>
-          )}
+          <div className="flex flex-col items-center gap-2 md:flex-row md:gap-6">
+            {(settings.footer.showMentionsLegales ?? true) && (
+              <TransitionLink href="/mentions-legales" className="footer-link transition">
+                {settings.footer.mentionsLegalesText || "Mentions legales"}
+              </TransitionLink>
+            )}
+            <p>
+              Site créé par{" "}
+              <a
+                href="https://varascundo.com/"
+                target="_blank"
+                rel="noopener"
+                className="footer-link underline underline-offset-2 transition"
+                aria-label="Facundo Varas (ouvre un nouvel onglet)"
+              >
+                Facundo Varas
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 
