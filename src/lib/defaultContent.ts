@@ -221,6 +221,9 @@ export const FALLBACK_SETTINGS: PublicSettings = {
   },
   contact: {
     address: { street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
+    locations: [
+      { label: "Lieu principal", street: "123 Rue du Bien-Etre", postalCode: "75011", city: "Paris" },
+    ],
     phone: "06 12 34 56 78",
     email: "contact@helene-massage.fr",
     googleMapsUrl: null,
@@ -256,6 +259,9 @@ export const FALLBACK_SETTINGS: PublicSettings = {
     ],
     showSocialLinks: true,
     showContactInfo: true,
+    addressDisplay: "all",
+    selectedAddressIndex: 0,
+    addressSummary: "Deux lieux pour les massages",
     showHours: false,
     customDescription: null,
     mentionsLegalesText: "Mentions legales",

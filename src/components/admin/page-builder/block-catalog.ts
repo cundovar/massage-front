@@ -731,6 +731,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         street: "",
         city: "",
       },
+      addresses: [{ label: "Lieu principal", street: "", city: "" }],
       phone: "",
       email: "",
       hours: [{ days: "Lundi - Vendredi", hours: "10h - 20h" }],
@@ -738,6 +739,17 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     fields: [
       { key: "address.street", label: "Adresse (rue)", type: "text", placeholder: "123 Rue du Bien-Etre" },
       { key: "address.city", label: "Ville", type: "text", placeholder: "75011 Paris" },
+      {
+        key: "addresses",
+        label: "Lieux de prestation",
+        type: "array",
+        arrayItemType: "object",
+        objectFields: [
+          { key: "label", label: "Nom du lieu", type: "text", placeholder: "Cabinet principal" },
+          { key: "street", label: "Rue", type: "text" },
+          { key: "city", label: "Code postal et ville", type: "text", placeholder: "75020 Paris" },
+        ],
+      },
       { key: "phone", label: "Telephone", type: "text", placeholder: "06 12 34 56 78" },
       { key: "email", label: "Email", type: "text", placeholder: "contact@example.fr" },
       {
@@ -772,6 +784,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         street: "",
         city: "",
       },
+      addresses: [{ label: "Lieu principal", street: "", city: "" }],
       phone: "",
       email: "",
       hours: [
@@ -782,6 +795,17 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     fields: [
       { key: "address.street", label: "Adresse (rue)", type: "text", placeholder: "123 Rue du Bien-Etre" },
       { key: "address.city", label: "Ville", type: "text", placeholder: "75011 Paris" },
+      {
+        key: "addresses",
+        label: "Lieux de prestation",
+        type: "array",
+        arrayItemType: "object",
+        objectFields: [
+          { key: "label", label: "Nom du lieu", type: "text", placeholder: "Cabinet principal" },
+          { key: "street", label: "Rue", type: "text" },
+          { key: "city", label: "Code postal et ville", type: "text", placeholder: "75020 Paris" },
+        ],
+      },
       { key: "phone", label: "Telephone", type: "text", placeholder: "06 12 34 56 78" },
       { key: "email", label: "Email", type: "text", placeholder: "contact@example.fr" },
       {

@@ -9,6 +9,7 @@ import {
   FormSection,
   Input,
   PageLinkPicker,
+  Select,
   Switch,
   Textarea,
 } from "@/components/admin/ui";
@@ -204,14 +205,56 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
           </span>
         }
       >
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField label="Adresses affichées dans le footer">
+            <Select
+              value={settings.footer.addressDisplay}
+              options={[
+                { value: "all", label: "Tous les lieux" },
+                { value: "selected", label: "Un lieu précis" },
+                { value: "summary", label: "Texte simplifié" },
+              ]}
+              onChange={(event) => onChange({
+                ...settings,
+                footer: { ...settings.footer, addressDisplay: event.target.value as SiteSettings["footer"]["addressDisplay"] },
+              })}
+            />
+          </FormField>
+          {settings.footer.addressDisplay === "selected" ? (
+            <FormField label="Lieu affiché">
+              <Select
+                value={String(settings.footer.selectedAddressIndex)}
+                options={settings.contact.locations.map((location, index) => ({
+                  value: String(index),
+                  label: location.label || `Lieu ${index + 1}`,
+                }))}
+                onChange={(event) => onChange({
+                  ...settings,
+                  footer: { ...settings.footer, selectedAddressIndex: Number(event.target.value) },
+                })}
+              />
+            </FormField>
+          ) : null}
+        </div>
+        {settings.footer.addressDisplay === "summary" ? (
+          <FormField label="Texte simplifié">
+            <Input
+              placeholder="Ex. Deux lieux pour les massages à Paris"
+              value={settings.footer.addressSummary}
+              onChange={(event) => onChange({
+                ...settings,
+                footer: { ...settings.footer, addressSummary: event.target.value },
+              })}
+            />
+          </FormField>
+        ) : null}
         <button
           type="button"
           onClick={() => setShowContactSync(!showContactSync)}
           className="flex w-full items-center justify-between rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-left text-sm hover:bg-stone-100"
         >
           <span>
-            {settings.contact.address.street || "Adresse non definie"},{" "}
-            {settings.contact.address.postalCode} {settings.contact.address.city}
+            {settings.contact.locations.length} lieu(x) synchronisé(s)
           </span>
           {showContactSync ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>

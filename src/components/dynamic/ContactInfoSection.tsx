@@ -8,6 +8,7 @@ interface ContactInfoContent {
     street?: string;
     city?: string;
   };
+  addresses?: Array<{ label?: string; street: string; city: string }>;
   phone?: string;
   email?: string;
   hours?: Array<{
@@ -23,6 +24,7 @@ interface ContactInfoSectionProps {
 export function ContactInfoSection({ content }: ContactInfoSectionProps) {
   const street = content?.address?.street ?? "";
   const city = content?.address?.city ?? "";
+  const addresses = content?.addresses?.length ? content.addresses : [{ street, city }];
   const phone = content?.phone ?? "";
   const email = content?.email ?? "";
   const hours = content?.hours ?? [];
@@ -46,17 +48,24 @@ export function ContactInfoSection({ content }: ContactInfoSectionProps) {
 
           <div className="mt-8 grid gap-8 md:grid-cols-2">
             {/* Adresse */}
-            {(street || city) && (
+            {addresses.some((address) => address.street || address.city) && (
               <div>
                 <h3 className="mb-3 flex items-center gap-2 text-lg font-medium text-[var(--text-primary)]">
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  Adresse
+                  {addresses.length > 1 ? "Lieux de massage" : "Adresse"}
                 </h3>
-                <p className="text-[var(--text-secondary)]">{street}</p>
-                <p className="text-[var(--text-secondary)]">{city}</p>
+                <div className="space-y-3">
+                  {addresses.map((address, index) => (
+                    <div key={`${address.street}-${index}`} className="text-[var(--text-secondary)]">
+                      {address.label ? <p className="font-medium text-[var(--text-primary)]">{address.label}</p> : null}
+                      <p>{address.street}</p>
+                      <p>{address.city}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

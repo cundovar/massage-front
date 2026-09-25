@@ -51,6 +51,11 @@ export interface ContactInfosContent {
     street: string;
     city: string;
   };
+  addresses?: Array<{
+    label?: string;
+    street: string;
+    city: string;
+  }>;
   phone: string;
   email: string;
   hours?: Array<{

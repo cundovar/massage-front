@@ -105,6 +105,7 @@ function normalizeSettingsPayload(raw: unknown): PublicSettings {
               city: String((data.address as Record<string, unknown>).city ?? ""),
             }
           : FALLBACK_SETTINGS.contact.address,
+      locations: FALLBACK_SETTINGS.contact.locations,
       phone: typeof data.contactPhone === "string" ? data.contactPhone : FALLBACK_SETTINGS.contact.phone,
       email: typeof data.contactEmail === "string" ? data.contactEmail : FALLBACK_SETTINGS.contact.email,
       googleMapsUrl: null,

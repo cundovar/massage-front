@@ -56,7 +56,12 @@ export function Footer({ initialSettings }: FooterProps) {
     return FALLBACK_SETTINGS.footer.quickLinks;
   }, [settings.footer.quickLinks]);
 
-  const addressLine = [settings.contact.address.postalCode, settings.contact.address.city].filter(Boolean).join(" ");
+  const locations = settings.contact.locations.length > 0
+    ? settings.contact.locations
+    : [{ label: "", ...settings.contact.address }];
+  const footerLocations = settings.footer.addressDisplay === "selected"
+    ? [locations[settings.footer.selectedAddressIndex] ?? locations[0]]
+    : locations;
   const telHref = settings.contact.phone.replace(/\s+/g, "");
   const footerThemeClassName = getFooterClassName(settings.appearance.themePreset);
 
@@ -140,8 +145,15 @@ export function Footer({ initialSettings }: FooterProps) {
               <div className="flex-1">
                 <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
                 <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
-                  <li>{settings.contact.address.street}</li>
-                  <li>{addressLine}</li>
+                  {settings.footer.addressDisplay === "summary" ? (
+                    <li>{settings.footer.addressSummary || "Plusieurs lieux de massage"}</li>
+                  ) : footerLocations.map((location, index) => (
+                    <li key={`${location.street}-${index}`} className="space-y-0.5">
+                      {location.label ? <span className="block font-medium">{location.label}</span> : null}
+                      <span className="block">{location.street}</span>
+                      <span className="block">{[location.postalCode, location.city].filter(Boolean).join(" ")}</span>
+                    </li>
+                  ))}
                   <li className="pt-2">
                     <a href={`tel:${telHref}`} className="footer-link transition">
                       {settings.contact.phone}

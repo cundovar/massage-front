@@ -26,10 +26,18 @@ export interface ContactSettings {
     postalCode: string;
     city: string;
   };
+  locations: ContactLocation[];
   phone: string;
   email: string;
   googleMapsUrl: string | null;
   googleMapsEmbed: string | null;
+}
+
+export interface ContactLocation {
+  label: string;
+  street: string;
+  postalCode: string;
+  city: string;
 }
 
 export interface HoursSettings {
@@ -63,6 +71,9 @@ export interface FooterSettings {
   quickLinks: Array<{ label: string; url: string }>;
   showSocialLinks: boolean;
   showContactInfo: boolean;
+  addressDisplay: "all" | "selected" | "summary";
+  selectedAddressIndex: number;
+  addressSummary: string;
   showHours: boolean;
   customDescription: string | null;
   mentionsLegalesText: string;

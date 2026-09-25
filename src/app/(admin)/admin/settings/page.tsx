@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   },
   contact: {
     address: { street: "", postalCode: "", city: "" },
+    locations: [],
     phone: "",
     email: "",
     googleMapsUrl: null,
@@ -51,6 +52,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
     quickLinks: [],
     showSocialLinks: true,
     showContactInfo: true,
+    addressDisplay: "all",
+    selectedAddressIndex: 0,
+    addressSummary: "Deux lieux pour les massages",
     showHours: false,
     customDescription: null,
     mentionsLegalesText: "Mentions legales",

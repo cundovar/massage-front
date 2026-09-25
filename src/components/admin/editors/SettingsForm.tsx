@@ -48,6 +48,21 @@ export function SettingsForm({
     { value: "solid", label: "Solid (couleur de fond)" },
     { value: "sticky", label: "Sticky (reste en haut au scroll)" },
   ];
+  const locations = settings.contact.locations.length > 0
+    ? settings.contact.locations
+    : [{ label: "Lieu principal", ...settings.contact.address }];
+
+  function updateLocations(nextLocations: typeof locations) {
+    const primary = nextLocations[0] ?? { street: "", postalCode: "", city: "" };
+    onChange({
+      ...settings,
+      contact: {
+        ...settings.contact,
+        locations: nextLocations,
+        address: { street: primary.street, postalCode: primary.postalCode, city: primary.city },
+      },
+    });
+  }
 
   return (
     <Card className="space-y-6">
@@ -123,38 +138,38 @@ export function SettingsForm({
         </div>
       </FormSection>
 
-      <FormSection title="Coordonnees">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Input
-            placeholder="Rue"
-            value={settings.contact.address.street}
-            onChange={(event) =>
-              onChange({
-                ...settings,
-                contact: { ...settings.contact, address: { ...settings.contact.address, street: event.target.value } },
-              })
-            }
-          />
-          <Input
-            placeholder="Code postal"
-            value={settings.contact.address.postalCode}
-            onChange={(event) =>
-              onChange({
-                ...settings,
-                contact: { ...settings.contact, address: { ...settings.contact.address, postalCode: event.target.value } },
-              })
-            }
-          />
-          <Input
-            placeholder="Ville"
-            value={settings.contact.address.city}
-            onChange={(event) =>
-              onChange({
-                ...settings,
-                contact: { ...settings.contact, address: { ...settings.contact.address, city: event.target.value } },
-              })
-            }
-          />
+      <FormSection title="Coordonnees" description="Ajoutez les différents lieux où les prestations sont proposées">
+        <div className="space-y-3">
+          {locations.map((location, index) => (
+            <div key={index} className="space-y-3 rounded-lg border border-stone-200 p-4">
+              <div className="grid gap-3 md:grid-cols-4">
+                {(["label", "street", "postalCode", "city"] as const).map((field) => (
+                  <Input
+                    key={field}
+                    placeholder={{ label: "Nom du lieu", street: "Rue", postalCode: "Code postal", city: "Ville" }[field]}
+                    value={location[field]}
+                    onChange={(event) => {
+                      const next = [...locations];
+                      next[index] = { ...location, [field]: event.target.value };
+                      updateLocations(next);
+                    }}
+                  />
+                ))}
+              </div>
+              {locations.length > 1 ? (
+                <Button type="button" variant="danger" size="sm" onClick={() => updateLocations(locations.filter((_, i) => i !== index))}>
+                  Supprimer ce lieu
+                </Button>
+              ) : null}
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => updateLocations([...locations, { label: "", street: "", postalCode: "", city: "" }])}
+          >
+            Ajouter une adresse
+          </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <Input
