@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { ImageIcon } from "lucide-react";
+import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
 import { getImageUrl } from "@/lib/api";
 
 interface ImageSectionProps {
@@ -11,7 +13,7 @@ interface ImageSectionProps {
 
 export function ImageSection({ content }: ImageSectionProps) {
   const imageUrl = content.image ? getImageUrl(content.image) : null;
-  if (!imageUrl) return null;
+  if (!imageUrl) return <EmptyBlockPlaceholder icon={ImageIcon} title="Image" hint="Choisissez une photo dans la section « Images » du bloc." />;
 
   return (
     <section className="mx-auto max-w-4xl px-6 py-16">

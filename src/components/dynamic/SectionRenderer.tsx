@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import { AnimationWrapper, type AnimationEffect } from "@/components/animations/AnimationWrapper";
+import { Leaf } from "lucide-react";
+import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
 import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 import { BenefitsGridSection, type BenefitsGridContent } from "@/components/dynamic/BenefitsGridSection";
 import { ContactInfoSection } from "@/components/dynamic/ContactInfoSection";
@@ -234,7 +236,14 @@ export function SectionRenderer({
             const hasApiServices = services && services.length > 0;
 
             if (!hasManualItems && !hasApiServices) {
-              return null;
+              return (
+                <EmptyBlockPlaceholder
+                  key={key}
+                  icon={Leaf}
+                  title="Aperçu des soins"
+                  hint="Ajoutez des soins dans le bloc, ou créez des soins dans « Services »."
+                />
+              );
             }
 
             return withAnimation(

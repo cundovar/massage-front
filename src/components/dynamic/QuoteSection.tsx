@@ -1,3 +1,6 @@
+import { Quote } from "lucide-react";
+import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
+
 interface QuoteSectionProps {
   content: {
     text?: string;
@@ -6,7 +9,9 @@ interface QuoteSectionProps {
 }
 
 export function QuoteSection({ content }: QuoteSectionProps) {
-  if (!content.text) return null;
+  if (!content.text?.trim()) {
+    return <EmptyBlockPlaceholder icon={Quote} title="Citation" hint="Écrivez la citation dans la section « Textes » du bloc." />;
+  }
 
   return (
     <section className="mx-auto max-w-4xl px-6 py-16">

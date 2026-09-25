@@ -1,5 +1,8 @@
 "use client";
 
+import { Map as MapIcon } from "lucide-react";
+import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
+
 interface GoogleMapContent {
   embedUrl?: string;
   title?: string;
@@ -12,13 +15,13 @@ interface GoogleMapSectionProps {
 export function GoogleMapSection({ content }: GoogleMapSectionProps) {
   const embedUrl = content.embedUrl || "";
 
-  if (!embedUrl) {
+  if (!embedUrl.trim()) {
     return (
-      <section className="mx-auto max-w-6xl px-6 py-10" data-animate="section">
-        <div className="flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-2xl bg-gray-100">
-          <p className="text-gray-500">Aucune carte configuree</p>
-        </div>
-      </section>
+      <EmptyBlockPlaceholder
+        icon={MapIcon}
+        title="Carte"
+        hint="Collez l'URL d'intégration Google Maps (ou Google My Maps) dans la section « Textes » du bloc."
+      />
     );
   }
 
