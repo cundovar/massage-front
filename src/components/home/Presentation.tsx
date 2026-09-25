@@ -9,6 +9,7 @@ interface PresentationProps {
 
 export function Presentation({ content }: PresentationProps) {
   const imageUrl = getImageUrl(content.image);
+  const quote = content.quote?.trim();
 
   return (
     <section id="bienvenue" className="mt-16 grid gap-10 md:grid-cols-[5fr_2fr]">
@@ -23,16 +24,17 @@ export function Presentation({ content }: PresentationProps) {
               {paragraph}
             </p>
           ))}
-          <blockquote
-            className="rounded-r-xl px-5 py-4 text-xl italic text-[var(--text-primary)]"
-            style={{
-              borderLeft: "2px solid color-mix(in srgb, var(--primary-start) 40%, transparent)",
-              background: "color-mix(in srgb, var(--primary-start) 10%, transparent)",
-            }}
-          >
-            {content.quote ??
-              "Je m'adresse a tous ceux qui souhaitent prendre soin d'eux-memes et s'offrir une pause bienveillante."}
-          </blockquote>
+          {quote ? (
+            <blockquote
+              className="rounded-r-xl px-5 py-4 text-xl italic text-[var(--text-primary)]"
+              style={{
+                borderLeft: "2px solid color-mix(in srgb, var(--primary-start) 40%, transparent)",
+                background: "color-mix(in srgb, var(--primary-start) 10%, transparent)",
+              }}
+            >
+              {quote}
+            </blockquote>
+          ) : null}
         </div>
       </ScrollReveal>
 
