@@ -1,33 +1,93 @@
+import {
+  AlignLeft,
+  Ban,
+  Blend,
+  Building2,
+  Contact,
+  FileText,
+  Flower2,
+  GraduationCap,
+  HandCoins,
+  House,
+  Image as ImageIcon,
+  Images,
+  LayoutGrid,
+  LayoutTemplate,
+  Leaf,
+  ListChecks,
+  ListFilter,
+  Mail,
+  Map as MapIcon,
+  MapPin,
+  Megaphone,
+  MoveVertical,
+  PanelTop,
+  PanelsTopLeft,
+  Phone,
+  Quote,
+  RectangleHorizontal,
+  Route,
+  Sparkles,
+  Square,
+  Star,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 import { ANIMATION_OPTIONS } from "@/lib/heroAnimations";
 
 export interface BlockDefinition {
   type: string;
   label: string;
   description: string;
-  icon: string;
+  icon: LucideIcon;
   category: string;
   defaultContent: Record<string, unknown>;
   fields: FieldDefinition[];
 }
 
+/** Section de l'editeur dans laquelle un champ est range. */
+export type FieldGroupId = "content" | "button" | "media" | "design" | "animation" | "advanced";
+
+export interface FieldOption {
+  value: string;
+  label: string;
+  /** Precision affichee sous le libelle (cartes de choix). */
+  hint?: string;
+  icon?: LucideIcon;
+}
+
 export interface FieldDefinition {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "array" | "page-link" | "select" | "color" | "toggle";
+  type: "text" | "textarea" | "image" | "array" | "page-link" | "select" | "color" | "toggle" | "button";
   placeholder?: string;
   arrayItemType?: "text" | "textarea" | "image" | "object";
   objectFields?: FieldDefinition[];
-  options?: Array<{ value: string; label: string }>;
+  /** Libelle d'un element de liste ("Photo" -> "Photo 1", "Photo 2"...). */
+  itemLabel?: string;
+  options?: FieldOption[];
+  /** Section de l'editeur ; par defaut "design" pour les couleurs, "content" sinon. */
+  group?: FieldGroupId;
+  /** Explication en langage courant, affichee dans une bulle "?". */
+  help?: string;
+  /** Champ facultatif : affiche la mention "facultatif". */
+  optional?: boolean;
+  /** Affiche le champ seulement si un autre champ a (ou n'a pas) une valeur donnee. */
+  showIf?: { key: string; in?: string[]; notIn?: string[] };
+  /** Rendu d'un champ "select" : liste deroulante (defaut), boutons ou cartes. */
+  widget?: "segmented" | "cards";
+  /** Champ "button" : cles du contenu pour le texte, le lien et l'ouverture dans un nouvel onglet. */
+  buttonKeys?: { text: string; link: string; newTab?: string };
 }
 
 export const BLOCK_CATEGORIES = [
-  { id: "header", label: "En-tete", icon: "📌" },
-  { id: "content", label: "Contenu", icon: "📝" },
-  { id: "layout", label: "Mise en page", icon: "↕️" },
-  { id: "services", label: "Services & Tarifs", icon: "💰" },
-  { id: "about", label: "A propos", icon: "👤" },
-  { id: "contact", label: "Contact", icon: "📍" },
-  { id: "cta", label: "Appel a l'action", icon: "📞" },
+  { id: "header", label: "En-tete", icon: PanelTop },
+  { id: "content", label: "Contenu", icon: FileText },
+  { id: "layout", label: "Mise en page", icon: LayoutTemplate },
+  { id: "services", label: "Services & Tarifs", icon: HandCoins },
+  { id: "about", label: "A propos", icon: UserRound },
+  { id: "contact", label: "Contact", icon: MapPin },
+  { id: "cta", label: "Appel a l'action", icon: Megaphone },
 ] as const;
 
 export const BLOCK_CATALOG: BlockDefinition[] = [
@@ -35,7 +95,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "hero-home",
     label: "Bannière d’accueil avec photos",
     description: "Présente le site dès l’arrivée avec un titre et plusieurs photos défilantes",
-    icon: "🏠",
+    icon: House,
     category: "header",
     defaultContent: {
       siteTitle: "Helene - Massages & Ayurveda",
@@ -60,32 +120,117 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       ],
     },
     fields: [
-      { key: "siteTitle", label: "Titre du site", type: "text", placeholder: "Les Massages d'Helene" },
-      { key: "siteSubtitle", label: "Sous-titre du site", type: "text", placeholder: "Massages, rituels et bien-etre" },
-      { key: "buttonText", label: "Texte du bouton (optionnel)", type: "text", placeholder: "Decouvrir la carte" },
-      { key: "buttonLink", label: "Lien du bouton (optionnel)", type: "page-link", placeholder: "/soins" },
       {
-        key: "backgroundType",
-        label: "Type de fond",
-        type: "select",
-        options: [
-          { value: "image", label: "Photo (slides)" },
-          { value: "gradient", label: "Gradient" },
-          { value: "transparent", label: "Transparent" },
+        key: "siteTitle",
+        label: "Grand titre",
+        type: "text",
+        placeholder: "Les Massages d'Hélène",
+        help: "Le premier texte que voient les visiteurs, en très grand au centre de la bannière.",
+      },
+      {
+        key: "siteSubtitle",
+        label: "Phrase sous le titre",
+        type: "text",
+        optional: true,
+        placeholder: "Massages, rituels et bien-être",
+      },
+      {
+        key: "button",
+        label: "Bouton",
+        type: "button",
+        placeholder: "Réserver un soin",
+        buttonKeys: { text: "buttonText", link: "buttonLink" },
+      },
+      {
+        key: "slides",
+        label: "Photos qui défilent",
+        type: "array",
+        arrayItemType: "object",
+        itemLabel: "Photo",
+        group: "media",
+        help: "Chaque photo s'affiche à tour de rôle en fond de bannière, avec son propre texte.",
+        objectFields: [
+          { key: "image", label: "Photo", type: "image" },
+          { key: "title", label: "Texte sur la photo", type: "text", optional: true },
+          { key: "subtitle", label: "Petite phrase", type: "text", optional: true },
         ],
       },
       {
-        key: "animation",
-        label: "Animation de fond",
+        key: "backgroundType",
+        label: "Fond de la bannière",
         type: "select",
+        widget: "cards",
+        group: "design",
+        options: [
+          { value: "image", label: "Photos", hint: "Les photos ajoutées dans « Images »", icon: ImageIcon },
+          { value: "gradient", label: "Dégradé", hint: "Fondu entre deux couleurs", icon: Blend },
+          { value: "transparent", label: "Aucun", hint: "Le fond de la page reste visible", icon: Ban },
+        ],
+      },
+      {
+        key: "gradientStart",
+        label: "Couleur 1 du dégradé",
+        type: "color",
+        showIf: { key: "backgroundType", in: ["gradient"] },
+      },
+      {
+        key: "gradientEnd",
+        label: "Couleur 2 du dégradé",
+        type: "color",
+        showIf: { key: "backgroundType", in: ["gradient"] },
+      },
+      {
+        key: "overlayOpacity",
+        label: "Assombrir la photo",
+        type: "select",
+        widget: "segmented",
+        group: "design",
+        help: "Pose un voile sombre sur le fond pour que le texte reste bien lisible, même sur une photo claire.",
+        showIf: { key: "backgroundType", in: ["image", "gradient"] },
+        options: [
+          { value: "20", label: "Léger" },
+          { value: "35", label: "Moyen" },
+          { value: "45", label: "Marqué" },
+          { value: "60", label: "Fort" },
+        ],
+      },
+      {
+        key: "backgroundBlur",
+        label: "Flou de la photo",
+        type: "select",
+        widget: "segmented",
+        group: "design",
+        help: "Rend la photo floue pour faire ressortir le texte. « Aucun » garde la photo nette.",
+        showIf: { key: "backgroundType", in: ["image"] },
+        options: [
+          { value: "0", label: "Aucun" },
+          { value: "2", label: "Léger" },
+          { value: "4", label: "Moyen" },
+          { value: "6", label: "Fort" },
+        ],
+      },
+      {
+        key: "textColor",
+        label: "Couleur du texte",
+        type: "color",
+        help: "Couleur du titre et des phrases. Choisissez une couleur claire sur une photo sombre, et inversement.",
+      },
+      {
+        key: "animation",
+        label: "Décor animé",
+        type: "select",
+        group: "design",
+        help: "Motif en mouvement (vagues, pétales…) qui remplace ou décore le fond de la bannière.",
         options: ANIMATION_OPTIONS,
       },
       {
         key: "entryAnimation",
-        label: "Animation d'entrée",
+        label: "Effet d'apparition du texte",
         type: "select",
+        group: "animation",
+        help: "Mouvement du titre et du bouton à l'ouverture de la page.",
         options: [
-          { value: "none", label: "Aucune" },
+          { value: "none", label: "Aucun" },
           { value: "fade-up", label: "Fondu + montée" },
           { value: "fade-down", label: "Fondu + descente" },
           { value: "slide-left", label: "Glissement gauche" },
@@ -97,49 +242,16 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       },
       {
         key: "entryAnimationDelay",
-        label: "Délai de l'animation (secondes)",
+        label: "Délai avant l'effet",
         type: "select",
+        widget: "segmented",
+        group: "animation",
+        showIf: { key: "entryAnimation", notIn: ["", "none"] },
         options: [
           { value: "0", label: "Immédiat" },
-          { value: "0.3", label: "0,3 seconde" },
-          { value: "0.6", label: "0,6 seconde" },
-          { value: "1", label: "1 seconde" },
-        ],
-      },
-      { key: "gradientStart", label: "Gradient debut", type: "color" },
-      { key: "gradientEnd", label: "Gradient fin", type: "color" },
-      { key: "textColor", label: "Couleur du texte", type: "color" },
-      {
-        key: "backgroundBlur",
-        label: "Flou du fond",
-        type: "select",
-        options: [
-          { value: "0", label: "Aucun" },
-          { value: "2", label: "Leger" },
-          { value: "4", label: "Moyen" },
-          { value: "6", label: "Fort" },
-        ],
-      },
-      {
-        key: "overlayOpacity",
-        label: "Opacite de l'overlay",
-        type: "select",
-        options: [
-          { value: "20", label: "20%" },
-          { value: "35", label: "35%" },
-          { value: "45", label: "45%" },
-          { value: "60", label: "60%" },
-        ],
-      },
-      {
-        key: "slides",
-        label: "Slides",
-        type: "array",
-        arrayItemType: "object",
-        objectFields: [
-          { key: "image", label: "Image de fond", type: "image" },
-          { key: "title", label: "Titre du slide", type: "text" },
-          { key: "subtitle", label: "Sous-titre", type: "text" },
+          { value: "0.3", label: "0,3 s" },
+          { value: "0.6", label: "0,6 s" },
+          { value: "1", label: "1 s" },
         ],
       },
     ],
@@ -148,7 +260,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "neutral",
     label: "Section personnalisée",
     description: "Ajoute un contenu libre avec un titre, du texte et éventuellement un bouton",
-    icon: "▫️",
+    icon: Square,
     category: "content",
     defaultContent: {
       eyebrow: "",
@@ -214,7 +326,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "spacer",
     label: "Espace entre les sections",
     description: "Ajoute un espace vertical entre deux sections",
-    icon: "↕️",
+    icon: MoveVertical,
     category: "layout",
     defaultContent: {
       size: "md",
@@ -238,7 +350,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "hero",
     label: "Bannière de page",
     description: "Affiche une grande photo avec un titre et un sous-titre",
-    icon: "🖼️",
+    icon: ImageIcon,
     category: "header",
     defaultContent: {
       title: "",
@@ -296,7 +408,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "hero-compact",
     label: "Petite bannière de page",
     description: "Affiche une bannière plus courte pour les pages intérieures",
-    icon: "🎯",
+    icon: RectangleHorizontal,
     category: "header",
     defaultContent: {
       title: "",
@@ -362,7 +474,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "presentation",
     label: "Présentation avec photo",
     description: "Présente une personne ou une activité avec une photo et du texte",
-    icon: "✨",
+    icon: Sparkles,
     category: "content",
     defaultContent: {
       title: "",
@@ -381,7 +493,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "approche",
     label: "Points forts et approche",
     description: "Présente les points forts, la méthode et les valeurs de l’activité",
-    icon: "📋",
+    icon: ListChecks,
     category: "content",
     defaultContent: {
       title: "",
@@ -402,7 +514,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "quote",
     label: "Citation mise en avant",
     description: "Met en valeur une phrase importante ou un témoignage",
-    icon: "💬",
+    icon: Quote,
     category: "content",
     defaultContent: {
       text: "",
@@ -417,7 +529,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "google-reviews",
     label: "Témoignages clients",
     description: "Présente une note globale et des témoignages de clientes",
-    icon: "⭐",
+    icon: Star,
     category: "content",
     defaultContent: {
       eyebrow: "Avis Google",
@@ -485,7 +597,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "text",
     label: "Texte libre",
     description: "Ajoute un titre et un ou plusieurs paragraphes de texte",
-    icon: "📄",
+    icon: AlignLeft,
     category: "content",
     defaultContent: {
       title: "",
@@ -502,7 +614,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "image",
     label: "Photo",
     description: "Ajoute une photo avec un texte alternatif et une légende facultative",
-    icon: "🖼️",
+    icon: ImageIcon,
     category: "content",
     defaultContent: {
       image: null,
@@ -519,7 +631,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "gallery",
     label: "Galerie de photos",
     description: "Grille d'images",
-    icon: "📸",
+    icon: Images,
     category: "content",
     defaultContent: {
       title: "",
@@ -534,7 +646,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "tarifs",
     label: "Tarifs et prestations",
     description: "Présente les soins, leurs descriptions, leurs durées et leurs prix",
-    icon: "💰",
+    icon: HandCoins,
     category: "services",
     defaultContent: {
       title: "Tarifs",
@@ -565,7 +677,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "entreprise",
     label: "Massages en entreprise",
     description: "Présente les bénéfices des massages pour les équipes et les entreprises",
-    icon: "🏢",
+    icon: Building2,
     category: "services",
     defaultContent: {
       title: "",
@@ -592,7 +704,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "benefits-grid",
     label: "Avantages pour les entreprises",
     description: "Compare les bénéfices pour les équipes et pour l’entreprise",
-    icon: "🧩",
+    icon: LayoutGrid,
     category: "services",
     defaultContent: {
       leftTitle: "Pour vos equipes",
@@ -619,7 +731,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "parcours",
     label: "Mon parcours",
     description: "Présente votre parcours personnel et professionnel avec une photo",
-    icon: "👤",
+    icon: Route,
     category: "about",
     defaultContent: {
       image: null,
@@ -634,7 +746,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "formations",
     label: "Formations et certifications",
     description: "Liste les formations, diplômes et certifications avec leurs années",
-    icon: "🎓",
+    icon: GraduationCap,
     category: "about",
     defaultContent: {
       images: [],
@@ -658,7 +770,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "philosophie",
     label: "Ma philosophie",
     description: "Partage une phrase, une valeur ou une vision de votre activité",
-    icon: "🧘",
+    icon: Flower2,
     category: "about",
     defaultContent: {
       text: "",
@@ -670,7 +782,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "contact-cta",
     label: "Prendre rendez-vous",
     description: "Invite les visiteurs à vous contacter ou à réserver une séance",
-    icon: "📞",
+    icon: Phone,
     category: "cta",
     defaultContent: {
       title: "Pret(e) a vous offrir une pause bien-etre ?",
@@ -687,7 +799,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "contact-infos",
     label: "Coordonnées et horaires",
     description: "Adresse, telephone, email et horaires",
-    icon: "📍",
+    icon: MapPin,
     category: "contact",
     defaultContent: {
       title: "Informations pratiques",
@@ -724,7 +836,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "contact-info",
     label: "Coordonnées et horaires (ancien format)",
     description: "Adresse, telephone, email et horaires",
-    icon: "📍",
+    icon: Contact,
     category: "contact",
     defaultContent: {
       address: {
@@ -768,7 +880,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "contact-form",
     label: "Formulaire de contact",
     description: "Formulaire de contact front",
-    icon: "✉️",
+    icon: Mail,
     category: "contact",
     defaultContent: {},
     fields: [],
@@ -777,7 +889,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "contact-layout",
     label: "Contact : coordonnées + formulaire",
     description: "Affiche les coordonnées à gauche et le formulaire de contact à droite",
-    icon: "📱",
+    icon: PanelsTopLeft,
     category: "contact",
     defaultContent: {
       address: {
@@ -824,7 +936,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "service-selector",
     label: "Choisir un soin et réserver",
     description: "Présente les prestations et les tarifs sous forme d’onglets",
-    icon: "🗂️",
+    icon: ListFilter,
     category: "services",
     defaultContent: {
       title: "Carte & tarifs",
@@ -855,7 +967,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "services-preview",
     label: "Aperçu des soins",
     description: "Présente quelques soins sous forme de cartes avec photo et prix",
-    icon: "🃏",
+    icon: Leaf,
     category: "services",
     defaultContent: {
       subtitle: "Mes soins",
@@ -887,7 +999,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     type: "google-map",
     label: "Localisation et accès",
     description: "Affiche une carte pour aider les visiteurs à trouver le lieu",
-    icon: "🗺️",
+    icon: MapIcon,
     category: "contact",
     defaultContent: {
       title: "",

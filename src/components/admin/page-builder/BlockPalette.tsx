@@ -18,7 +18,7 @@ export function BlockPalette({ onSelect }: BlockPaletteProps) {
         return (
           <div key={category.id}>
             <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-stone-500">
-              <span>{category.icon}</span>
+              <category.icon className="h-4 w-4" aria-hidden="true" />
               {category.label}
             </h3>
 
@@ -30,7 +30,9 @@ export function BlockPalette({ onSelect }: BlockPaletteProps) {
                   onClick={() => onSelect(block.type)}
                   className="group flex items-start gap-3 rounded-lg border border-stone-200 bg-stone-50 p-3 text-left transition-all hover:border-amber-500 hover:bg-amber-50"
                 >
-                  <span className="text-2xl">{block.icon}</span>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-amber-600 shadow-sm">
+                    <block.icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-stone-900 group-hover:text-amber-700">{block.label}</p>
                     <p className="line-clamp-2 text-xs text-stone-500">{block.description}</p>

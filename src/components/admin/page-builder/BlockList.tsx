@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, ChevronUp, Eye, EyeOff, GripVertical, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, EyeOff, FileText, GripVertical, Trash2 } from "lucide-react";
 import type { PageSection } from "@/lib/api-admin";
 import { BlockEditor } from "./BlockEditor";
 import { getBlockDefinition } from "./block-catalog";
@@ -63,6 +63,7 @@ function SortableBlock({ section, isActive, onSelect, onUpdate, onDelete, token 
 
   const definition = getBlockDefinition(section.type);
   const isVisible = section.visible ?? true;
+  const BlockIcon = definition?.icon ?? FileText;
 
   return (
     <div
@@ -85,9 +86,16 @@ function SortableBlock({ section, isActive, onSelect, onUpdate, onDelete, token 
           <GripVertical className="h-5 w-5" />
         </button>
 
-        <span className="text-xl">{definition?.icon ?? "📄"}</span>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+          <BlockIcon className="h-5 w-5" aria-hidden="true" />
+        </span>
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-stone-900">{definition?.label ?? section.type}</p>
+          <p className="font-medium text-stone-900">
+            {section.title?.trim() || definition?.label || section.type}
+          </p>
+          {section.title?.trim() && definition ? (
+            <p className="text-xs font-medium text-amber-700">{definition.label}</p>
+          ) : null}
           {definition?.description ? (
             <p className="mt-0.5 text-xs leading-5 text-stone-500">{definition.description}</p>
           ) : null}

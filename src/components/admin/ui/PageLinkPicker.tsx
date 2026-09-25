@@ -113,7 +113,7 @@ export function PageLinkPicker({
             }}
             className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-600 hover:bg-stone-50"
           >
-            Liste
+            Choisir une page
           </button>
         </div>
       ) : (
