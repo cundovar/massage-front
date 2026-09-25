@@ -486,6 +486,81 @@ body.is-transitioning .page-content {
   background-size: 72px 100%;
 }
 
+/* Styles du footer choisis dans l'admin (Bas de page > Apparence).
+   "dark" = rendu des themes ci-dessus. Les autres styles reprennent les couleurs
+   du site : ils suivent le theme et le mode sombre automatiquement. */
+.site-footer.footer-style-light,
+.site-footer.footer-style-theme,
+.site-footer.footer-style-transparent {
+  --footer-text: var(--text-primary);
+  --footer-text-muted: var(--text-secondary);
+  --footer-border: color-mix(in srgb, var(--primary-start) 35%, var(--card-border));
+  --footer-link-hover: color-mix(in srgb, var(--primary-end) 70%, var(--text-primary));
+}
+
+.site-footer.footer-style-light {
+  background: color-mix(in srgb, var(--primary-start) 12%, var(--background));
+  border-color: color-mix(in srgb, var(--primary-start) 22%, transparent);
+  box-shadow: 0 -12px 40px -28px color-mix(in srgb, var(--primary-end) 45%, transparent);
+}
+
+.site-footer.footer-style-theme {
+  background:
+    radial-gradient(ellipse 70% 60% at 100% 100%, color-mix(in srgb, var(--primary-end) 28%, transparent), transparent 70%),
+    linear-gradient(145deg, color-mix(in srgb, var(--primary-start) 40%, var(--background)) 0%, color-mix(in srgb, var(--primary-end) 32%, var(--background)) 100%);
+  border-color: color-mix(in srgb, var(--primary-start) 30%, transparent);
+  box-shadow: 0 -12px 40px -24px color-mix(in srgb, var(--primary-end) 50%, transparent);
+}
+
+.site-footer.footer-style-transparent {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.site-footer.footer-style-custom {
+  background: var(--footer-custom-bg);
+  border-color: color-mix(in srgb, var(--footer-text) 12%, transparent);
+  box-shadow: 0 -12px 40px -28px rgb(0 0 0 / 0.25);
+}
+
+/* Trait fin en degrade en haut, comme sous les titres du site. */
+.site-footer:not(.footer-style-dark)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+  width: min(12rem, 40%);
+  height: 2px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, var(--primary-start), var(--primary-end), transparent);
+}
+
+.site-footer.footer-style-custom::before {
+  background: linear-gradient(90deg, transparent, var(--footer-text), transparent);
+  opacity: 0.35;
+}
+
+/* Sur fond clair : motif et halo plus discrets, titres sans ombre portee. */
+.site-footer:not(.footer-style-dark) .footer-pattern {
+  opacity: calc(var(--footer-pattern-opacity, 0.12) * 0.6);
+}
+
+.site-footer:not(.footer-style-dark) .footer-glow {
+  opacity: 0.12;
+}
+
+.site-footer.footer-style-transparent .footer-glow,
+.site-footer.footer-style-custom .footer-glow {
+  display: none;
+}
+
+.site-footer:not(.footer-style-dark) :is(h3, h4) {
+  filter: none;
+}
+
 .footer-link {
   color: inherit;
 }

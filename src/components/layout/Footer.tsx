@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { hexToRgb, prefersDarkText } from "@/lib/color";
 import { FALLBACK_SETTINGS } from "@/lib/defaultContent";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import type { PublicSettings } from "@/types/settings";
@@ -19,6 +20,25 @@ function getFooterClassName(themePreset: PublicSettings["appearance"]["themePres
   };
 
   return themeClasses[themePreset] ?? themeClasses.ayurveda;
+}
+
+const FOOTER_STYLES: ReadonlyArray<PublicSettings["footer"]["style"]> = ["light", "theme", "dark", "transparent", "custom"];
+
+/**
+ * Couleur choisie par l'admin : le texte passe en fonce ou en clair selon le contraste.
+ * Retourne undefined si le style n'est pas "custom" ou si la couleur est invalide.
+ */
+function getCustomFooterStyle(footer: PublicSettings["footer"]): CSSProperties | undefined {
+  if (footer.style !== "custom" || !hexToRgb(footer.backgroundColor ?? "")) return undefined;
+
+  const isDarkText = prefersDarkText(footer.backgroundColor);
+  return {
+    "--footer-custom-bg": footer.backgroundColor,
+    "--footer-text": isDarkText ? "#1c1917" : "#ffffff",
+    "--footer-text-muted": isDarkText ? "#44403c" : "#e7e5e4",
+    "--footer-border": isDarkText ? "rgb(28 25 23 / 0.18)" : "rgb(255 255 255 / 0.28)",
+    "--footer-link-hover": isDarkText ? "#000000" : "#ffffff",
+  } as CSSProperties;
 }
 
 interface FooterProps {
@@ -64,10 +84,15 @@ export function Footer({ initialSettings }: FooterProps) {
     : locations;
   const telHref = settings.contact.phone.replace(/\s+/g, "");
   const footerThemeClassName = getFooterClassName(settings.appearance.themePreset);
+  const customFooterStyle = getCustomFooterStyle(settings.footer);
+  // Couleur perso invalide ou absente : on retombe sur le style clair.
+  const requestedStyle = FOOTER_STYLES.includes(settings.footer.style) ? settings.footer.style : "light";
+  const footerStyle = requestedStyle === "custom" && !customFooterStyle ? "light" : requestedStyle;
 
   return (
     <footer
-      className={`site-footer ${footerThemeClassName} relative mx-4 mb-4 overflow-hidden py-16 md:mx-6`}
+      className={`site-footer ${footerThemeClassName} footer-style-${footerStyle} relative mx-4 mb-4 overflow-hidden py-16 md:mx-6`}
+      style={customFooterStyle}
     >
       <div className="footer-pattern" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-7xl px-6">

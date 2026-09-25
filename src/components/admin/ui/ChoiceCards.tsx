@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { FieldLabel } from "./FieldLabel";
 
@@ -9,6 +9,8 @@ export interface ChoiceCardOption {
   label: string;
   hint?: string;
   icon?: LucideIcon;
+  /** Miniature visuelle affichee en haut de la carte (a la place de l'icone). */
+  preview?: ReactNode;
 }
 
 interface ChoiceCardsProps {
@@ -49,7 +51,11 @@ export function ChoiceCards({ label, value, options, onChange, help, optional }:
                   : "border-stone-200 bg-white hover:border-amber-300",
               ].join(" ")}
             >
-              {Icon ? (
+              {option.preview ? (
+                <span className="mb-1 block w-full" aria-hidden="true">
+                  {option.preview}
+                </span>
+              ) : Icon ? (
                 <Icon className={`h-5 w-5 ${isSelected ? "text-amber-600" : "text-stone-500"}`} aria-hidden="true" />
               ) : null}
               <span className={`text-sm font-medium ${isSelected ? "text-amber-800" : "text-stone-800"}`}>

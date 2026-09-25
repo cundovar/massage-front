@@ -66,6 +66,12 @@ export interface AppearanceSettings {
   bodyBackgroundImage: string | null;
 }
 
+/**
+ * Style du footer : clair (defaut), teinte du theme, sombre (ancien rendu),
+ * transparent (fond de page visible) ou couleur choisie (backgroundColor).
+ */
+export type FooterStyle = "light" | "theme" | "dark" | "transparent" | "custom";
+
 export interface FooterSettings {
   copyrightText: string;
   quickLinks: Array<{ label: string; url: string }>;
@@ -78,6 +84,9 @@ export interface FooterSettings {
   customDescription: string | null;
   mentionsLegalesText: string;
   showMentionsLegales: boolean;
+  style: FooterStyle;
+  /** Couleur de fond au format #RRGGBB, utilisee avec le style "custom". */
+  backgroundColor: string;
 }
 
 export interface ExternalNavLink {

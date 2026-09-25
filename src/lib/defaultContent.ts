@@ -266,6 +266,8 @@ export const FALLBACK_SETTINGS: PublicSettings = {
     customDescription: null,
     mentionsLegalesText: "Mentions legales",
     showMentionsLegales: true,
+    style: "light",
+    backgroundColor: "",
   },
   navigation: { externalLinks: [] },
 };

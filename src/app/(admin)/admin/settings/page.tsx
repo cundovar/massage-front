@@ -59,6 +59,8 @@ const DEFAULT_SETTINGS: SiteSettings = {
     customDescription: null,
     mentionsLegalesText: "Mentions legales",
     showMentionsLegales: true,
+    style: "light",
+    backgroundColor: "",
   },
   navigation: {
     externalLinks: [],
