@@ -8,6 +8,7 @@ import { ColorPicker } from "@/components/admin/ui/ColorPicker";
 import { FieldLabel } from "@/components/admin/ui/FieldLabel";
 import { Input } from "@/components/admin/ui/Input";
 import { PageLinkPicker } from "@/components/admin/ui/PageLinkPicker";
+import { RichTextEditor } from "@/components/admin/ui/RichTextEditor";
 import { SegmentedControl } from "@/components/admin/ui/SegmentedControl";
 import { Select } from "@/components/admin/ui/Select";
 import { Textarea } from "@/components/admin/ui/Textarea";
@@ -75,20 +76,44 @@ export function FieldRenderer({ field, value, onChange, token }: FieldRendererPr
 
   switch (field.type) {
     case "text":
-      return (
-        <div>
-          <FieldLabel label={field.label} htmlFor={fieldId} help={field.help} optional={field.optional} />
-          <Input
-            id={fieldId}
-            type="text"
-            value={(value as string) ?? ""}
-            onChange={(event) => onChange(event.target.value)}
-            placeholder={field.placeholder}
-          />
-        </div>
-      );
-
     case "textarea":
+      if (field.rich) {
+        return (
+          <div>
+            <FieldLabel
+              as="span"
+              id={`${fieldId}-label`}
+              label={field.label}
+              help={field.help}
+              optional={field.optional}
+            />
+            <RichTextEditor
+              id={fieldId}
+              labelledBy={`${fieldId}-label`}
+              value={(value as string) ?? ""}
+              onChange={onChange}
+              placeholder={field.placeholder}
+              multiline={field.type === "textarea"}
+            />
+          </div>
+        );
+      }
+
+      if (field.type === "text") {
+        return (
+          <div>
+            <FieldLabel label={field.label} htmlFor={fieldId} help={field.help} optional={field.optional} />
+            <Input
+              id={fieldId}
+              type="text"
+              value={(value as string) ?? ""}
+              onChange={(event) => onChange(event.target.value)}
+              placeholder={field.placeholder}
+            />
+          </div>
+        );
+      }
+
       return (
         <div>
           <FieldLabel label={field.label} htmlFor={fieldId} help={field.help} optional={field.optional} />
@@ -265,6 +290,15 @@ export function ArrayField({ field, value, onChange, token }: ArrayFieldProps) {
                     token={token}
                     value={(item as string) ?? null}
                     onChange={(path) => updateItem(index, path)}
+                  />
+                </div>
+              ) : field.rich && (field.arrayItemType === "textarea" || field.arrayItemType === "text") ? (
+                <div className="min-w-0 flex-1">
+                  <RichTextEditor
+                    value={(item as string) ?? ""}
+                    onChange={(nextValue) => updateItem(index, nextValue)}
+                    ariaLabel={`${itemLabel} ${index + 1}`}
+                    multiline={field.arrayItemType === "textarea"}
                   />
                 </div>
               ) : field.arrayItemType === "textarea" ? (

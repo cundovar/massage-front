@@ -70,6 +70,8 @@ export interface FieldDefinition {
   group?: FieldGroupId;
   /** Explication en langage courant, affichee dans une bulle "?". */
   help?: string;
+  /** Texte avec mise en forme (gras, italique, souligne, saut de ligne, couleur). Champs text/textarea. */
+  rich?: boolean;
   /** Champ facultatif : affiche la mention "facultatif". */
   optional?: boolean;
   /** Affiche le champ seulement si un autre champ a (ou n'a pas) une valeur donnee. */
@@ -124,6 +126,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         key: "siteTitle",
         label: "Grand titre",
         type: "text",
+        rich: true,
         placeholder: "Les Massages d'Hélène",
         help: "Le premier texte que voient les visiteurs, en très grand au centre de la bannière.",
       },
@@ -131,6 +134,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         key: "siteSubtitle",
         label: "Phrase sous le titre",
         type: "text",
+        rich: true,
         optional: true,
         placeholder: "Massages, rituels et bien-être",
       },
@@ -151,8 +155,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         help: "Chaque photo s'affiche à tour de rôle en fond de bannière, avec son propre texte.",
         objectFields: [
           { key: "image", label: "Photo", type: "image" },
-          { key: "title", label: "Texte sur la photo", type: "text", optional: true },
-          { key: "subtitle", label: "Petite phrase", type: "text", optional: true },
+          { key: "title", label: "Texte sur la photo", type: "text", rich: true, optional: true },
+          { key: "subtitle", label: "Petite phrase", type: "text", rich: true, optional: true },
         ],
       },
       {
@@ -483,10 +487,24 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       image: null,
     },
     fields: [
-      { key: "title", label: "Titre", type: "text" },
-      { key: "image", label: "Image", type: "image" },
-      { key: "paragraphs", label: "Paragraphes", type: "array", arrayItemType: "textarea" },
-      { key: "quote", label: "Citation (optionnel)", type: "textarea" },
+      { key: "title", label: "Titre", type: "text", rich: true },
+      { key: "image", label: "Photo", type: "image" },
+      {
+        key: "paragraphs",
+        label: "Paragraphes",
+        type: "array",
+        arrayItemType: "textarea",
+        itemLabel: "Paragraphe",
+        rich: true,
+      },
+      {
+        key: "quote",
+        label: "Citation",
+        type: "textarea",
+        rich: true,
+        optional: true,
+        help: "Phrase mise en valeur dans un encadré coloré. Laissez vide pour ne pas afficher l'encadré.",
+      },
     ],
   },
   {

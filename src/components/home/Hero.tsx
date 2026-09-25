@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/api";
+import { hasRichText, toPlainText } from "@/lib/richText";
+import { RichText } from "@/components/dynamic/RichText";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { getAnimationMeta } from "@/lib/heroAnimations";
 import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
@@ -86,6 +88,9 @@ export function Hero({ content }: HeroProps) {
       ? activeSlideIndex % imageSlides.length
       : 0;
   const activeSlide = useImageBackground ? imageSlides[normalizedActiveSlideIndex] : slides[0];
+  // Textes par defaut seulement si le champ n'a jamais ete rempli ; un champ vide masque la ligne.
+  const siteTitle = content.siteTitle ?? "Les Massages d'Helene";
+  const slideTitle = activeSlide ? activeSlide.title ?? "Pause ayurvedique" : undefined;
 
   useEffect(() => {
     if (!useImageBackground || imageSlides.length < 2) {
@@ -122,7 +127,7 @@ export function Hero({ content }: HeroProps) {
             >
               <Image
                 src={slide.imageUrl!}
-                alt={slide.title ?? `Slide ${index + 1}`}
+                alt={toPlainText(slide.title) || `Slide ${index + 1}`}
                 fill
                 priority={index === 0}
                 className="object-cover"
@@ -155,22 +160,26 @@ export function Hero({ content }: HeroProps) {
       <AnimationWrapper effect={entryAnimation} delay={Number.isFinite(entryAnimationDelay) ? entryAnimationDelay : 0}>
         <div className="js-hero-content relative z-10 mx-auto flex md:min-h-[65vh] max-w-4xl flex-col items-center justify-start pt-20 pb-8 text-center md:justify-center md:py-12" style={{ color: textColor }}>
           <div className="h-px w-24 bg-gold-default" />
-          <h1 data-animate="title" className="mt-6 font-serif text-5xl leading-[0.95] font-extralight md:text-7xl">
-            {content.siteTitle ?? "Les Massages d'Helene"}
-          </h1>
-          {content.siteSubtitle ? (
+          {hasRichText(siteTitle) ? (
+            <h1 data-animate="title" className="mt-6 font-serif text-5xl leading-[0.95] font-extralight md:text-7xl">
+              <RichText value={siteTitle} />
+            </h1>
+          ) : null}
+          {hasRichText(content.siteSubtitle) ? (
             <p className="mt-4 text-base md:text-lg" style={{ color: textColor, opacity: 0.9 }}>
-              {content.siteSubtitle}
+              <RichText value={content.siteSubtitle} />
             </p>
           ) : null}
-          <p data-animate="text" className="mt-5 text-xl md:text-3xl" style={{ opacity: 0.9 }}>
-            {activeSlide?.title ?? "Pause ayurvedique"}
-          </p>
-          {activeSlide?.subtitle && (
-            <p data-animate="text" className="mt-7 max-w-2xl text-lg" style={{ opacity: 0.8 }}>
-              {activeSlide.subtitle}
+          {hasRichText(slideTitle) ? (
+            <p data-animate="text" className="mt-5 text-xl md:text-3xl" style={{ opacity: 0.9 }}>
+              <RichText value={slideTitle} />
             </p>
-          )}
+          ) : null}
+          {hasRichText(activeSlide?.subtitle) ? (
+            <p data-animate="text" className="mt-7 max-w-2xl text-lg" style={{ opacity: 0.8 }}>
+              <RichText value={activeSlide?.subtitle} />
+            </p>
+          ) : null}
           {content.buttonText ? (
             content.buttonLink ? (
               <TransitionLink

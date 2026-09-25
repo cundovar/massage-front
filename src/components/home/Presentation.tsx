@@ -2,6 +2,8 @@ import Image from "next/image";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { getImageUrl } from "@/lib/api";
 import type { PresentationContent } from "@/lib/api";
+import { hasRichText } from "@/lib/richText";
+import { RichText } from "@/components/dynamic/RichText";
 
 interface PresentationProps {
   content: PresentationContent;
@@ -9,22 +11,25 @@ interface PresentationProps {
 
 export function Presentation({ content }: PresentationProps) {
   const imageUrl = getImageUrl(content.image);
-  const quote = content.quote?.trim();
+  const title = content.title ?? "Presentation";
+  const paragraphs = (content.paragraphs ?? []).filter((paragraph) => hasRichText(paragraph));
 
   return (
     <section id="bienvenue" className="mt-16 grid gap-10 md:grid-cols-[5fr_2fr]">
       <ScrollReveal>
         <div className="js-section-left space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" />
-          <h2 className="text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }}>
-            {content.title ?? "Presentation"}
-          </h2>
-          {content.paragraphs?.map((paragraph) => (
-            <p key={paragraph} className="text-lg leading-loose text-[var(--text-secondary)]">
-              {paragraph}
+          {hasRichText(title) ? (
+            <h2 className="text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }}>
+              <RichText value={title} />
+            </h2>
+          ) : null}
+          {paragraphs.map((paragraph, index) => (
+            <p key={`${index}-${paragraph.slice(0, 24)}`} className="text-lg leading-loose text-[var(--text-secondary)]">
+              <RichText value={paragraph} />
             </p>
           ))}
-          {quote ? (
+          {hasRichText(content.quote) ? (
             <blockquote
               className="rounded-r-xl px-5 py-4 text-xl italic text-[var(--text-primary)]"
               style={{
@@ -32,7 +37,7 @@ export function Presentation({ content }: PresentationProps) {
                 background: "color-mix(in srgb, var(--primary-start) 10%, transparent)",
               }}
             >
-              {quote}
+              <RichText value={content.quote} />
             </blockquote>
           ) : null}
         </div>
