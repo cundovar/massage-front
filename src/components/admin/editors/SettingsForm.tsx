@@ -184,7 +184,7 @@ export function SettingsForm({
       <FormSection title="Horaires">
         <div className="space-y-2">
           {settings.hours.schedule.map((item, index) => (
-            <div key={`${item.days}-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
+            <div key={index} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
               <Input
                 placeholder="Jours"
                 value={item.days}
