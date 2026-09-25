@@ -103,7 +103,7 @@ export function PageLinkPicker({
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder={placeholder || "https://... ou /chemin"}
-            className="flex-1 rounded-lg border border-stone-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-amber-500"
+            className="flex-1 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder-stone-400 transition-colors hover:border-stone-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
           <button
             type="button"
@@ -111,7 +111,7 @@ export function PageLinkPicker({
               setIsCustom(false);
               onChange("");
             }}
-            className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-600 hover:bg-stone-50"
+            className="rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-600 hover:bg-stone-50"
           >
             Choisir une page
           </button>
@@ -122,7 +122,7 @@ export function PageLinkPicker({
             value={value}
             onChange={(event) => handleSelectChange(event.target.value)}
             disabled={loading}
-            className="w-full appearance-none rounded-lg border border-stone-300 bg-white px-3 py-2 pr-10 focus:border-transparent focus:ring-2 focus:ring-amber-500 disabled:bg-stone-100"
+            className="w-full appearance-none rounded-md border border-stone-200 bg-white px-3 py-2 pr-10 text-sm text-stone-900 transition-colors hover:border-stone-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-stone-100"
           >
             <option value="">-- Sélectionner une page --</option>
 

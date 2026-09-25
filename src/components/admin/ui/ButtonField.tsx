@@ -3,6 +3,7 @@
 import { useId } from "react";
 import { ExternalLink, MousePointerClick } from "lucide-react";
 import { FieldLabel } from "./FieldLabel";
+import { Input } from "./Input";
 import { PageLinkPicker } from "./PageLinkPicker";
 
 export interface ButtonFieldValue {
@@ -43,13 +44,12 @@ export function ButtonField({ token, value, onChange, withNewTab = false, textPl
           optional
           help="Laissez vide pour ne pas afficher de bouton."
         />
-        <input
+        <Input
           id={textId}
           type="text"
           value={text}
           onChange={(event) => onChange({ ...value, text: event.target.value })}
           placeholder={textPlaceholder ?? "Réserver un soin"}
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-amber-500"
         />
       </div>
 
