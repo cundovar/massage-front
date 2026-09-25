@@ -6,7 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { SwipeMenu } from "@/components/layout/SwipeMenu";
-import { CookieConsent } from "@/components/consent/CookieConsent";
+import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import { TransitionProvider } from "@/contexts/TransitionContext";
 import { PageWrapper } from "@/components/transitions/PageWrapper";
 import { FALLBACK_NAV } from "@/lib/defaultContent";
@@ -51,7 +51,12 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
   }, [isAdmin]);
 
   if (isAdmin) {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <SiteAnalytics />
+      </>
+    );
   }
 
   const showMobileToggle = initialSettings?.appearance?.showDarkModeToggle !== false;
@@ -68,7 +73,7 @@ export function AppShell({ children, initialNavItems, initialSettings }: AppShel
 
       <BottomNav showThemeToggle={showMobileToggle} />
       <SwipeMenu initialNavItems={navItems} />
-      <CookieConsent />
+      <SiteAnalytics />
     </TransitionProvider>
   );
 }
