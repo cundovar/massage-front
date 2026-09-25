@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { getImageUrl } from "@/lib/api";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { RichText } from "@/components/dynamic/RichText";
+import { hasRichText } from "@/lib/richText";
 
 interface GenericGalleryContent {
   title?: string;
@@ -13,9 +15,11 @@ export function GenericGallerySection({ content }: { content: GenericGalleryCont
   return (
     <section className="px-6 py-16 md:px-12">
       <div className="mx-auto max-w-6xl">
-        {content.title ? (
+        {hasRichText(content.title) ? (
           <ScrollReveal>
-            <h2 className="mb-8 text-center text-3xl font-serif text-brown-darker">{content.title}</h2>
+            <h2 className="mb-8 text-center text-3xl font-serif text-brown-darker">
+              <RichText value={content.title} />
+            </h2>
           </ScrollReveal>
         ) : null}
 

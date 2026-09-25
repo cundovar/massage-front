@@ -1,4 +1,6 @@
 import { ExternalLink, Quote, Star } from "lucide-react";
+import { RichText } from "@/components/dynamic/RichText";
+import { hasRichText } from "@/lib/richText";
 
 export interface GoogleReviewItem {
   name?: string;
@@ -39,7 +41,10 @@ function Stars({ rating, label }: { rating: number; label: string }) {
 
 export function GoogleReviewsSection({ content }: { content: GoogleReviewsContent }) {
   const averageRating = normalizeRating(content.averageRating, 5);
-  const reviews = Array.isArray(content.reviews) ? content.reviews : [];
+  // Un avis sans texte n'est pas affiche aux visiteurs.
+  const reviews = (Array.isArray(content.reviews) ? content.reviews : []).filter((review) => hasRichText(review.text));
+  const eyebrow = content.eyebrow ?? "Avis Google";
+  const title = content.title ?? "Elles partagent leur expérience";
 
   return (
     <section className="relative overflow-hidden px-6 py-20">
@@ -47,14 +52,20 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-8 lg:grid-cols-[0.8fr_2fr] lg:items-end">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.22em] text-[var(--primary-start)]">
-              {content.eyebrow || "Avis Google"}
-            </p>
-            <h2 className="mt-3 font-serif text-4xl font-light text-[var(--text-primary)] md:text-5xl">
-              {content.title || "Elles partagent leur expérience"}
-            </h2>
-            {content.subtitle ? (
-              <p className="mt-4 max-w-xl text-lg leading-relaxed text-[var(--text-secondary)]">{content.subtitle}</p>
+            {hasRichText(eyebrow) ? (
+              <p className="text-sm font-medium uppercase tracking-[0.22em] text-[var(--primary-start)]">
+                <RichText value={eyebrow} />
+              </p>
+            ) : null}
+            {hasRichText(title) ? (
+              <h2 className="mt-3 font-serif text-4xl font-light text-[var(--text-primary)] md:text-5xl">
+                <RichText value={title} />
+              </h2>
+            ) : null}
+            {hasRichText(content.subtitle) ? (
+              <p className="mt-4 max-w-xl text-lg leading-relaxed text-[var(--text-secondary)]">
+                <RichText value={content.subtitle} />
+              </p>
             ) : null}
           </div>
 
@@ -69,6 +80,7 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
           </div>
         </div>
 
+        {reviews.length > 0 ? (
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {reviews.map((review, index) => {
             const rating = normalizeRating(review.rating);
@@ -82,7 +94,7 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
                   <Quote className="h-7 w-7 text-[var(--primary-start)] opacity-45" aria-hidden="true" />
                 </div>
                 <p className="mt-6 flex-1 text-base leading-relaxed text-[var(--text-secondary)]">
-                  {review.text || "Ajoutez ici le texte de l'avis."}
+                  <RichText value={review.text} />
                 </p>
                 <footer className="mt-7 border-t border-[var(--card-border)] pt-5">
                   <p className="font-medium text-[var(--text-primary)]">{review.name || "Cliente Google"}</p>
@@ -92,6 +104,7 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
             );
           })}
         </div>
+        ) : null}
 
         {content.googleUrl ? (
           <div className="mt-10 text-center">

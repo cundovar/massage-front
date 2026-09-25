@@ -1,6 +1,8 @@
 "use client";
 
+import { RichText } from "@/components/dynamic/RichText";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
+import { hasRichText } from "@/lib/richText";
 
 export interface ServicePrice {
   label: string;
@@ -52,9 +54,9 @@ export function ServiceCard({
       `}
     >
       {/* Catégorie / Sous-titre */}
-      {category ? (
+      {hasRichText(category) ? (
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary-start)]/80">
-          {category}
+          <RichText value={category} />
         </p>
       ) : null}
 
@@ -63,16 +65,20 @@ export function ServiceCard({
         className="text-3xl font-light tracking-tight text-[var(--text-primary)] md:text-4xl"
         style={{ fontFamily: "var(--font-title)" }}
       >
-        {title}
+        <RichText value={title} />
       </h3>
 
       {/* Ligne décorative */}
       <div className="my-5 h-px w-16 bg-gradient-to-r from-[var(--primary-start)] to-transparent" />
 
       {/* Description */}
-      <p className="flex-grow leading-relaxed text-[var(--text-secondary)]">
-        {description}
-      </p>
+      {hasRichText(description) ? (
+        <p className="flex-grow leading-relaxed text-[var(--text-secondary)]">
+          <RichText value={description} />
+        </p>
+      ) : (
+        <div className="flex-grow" />
+      )}
 
       {/* Bloc prix */}
       {prices.length > 0 ? (

@@ -1,6 +1,8 @@
 "use client";
 
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { RichText } from "@/components/dynamic/RichText";
+import { hasRichText } from "@/lib/richText";
 
 interface ContactInfoContent {
   title?: string;
@@ -28,6 +30,7 @@ export function ContactInfoSection({ content }: ContactInfoSectionProps) {
   const phone = content?.phone ?? "";
   const email = content?.email ?? "";
   const hours = content?.hours ?? [];
+  const title = content.title ?? "Informations pratiques";
 
   return (
     <section className="mx-auto max-w-4xl px-6 py-12" data-animate="section">
@@ -39,12 +42,14 @@ export function ContactInfoSection({ content }: ContactInfoSectionProps) {
             border: "1px solid var(--card-border)",
           }}
         >
-          <h2
-            className="text-3xl font-light"
-            style={{ fontFamily: "var(--font-title)" }}
-          >
-            {content.title || "Informations pratiques"}
-          </h2>
+          {hasRichText(title) ? (
+            <h2
+              className="text-3xl font-light"
+              style={{ fontFamily: "var(--font-title)" }}
+            >
+              <RichText value={title} />
+            </h2>
+          ) : null}
 
           <div className="mt-8 grid gap-8 md:grid-cols-2">
             {/* Adresse */}

@@ -2,6 +2,8 @@
 
 import { Map as MapIcon } from "lucide-react";
 import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
+import { RichText } from "@/components/dynamic/RichText";
+import { hasRichText, toPlainText } from "@/lib/richText";
 
 interface GoogleMapContent {
   embedUrl?: string;
@@ -27,17 +29,17 @@ export function GoogleMapSection({ content }: GoogleMapSectionProps) {
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-10" data-animate="section">
-      {content.title ? (
+      {hasRichText(content.title) ? (
         <h2
           className="mb-6 text-3xl font-light"
           style={{ fontFamily: "var(--font-title)" }}
         >
-          {content.title}
+          <RichText value={content.title} />
         </h2>
       ) : null}
       <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl bg-gray-100">
         <iframe
-          title="Carte Google Maps"
+          title={toPlainText(content.title) || "Carte Google Maps"}
           className="h-full w-full"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"

@@ -3,7 +3,9 @@ import { getImageUrl } from "@/lib/api";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
 import { ViewportAnimation } from "@/components/animations/ViewportAnimation";
+import { RichText } from "@/components/dynamic/RichText";
 import { getAnimationMeta } from "@/lib/heroAnimations";
+import { hasRichText, toPlainText } from "@/lib/richText";
 
 export interface GenericHeroContent {
   title?: string;
@@ -61,7 +63,7 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
         ) : isTransparent ? null : useImageBackground ? (
           <Image
             src={imageUrl!}
-            alt={content.title ?? ""}
+            alt={toPlainText(content.title)}
             fill
             className="object-cover"
             style={backgroundBlur > 0 ? { filter: `blur(${backgroundBlur}px)`, transform: "scale(1.03)" } : undefined}
@@ -83,10 +85,14 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
           </ViewportAnimation>
         ) : null}
         <div className="relative z-10 mx-auto max-w-7xl px-6" style={{ color: textColor }}>
-          {content.title ? <h1 className="heading-hero">{content.title}</h1> : null}
-          {content.subtitle ? (
+          {hasRichText(content.title) ? (
+            <h1 className="heading-hero">
+              <RichText value={content.title} />
+            </h1>
+          ) : null}
+          {hasRichText(content.subtitle) ? (
             <p className="mt-4 text-xl opacity-90">
-              {content.subtitle}
+              <RichText value={content.subtitle} />
             </p>
           ) : null}
         </div>
@@ -126,14 +132,18 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
         ) : null}
       </div>
       <div className="relative z-10 flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
-        {content.title ? (
+        {hasRichText(content.title) ? (
           <ScrollReveal>
-            <h1 className="text-4xl font-serif md:text-6xl" style={{ color: textColor }}>{content.title}</h1>
+            <h1 className="text-4xl font-serif md:text-6xl" style={{ color: textColor }}>
+              <RichText value={content.title} />
+            </h1>
           </ScrollReveal>
         ) : null}
-        {content.subtitle ? (
+        {hasRichText(content.subtitle) ? (
           <ScrollReveal delay={0.2}>
-            <p className="mt-4 text-xl opacity-90" style={{ color: textColor }}>{content.subtitle}</p>
+            <p className="mt-4 text-xl opacity-90" style={{ color: textColor }}>
+              <RichText value={content.subtitle} />
+            </p>
           </ScrollReveal>
         ) : null}
       </div>

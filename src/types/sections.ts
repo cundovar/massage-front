@@ -71,11 +71,13 @@ export interface AboutHeroContent {
 }
 
 export interface ParcoursContent {
+  title?: string;
   image?: string;
   paragraphs: string[];
 }
 
 export interface FormationsContent {
+  title?: string;
   images?: string[];
   items?: Array<{
     year: string;

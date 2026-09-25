@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { TarifsContent } from "@/types";
+import { RichText } from "@/components/dynamic/RichText";
+import { hasRichText, toPlainText } from "@/lib/richText";
 
 interface ServiceSelectorProps {
   content: TarifsContent;
@@ -9,14 +11,15 @@ interface ServiceSelectorProps {
 
 export function ServiceSelector({ content }: ServiceSelectorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeOffer = content.offers[activeIndex] ?? content.offers[0];
+  const offers = useMemo(() => (content.offers ?? []).filter((offer) => hasRichText(offer.title)), [content.offers]);
+  const activeOffer = offers[activeIndex] ?? offers[0];
 
   useEffect(() => {
     const syncFromHash = () => {
       const hash = window.location.hash.replace("#", "").toLowerCase();
       if (!hash) return;
-      const index = content.offers.findIndex((offer) =>
-        offer.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(hash),
+      const index = offers.findIndex((offer) =>
+        toPlainText(offer.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(hash),
       );
       if (index >= 0) {
         setActiveIndex(index);
@@ -26,24 +29,32 @@ export function ServiceSelector({ content }: ServiceSelectorProps) {
     syncFromHash();
     window.addEventListener("hashchange", syncFromHash);
     return () => window.removeEventListener("hashchange", syncFromHash);
-  }, [content.offers]);
+  }, [offers]);
 
   return (
     <section className="py-20" id="soins">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10">
-          <h2 className="heading-section">{content.title}</h2>
-          {content.subtitle ? <p className="mt-4 text-lg text-gray-600">{content.subtitle}</p> : null}
+          {hasRichText(content.title) ? (
+            <h2 className="heading-section">
+              <RichText value={content.title} />
+            </h2>
+          ) : null}
+          {hasRichText(content.subtitle) ? (
+            <p className="mt-4 text-lg text-gray-600">
+              <RichText value={content.subtitle} />
+            </p>
+          ) : null}
         </div>
 
         <div className="grid gap-6 md:gap-10 md:grid-cols-[240px_1fr] lg:grid-cols-[260px_1fr]">
           <aside className="w-full md:w-60 lg:w-64 flex-shrink-0 border-b border-gray-200 pb-4 md:border-b-0 md:border-r md:pr-4 md:pb-0">
             <div className="space-y-2 overflow-x-auto whitespace-nowrap md:overflow-visible md:whitespace-normal scrollbar-hide">
-            {content.offers.map((offer, index) => {
+            {offers.map((offer, index) => {
               const isActive = index === activeIndex;
               return (
                 <button
-                  key={offer.title}
+                  key={`${index}-${offer.title.slice(0, 24)}`}
                   type="button"
                   onClick={() => setActiveIndex(index)}
                   className={`inline-flex w-auto min-w-[44px] md:w-full rounded-full border px-4 py-2 text-left text-sm transition ${
@@ -52,7 +63,7 @@ export function ServiceSelector({ content }: ServiceSelectorProps) {
                       : "border-gray-200 text-gray-600 hover:border-orange-300"
                   }`}
                 >
-                  {offer.title}
+                  <RichText value={offer.title} />
                 </button>
               );
             })}
@@ -61,14 +72,16 @@ export function ServiceSelector({ content }: ServiceSelectorProps) {
 
           <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <h3 className="text-3xl" style={{ fontFamily: "var(--font-serif)" }}>
-              {activeOffer?.title}
+              <RichText value={activeOffer?.title} />
             </h3>
-            {activeOffer?.description ? (
-              <p className="mt-4 text-gray-600">{activeOffer.description}</p>
+            {hasRichText(activeOffer?.description) ? (
+              <p className="mt-4 text-gray-600">
+                <RichText value={activeOffer?.description} />
+              </p>
             ) : null}
             <div className="mt-6 space-y-2">
-              {activeOffer?.prices.map((price) => (
-                <p key={price} className="text-lg text-gray-800">
+              {(activeOffer?.prices ?? []).filter((price) => price.trim() !== "").map((price, index) => (
+                <p key={`${index}-${price}`} className="text-lg text-gray-800">
                   {price}
                 </p>
               ))}

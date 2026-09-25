@@ -6,6 +6,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getImageUrl } from "@/lib/api";
 import type { ApprocheContent } from "@/lib/api";
+import { hasRichText } from "@/lib/richText";
+import { RichText } from "@/components/dynamic/RichText";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -29,6 +31,11 @@ export function Approche({ content }: ApprocheProps) {
   const imageUrls = imageSources
     .map((src) => getImageUrl(src))
     .filter((src): src is string => Boolean(src));
+  // Titre vide = titre par defaut (ancien comportement, le titre etait fixe).
+  const title = hasRichText(content.title) ? content.title : "Approche";
+  const bulletsTitle = content.bulletsTitle ?? "Ce qui guide mes mains :";
+  const bullets = (content.bullets ?? []).filter((bullet) => hasRichText(bullet));
+  const quote = content.quote ?? "Chaque soin est pense comme une pause pour vous recentrer et vous alleger.";
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -183,26 +190,38 @@ export function Approche({ content }: ApprocheProps) {
         <div className="space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" data-anim-child />
           <h2 className="text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }} data-anim-child>
-            Approche
+            <RichText value={title} />
           </h2>
-          <div
-            className="rounded-r-xl px-5 py-4 text-[var(--text-secondary)]"
-            style={{
-              borderLeft: "2px solid color-mix(in srgb, var(--primary-start) 40%, transparent)",
-              background: "color-mix(in srgb, var(--primary-start) 10%, transparent)",
-            }}
-            data-anim-child
-          >
-            <p className="mb-2 text-xl font-semibold text-[var(--text-primary)]">{content.bulletsTitle ?? "Ce qui guide mes mains :"}</p>
-            <ul className="space-y-2 text-lg leading-relaxed">
-              {(content.bullets ?? []).map((bullet) => (
-                <li key={bullet}>• {bullet}</li>
-              ))}
-            </ul>
-          </div>
-          <p className="text-xl font-semibold italic text-[var(--text-secondary)]" data-anim-child>
-            {content.quote ?? "Chaque soin est pense comme une pause pour vous recentrer et vous alleger."}
-          </p>
+          {hasRichText(bulletsTitle) || bullets.length > 0 ? (
+            <div
+              className="rounded-r-xl px-5 py-4 text-[var(--text-secondary)]"
+              style={{
+                borderLeft: "2px solid color-mix(in srgb, var(--primary-start) 40%, transparent)",
+                background: "color-mix(in srgb, var(--primary-start) 10%, transparent)",
+              }}
+              data-anim-child
+            >
+              {hasRichText(bulletsTitle) ? (
+                <p className={`text-xl font-semibold text-[var(--text-primary)] ${bullets.length > 0 ? "mb-2" : ""}`}>
+                  <RichText value={bulletsTitle} />
+                </p>
+              ) : null}
+              {bullets.length > 0 ? (
+                <ul className="space-y-2 text-lg leading-relaxed">
+                  {bullets.map((bullet, index) => (
+                    <li key={`${index}-${bullet.slice(0, 24)}`}>
+                      • <RichText value={bullet} />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+          {hasRichText(quote) ? (
+            <p className="text-xl font-semibold italic text-[var(--text-secondary)]" data-anim-child>
+              <RichText value={quote} />
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

@@ -2,7 +2,9 @@ import Image from "next/image";
 import type { ServiceItem } from "@/types";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
+import { RichText } from "@/components/dynamic/RichText";
 import { getImageUrl } from "@/lib/api";
+import { hasRichText, toPlainText } from "@/lib/richText";
 
 interface ImageValueObject {
   path?: string | null;
@@ -32,11 +34,11 @@ interface ServicesPreviewProps {
 }
 
 export function ServicesPreview({ services = [], content }: ServicesPreviewProps) {
-  const subtitle = content?.subtitle || "Mes soins";
-  const title = content?.title || "Une gamme de soins pour votre bien-être";
+  const subtitle = content?.subtitle ?? "Mes soins";
+  const title = content?.title ?? "Une gamme de soins pour votre bien-être";
 
   // Utiliser les items manuels s'ils existent et ont du contenu, sinon utiliser les services API
-  const manualItems = content?.items?.filter((item) => item.name?.trim()) || [];
+  const manualItems = content?.items?.filter((item) => hasRichText(item.name)) || [];
   const useManualItems = manualItems.length > 0;
 
   // Adapter le nombre de colonnes selon le nombre d'items
@@ -52,10 +54,16 @@ export function ServicesPreview({ services = [], content }: ServicesPreviewProps
     <section className="bg-transparent py-24 md:py-32" data-animate="section">
       <div className="mx-auto max-w-7xl px-6">
         <AnimatedSection className="mb-16 text-center">
-          <p className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--primary-start)]">{subtitle}</p>
-          <h2 data-animate="title" className="text-4xl font-serif text-[var(--text-primary)] md:text-5xl">
-            {title}
-          </h2>
+          {hasRichText(subtitle) ? (
+            <p className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--primary-start)]">
+              <RichText value={subtitle} />
+            </p>
+          ) : null}
+          {hasRichText(title) ? (
+            <h2 data-animate="title" className="text-4xl font-serif text-[var(--text-primary)] md:text-5xl">
+              <RichText value={title} />
+            </h2>
+          ) : null}
         </AnimatedSection>
 
         <div className={`grid gap-8 ${gridCols}`}>
@@ -128,7 +136,7 @@ function ServiceCard({ index, name, category, description, price, image, link }:
           {imageUrl ? (
             <Image
               src={imageUrl}
-              alt={name}
+              alt={toPlainText(name)}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -148,19 +156,29 @@ function ServiceCard({ index, name, category, description, price, image, link }:
 
         <div className="p-6">
           {/* Catégorie + Prix */}
-          {(category || price) && (
+          {(hasRichText(category) || price?.trim()) && (
             <div className="mb-3 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-              {category && <span>{category}</span>}
-              {category && price && <span>•</span>}
-              {price && <span className="font-medium text-[var(--primary-start)]">{price}</span>}
+              {hasRichText(category) && (
+                <span>
+                  <RichText value={category} />
+                </span>
+              )}
+              {hasRichText(category) && price?.trim() && <span>•</span>}
+              {price?.trim() && <span className="font-medium text-[var(--primary-start)]">{price}</span>}
             </div>
           )}
 
           {/* Nom */}
-          <h3 className="mb-2 text-xl font-serif text-[var(--text-primary)]">{name}</h3>
+          <h3 className="mb-2 text-xl font-serif text-[var(--text-primary)]">
+            <RichText value={name} />
+          </h3>
 
           {/* Description */}
-          {description && <p className="mb-4 line-clamp-2 text-[var(--text-secondary)]">{description}</p>}
+          {hasRichText(description) && (
+            <p className="mb-4 line-clamp-2 text-[var(--text-secondary)]">
+              <RichText value={description} />
+            </p>
+          )}
 
           {/* Lien */}
           <TransitionLink

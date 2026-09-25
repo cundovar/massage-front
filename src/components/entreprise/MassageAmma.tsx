@@ -5,6 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import type { EntrepriseContent } from "@/types";
+import { RichText } from "@/components/dynamic/RichText";
+import { hasRichText } from "@/lib/richText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,7 +35,11 @@ interface MassageAmmaProps {
 
 export function MassageAmma({ content }: MassageAmmaProps) {
   const iconContainerRef = useRef<HTMLDivElement | null>(null);
-  const characteristicItems = content.characteristics.length > 0 ? content.characteristics : characteristics.map((item) => item.label);
+  const filledCharacteristics = (content.characteristics ?? []).filter((item) => hasRichText(item));
+  const characteristicItems =
+    filledCharacteristics.length > 0 ? filledCharacteristics : characteristics.map((item) => item.label);
+  const teamBenefits = (content.teamBenefits ?? []).filter((item) => hasRichText(item));
+  const companyBenefits = (content.companyBenefits ?? []).filter((item) => hasRichText(item));
 
   useEffect(() => {
     const container = iconContainerRef.current;
@@ -81,15 +87,19 @@ export function MassageAmma({ content }: MassageAmmaProps) {
             <div className="flex justify-center">
               <div className="h-px w-12 bg-amber-500/60" />
             </div>
-            <h2
-              id="entreprise"
-              className="font-serif text-5xl font-extralight tracking-tight leading-tight text-sand-100 sm:text-6xl"
-              style={{ fontFamily: "var(--font-title)" }}
-            >
-              {content.title}
-            </h2>
-            {content.subtitle ? (
-              <p className="mx-auto max-w-3xl text-xl font-light leading-relaxed text-sand-200/70">{content.subtitle}</p>
+            {hasRichText(content.title) ? (
+              <h2
+                id="entreprise"
+                className="font-serif text-5xl font-extralight tracking-tight leading-tight text-sand-100 sm:text-6xl"
+                style={{ fontFamily: "var(--font-title)" }}
+              >
+                <RichText value={content.title} />
+              </h2>
+            ) : null}
+            {hasRichText(content.subtitle) ? (
+              <p className="mx-auto max-w-3xl text-xl font-light leading-relaxed text-sand-200/70">
+                <RichText value={content.subtitle} />
+              </p>
             ) : null}
           </div>
         </ScrollReveal>
@@ -109,17 +119,25 @@ export function MassageAmma({ content }: MassageAmmaProps) {
                   </svg>
                 </div>
               </div>
-              <h3 className="mb-8 text-center text-2xl font-light tracking-wide text-sand-100">{content.teamTitle}</h3>
+              {hasRichText(content.teamTitle) ? (
+                <h3 className="mb-8 text-center text-2xl font-light tracking-wide text-sand-100">
+                  <RichText value={content.teamTitle} />
+                </h3>
+              ) : null}
+              {teamBenefits.length > 0 ? (
               <ul className="space-y-4 text-lg font-light leading-relaxed text-sand-200/70">
-                {content.teamBenefits.map((item) => (
-                  <li key={item} className="flex items-start">
+                {teamBenefits.map((item, index) => (
+                  <li key={`${index}-${item.slice(0, 24)}`} className="flex items-start">
                     <svg className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-amber-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    {item}
+                    <span>
+                      <RichText value={item} />
+                    </span>
                   </li>
                 ))}
               </ul>
+              ) : null}
             </div>
           </ScrollReveal>
 
@@ -137,17 +155,25 @@ export function MassageAmma({ content }: MassageAmmaProps) {
                   </svg>
                 </div>
               </div>
-              <h3 className="mb-8 text-center text-2xl font-light tracking-wide text-sand-100">{content.companyTitle}</h3>
+              {hasRichText(content.companyTitle) ? (
+                <h3 className="mb-8 text-center text-2xl font-light tracking-wide text-sand-100">
+                  <RichText value={content.companyTitle} />
+                </h3>
+              ) : null}
+              {companyBenefits.length > 0 ? (
               <ul className="space-y-4 text-lg font-light leading-relaxed text-sand-200/70">
-                {content.companyBenefits.map((item) => (
-                  <li key={item} className="flex items-start">
+                {companyBenefits.map((item, index) => (
+                  <li key={`${index}-${item.slice(0, 24)}`} className="flex items-start">
                     <svg className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-amber-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    {item}
+                    <span>
+                      <RichText value={item} />
+                    </span>
                   </li>
                 ))}
               </ul>
+              ) : null}
             </div>
           </ScrollReveal>
         </div>
@@ -156,24 +182,30 @@ export function MassageAmma({ content }: MassageAmmaProps) {
           <div className="mx-auto max-w-4xl border-2 border-amber-700/30 bg-gradient-to-br from-sand-900/15 to-transparent p-12">
             <div ref={iconContainerRef} className="flex flex-wrap items-center justify-center gap-8">
               {characteristicItems.slice(0, 4).map((label, index) => (
-                <div key={label} data-amma-icon className="flex max-lg:w-1/2 flex-col items-center space-y-2">
+                <div key={`${index}-${label.slice(0, 24)}`} data-amma-icon className="flex max-lg:w-1/2 flex-col items-center space-y-2">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/10">
                     <svg className="h-8 w-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={characteristics[index]?.path ?? characteristics[0].path} />
                     </svg>
                   </div>
-                  <span className="text-sm text-sand-300/70">{label}</span>
+                  <span className="text-sm text-sand-300/70">
+                    <RichText value={label} />
+                  </span>
                 </div>
               ))}
             </div>
 
-            <div className="my-8 flex justify-center">
-              <div className="h-px w-24 bg-amber-500/30" />
-            </div>
+            {hasRichText(content.quote) ? (
+              <>
+                <div className="my-8 flex justify-center">
+                  <div className="h-px w-24 bg-amber-500/30" />
+                </div>
 
-            <p className="mx-auto max-w-2xl text-center text-2xl font-light italic leading-relaxed text-sand-100">
-              {content.quote}
-            </p>
+                <p className="mx-auto max-w-2xl text-center text-2xl font-light italic leading-relaxed text-sand-100">
+                  <RichText value={content.quote} />
+                </p>
+              </>
+            ) : null}
           </div>
         </ScrollReveal>
       </div>

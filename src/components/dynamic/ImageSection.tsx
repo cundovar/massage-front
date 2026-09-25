@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
+import { RichText } from "@/components/dynamic/RichText";
 import { getImageUrl } from "@/lib/api";
+import { hasRichText } from "@/lib/richText";
 
 interface ImageSectionProps {
   content: {
@@ -21,7 +23,11 @@ export function ImageSection({ content }: ImageSectionProps) {
         <div className="relative aspect-[16/9] overflow-hidden rounded-2xl">
           <Image src={imageUrl} alt={content.alt || ""} fill className="object-cover" />
         </div>
-        {content.caption ? <figcaption className="mt-4 text-center text-sm text-gray-500">{content.caption}</figcaption> : null}
+        {hasRichText(content.caption) ? (
+          <figcaption className="mt-4 text-center text-sm text-gray-500">
+            <RichText value={content.caption} />
+          </figcaption>
+        ) : null}
       </figure>
     </section>
   );

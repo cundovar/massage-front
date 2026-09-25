@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { AnimationWrapper, type AnimationEffect } from "@/components/animations/AnimationWrapper";
 import { Leaf } from "lucide-react";
+import { hasRichText } from "@/lib/richText";
 import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
 import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 import { BenefitsGridSection, type BenefitsGridContent } from "@/components/dynamic/BenefitsGridSection";
@@ -232,7 +233,7 @@ export function SectionRenderer({
           case "services-preview": {
             const previewContent = section.content as ServicesPreviewContent;
             // Afficher si on a des items manuels OU des services API
-            const hasManualItems = previewContent.items?.some((item) => item.name?.trim());
+            const hasManualItems = previewContent.items?.some((item) => hasRichText(item.name));
             const hasApiServices = services && services.length > 0;
 
             if (!hasManualItems && !hasApiServices) {

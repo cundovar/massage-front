@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { RichText } from "@/components/dynamic/RichText";
 import { getImageUrl } from "@/lib/api";
+import { hasRichText } from "@/lib/richText";
 import type { ParcoursContent } from "@/types";
 
 interface ParcoursSectionProps {
@@ -9,7 +11,9 @@ interface ParcoursSectionProps {
 
 export function ParcoursSection({ content }: ParcoursSectionProps) {
   const imageUrl = getImageUrl(content.image);
-  const paragraphs = content.paragraphs ?? [];
+  // Titre vide = titre par defaut (le titre etait fixe avant d'etre modifiable).
+  const title = hasRichText(content.title) ? content.title : "Mon parcours";
+  const paragraphs = (content.paragraphs ?? []).filter((paragraph) => hasRichText(paragraph));
 
   return (
     <section className="py-16">
@@ -22,12 +26,14 @@ export function ParcoursSection({ content }: ParcoursSectionProps) {
           ) : null}
 
           <div className="space-y-6">
-            <h2 className="text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
-              Mon parcours
-            </h2>
+            {hasRichText(title) ? (
+              <h2 className="text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
+                <RichText value={title} />
+              </h2>
+            ) : null}
             {paragraphs.map((paragraph, index) => (
-              <p key={`${paragraph}-${index}`} className="text-lg leading-loose text-[var(--text-secondary)]">
-                {paragraph}
+              <p key={`${index}-${paragraph.slice(0, 24)}`} className="text-lg leading-loose text-[var(--text-secondary)]">
+                <RichText value={paragraph} />
               </p>
             ))}
           </div>

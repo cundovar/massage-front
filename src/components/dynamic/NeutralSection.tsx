@@ -1,6 +1,8 @@
 "use client";
 
+import { RichText } from "@/components/dynamic/RichText";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
+import { hasRichText } from "@/lib/richText";
 
 export interface NeutralSectionContent {
   eyebrow?: string;
@@ -38,7 +40,7 @@ export function NeutralSection({ content }: { content: NeutralSectionContent }) 
   const width = content.width ?? "normal";
   const background = content.background ?? "transparent";
   const spacing = content.spacing ?? "normal";
-  const paragraphs = content.paragraphs?.filter((paragraph) => paragraph.trim() !== "") ?? [];
+  const paragraphs = content.paragraphs?.filter((paragraph) => hasRichText(paragraph)) ?? [];
   const isCentered = align === "center";
 
   return (
@@ -51,33 +53,35 @@ export function NeutralSection({ content }: { content: NeutralSectionContent }) 
             isCentered ? "text-center" : "text-left",
           ].join(" ")}
         >
-          {content.eyebrow ? (
+          {hasRichText(content.eyebrow) ? (
             <p className="mb-3 text-sm font-medium uppercase tracking-[0.14em] text-[var(--primary-start)]">
-              {content.eyebrow}
+              <RichText value={content.eyebrow} />
             </p>
           ) : null}
 
-          {content.title ? (
+          {hasRichText(content.title) ? (
             <h2 className="text-3xl font-light tracking-normal text-[var(--text-primary)] md:text-5xl">
-              {content.title}
+              <RichText value={content.title} />
             </h2>
           ) : null}
 
-          {content.subtitle ? (
+          {hasRichText(content.subtitle) ? (
             <p className={`mt-4 text-lg text-[var(--text-secondary)] ${isCentered ? "mx-auto max-w-3xl" : "max-w-3xl"}`}>
-              {content.subtitle}
+              <RichText value={content.subtitle} />
             </p>
           ) : null}
 
           {paragraphs.length > 0 ? (
             <div className={`mt-7 space-y-4 text-base leading-8 text-[var(--text-secondary)] md:text-lg ${isCentered ? "mx-auto max-w-3xl" : "max-w-3xl"}`}>
               {paragraphs.map((paragraph, index) => (
-                <p key={`${paragraph}-${index}`}>{paragraph}</p>
+                <p key={`${index}-${paragraph.slice(0, 24)}`}>
+                  <RichText value={paragraph} />
+                </p>
               ))}
             </div>
           ) : null}
 
-          {content.buttonText && content.buttonLink ? (
+          {content.buttonText?.trim() && content.buttonLink ? (
             <TransitionLink
               href={content.buttonLink}
               className="mt-8 inline-flex rounded-full px-6 py-3 text-sm font-medium text-[var(--btn-text)] transition hover:opacity-90"
