@@ -7,6 +7,7 @@ import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { getAnimationMeta } from "@/lib/heroAnimations";
 import { HERO_ANIMATION_COMPONENTS } from "@/components/animations/heroAnimationComponents";
 import { ViewportAnimation } from "@/components/animations/ViewportAnimation";
+import { AnimationWrapper, type AnimationEffect } from "@/components/animations/AnimationWrapper";
 import type { HeroContent } from "@/lib/api";
 
 interface HeroVisualOptions {
@@ -20,6 +21,8 @@ interface HeroVisualOptions {
   backgroundBlur?: string | number;
   overlayOpacity?: string | number;
   animation?: string;
+  entryAnimation?: AnimationEffect;
+  entryAnimationDelay?: number | string;
 }
 
 interface HeroProps {
@@ -76,6 +79,8 @@ export function Hero({ content }: HeroProps) {
 
   const overlayValue = Number.parseInt(String(content.overlayOpacity ?? "45"), 10);
   const overlayOpacity = Number.isFinite(overlayValue) ? Math.max(0, Math.min(90, overlayValue)) / 100 : 0.45;
+  const entryAnimation = content.entryAnimation ?? "none";
+  const entryAnimationDelay = Number(content.entryAnimationDelay ?? 0);
   const normalizedActiveSlideIndex =
     useImageBackground && imageSlides.length > 0
       ? activeSlideIndex % imageSlides.length
@@ -147,39 +152,41 @@ export function Hero({ content }: HeroProps) {
         )}
       </div>
 
-      <div className="js-hero-content relative z-10 mx-auto flex md:min-h-[65vh] max-w-4xl flex-col items-center justify-start pt-20 pb-8 text-center md:justify-center md:py-12" style={{ color: textColor }}>
-        <div className="h-px w-24 bg-gold-default" />
-        <h1 data-animate="title" className="mt-6 font-serif text-5xl leading-[0.95] font-extralight md:text-7xl">
-          {content.siteTitle ?? "Les Massages d'Helene"}
-        </h1>
-        {content.siteSubtitle ? (
-          <p className="mt-4 text-base md:text-lg" style={{ color: textColor, opacity: 0.9 }}>
-            {content.siteSubtitle}
+      <AnimationWrapper effect={entryAnimation} delay={Number.isFinite(entryAnimationDelay) ? entryAnimationDelay : 0}>
+        <div className="js-hero-content relative z-10 mx-auto flex md:min-h-[65vh] max-w-4xl flex-col items-center justify-start pt-20 pb-8 text-center md:justify-center md:py-12" style={{ color: textColor }}>
+          <div className="h-px w-24 bg-gold-default" />
+          <h1 data-animate="title" className="mt-6 font-serif text-5xl leading-[0.95] font-extralight md:text-7xl">
+            {content.siteTitle ?? "Les Massages d'Helene"}
+          </h1>
+          {content.siteSubtitle ? (
+            <p className="mt-4 text-base md:text-lg" style={{ color: textColor, opacity: 0.9 }}>
+              {content.siteSubtitle}
+            </p>
+          ) : null}
+          <p data-animate="text" className="mt-5 text-xl md:text-3xl" style={{ opacity: 0.9 }}>
+            {activeSlide?.title ?? "Pause ayurvedique"}
           </p>
-        ) : null}
-        <p data-animate="text" className="mt-5 text-xl md:text-3xl" style={{ opacity: 0.9 }}>
-          {activeSlide?.title ?? "Pause ayurvedique"}
-        </p>
-        {activeSlide?.subtitle && (
-          <p data-animate="text" className="mt-7 max-w-2xl text-lg" style={{ opacity: 0.8 }}>
-            {activeSlide.subtitle}
-          </p>
-        )}
-        {content.buttonText ? (
-          content.buttonLink ? (
-            <TransitionLink
-              href={content.buttonLink}
-              className="mt-10 inline-flex rounded-full bg-gold-default px-7 py-3 text-sm font-semibold tracking-[0.1em] text-brown-darker uppercase hover:bg-gold-dark"
-            >
-              {content.buttonText}
-            </TransitionLink>
-          ) : (
-            <span className="mt-10 inline-flex rounded-full bg-gold-default px-7 py-3 text-sm font-semibold tracking-[0.1em] text-brown-darker uppercase">
-              {content.buttonText}
-            </span>
-          )
-        ) : null}
-      </div>
+          {activeSlide?.subtitle && (
+            <p data-animate="text" className="mt-7 max-w-2xl text-lg" style={{ opacity: 0.8 }}>
+              {activeSlide.subtitle}
+            </p>
+          )}
+          {content.buttonText ? (
+            content.buttonLink ? (
+              <TransitionLink
+                href={content.buttonLink}
+                className="mt-10 inline-flex rounded-full bg-gold-default px-7 py-3 text-sm font-semibold tracking-[0.1em] text-brown-darker uppercase hover:bg-gold-dark"
+              >
+                {content.buttonText}
+              </TransitionLink>
+            ) : (
+              <span className="mt-10 inline-flex rounded-full bg-gold-default px-7 py-3 text-sm font-semibold tracking-[0.1em] text-brown-darker uppercase">
+                {content.buttonText}
+              </span>
+            )
+          ) : null}
+        </div>
+      </AnimationWrapper>
     </section>
   );
 }

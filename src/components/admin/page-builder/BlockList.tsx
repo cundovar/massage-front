@@ -86,7 +86,12 @@ function SortableBlock({ section, isActive, onSelect, onUpdate, onDelete, token 
         </button>
 
         <span className="text-xl">{definition?.icon ?? "📄"}</span>
-        <span className="flex-1 font-medium text-stone-900">{definition?.label ?? section.type}</span>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-stone-900">{definition?.label ?? section.type}</p>
+          {definition?.description ? (
+            <p className="mt-0.5 text-xs leading-5 text-stone-500">{definition.description}</p>
+          ) : null}
+        </div>
         {!isVisible ? (
           <span className="rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-600">Masque</span>
         ) : null}

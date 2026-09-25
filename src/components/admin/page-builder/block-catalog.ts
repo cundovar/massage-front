@@ -33,8 +33,8 @@ export const BLOCK_CATEGORIES = [
 export const BLOCK_CATALOG: BlockDefinition[] = [
   {
     type: "hero-home",
-    label: "Hero Accueil (avec slides)",
-    description: "Hero principal avec titre du site et diaporama",
+    label: "Bannière d’accueil avec photos",
+    description: "Présente le site dès l’arrivée avec un titre et plusieurs photos défilantes",
     icon: "🏠",
     category: "header",
     defaultContent: {
@@ -44,6 +44,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
       buttonLink: "",
       backgroundType: "image",
       animation: "none",
+      entryAnimation: "none",
+      entryAnimationDelay: 0,
       gradientStart: "#FFCE67",
       gradientEnd: "#F67E54",
       textColor: "#F5F5F4",
@@ -77,6 +79,32 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
         label: "Animation de fond",
         type: "select",
         options: ANIMATION_OPTIONS,
+      },
+      {
+        key: "entryAnimation",
+        label: "Animation d'entrée",
+        type: "select",
+        options: [
+          { value: "none", label: "Aucune" },
+          { value: "fade-up", label: "Fondu + montée" },
+          { value: "fade-down", label: "Fondu + descente" },
+          { value: "slide-left", label: "Glissement gauche" },
+          { value: "slide-right", label: "Glissement droite" },
+          { value: "zoom-in", label: "Zoom entrant" },
+          { value: "zoom-out", label: "Zoom sortant" },
+          { value: "bounce", label: "Rebond" },
+        ],
+      },
+      {
+        key: "entryAnimationDelay",
+        label: "Délai de l'animation (secondes)",
+        type: "select",
+        options: [
+          { value: "0", label: "Immédiat" },
+          { value: "0.3", label: "0,3 seconde" },
+          { value: "0.6", label: "0,6 seconde" },
+          { value: "1", label: "1 seconde" },
+        ],
       },
       { key: "gradientStart", label: "Gradient debut", type: "color" },
       { key: "gradientEnd", label: "Gradient fin", type: "color" },
@@ -118,8 +146,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "neutral",
-    label: "Bloc neutre",
-    description: "Section simple et polyvalente avec fond, largeur et alignement reglables",
+    label: "Section personnalisée",
+    description: "Ajoute un contenu libre avec un titre, du texte et éventuellement un bouton",
     icon: "▫️",
     category: "content",
     defaultContent: {
@@ -184,8 +212,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "spacer",
-    label: "Espacement",
-    description: "Ajoute un espace vertical entre deux blocs",
+    label: "Espace entre les sections",
+    description: "Ajoute un espace vertical entre deux sections",
     icon: "↕️",
     category: "layout",
     defaultContent: {
@@ -208,8 +236,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "hero",
-    label: "Banniere simple",
-    description: "Grande image avec titre et sous-titre centre",
+    label: "Bannière de page",
+    description: "Affiche une grande photo avec un titre et un sous-titre",
     icon: "🖼️",
     category: "header",
     defaultContent: {
@@ -266,8 +294,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "hero-compact",
-    label: "Banniere compacte",
-    description: "Hero compact en bandeau",
+    label: "Petite bannière de page",
+    description: "Affiche une bannière plus courte pour les pages intérieures",
     icon: "🎯",
     category: "header",
     defaultContent: {
@@ -332,8 +360,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "presentation",
-    label: "Texte + Image",
-    description: "Bloc de presentation avec image, texte et citation",
+    label: "Présentation avec photo",
+    description: "Présente une personne ou une activité avec une photo et du texte",
     icon: "✨",
     category: "content",
     defaultContent: {
@@ -351,8 +379,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "approche",
-    label: "Points cles",
-    description: "Liste de points forts avec images",
+    label: "Points forts et approche",
+    description: "Présente les points forts, la méthode et les valeurs de l’activité",
     icon: "📋",
     category: "content",
     defaultContent: {
@@ -372,8 +400,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "quote",
-    label: "Citation",
-    description: "Citation mise en avant",
+    label: "Citation mise en avant",
+    description: "Met en valeur une phrase importante ou un témoignage",
     icon: "💬",
     category: "content",
     defaultContent: {
@@ -386,9 +414,77 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     ],
   },
   {
+    type: "google-reviews",
+    label: "Témoignages clients",
+    description: "Présente une note globale et des témoignages de clientes",
+    icon: "⭐",
+    category: "content",
+    defaultContent: {
+      eyebrow: "Avis Google",
+      title: "Elles partagent leur expérience",
+      subtitle: "Des moments de détente racontés par celles qui les ont vécus.",
+      averageRating: "5",
+      totalReviews: "24",
+      googleUrl: "",
+      buttonText: "Voir tous les avis Google",
+      reviews: [
+        {
+          name: "Sophie M.",
+          rating: "5",
+          text: "Un véritable moment de lâcher-prise, dans une atmosphère douce et bienveillante.",
+          date: "Il y a 2 mois",
+        },
+        {
+          name: "Claire D.",
+          rating: "5",
+          text: "Une écoute attentive et un massage parfaitement adapté. Je suis ressortie profondément détendue.",
+          date: "Il y a 3 mois",
+        },
+        {
+          name: "Émilie R.",
+          rating: "5",
+          text: "Une parenthèse précieuse. Le lieu, les gestes et l'accueil invitent immédiatement au calme.",
+          date: "Il y a 4 mois",
+        },
+      ],
+    },
+    fields: [
+      { key: "eyebrow", label: "Petit titre", type: "text" },
+      { key: "title", label: "Titre", type: "text" },
+      { key: "subtitle", label: "Introduction", type: "textarea" },
+      { key: "averageRating", label: "Note moyenne", type: "text", placeholder: "5" },
+      { key: "totalReviews", label: "Nombre d'avis", type: "text", placeholder: "24" },
+      { key: "googleUrl", label: "Lien vers la fiche Google", type: "text" },
+      { key: "buttonText", label: "Texte du bouton", type: "text" },
+      {
+        key: "reviews",
+        label: "Avis affichés",
+        type: "array",
+        arrayItemType: "object",
+        objectFields: [
+          { key: "name", label: "Nom", type: "text" },
+          {
+            key: "rating",
+            label: "Note",
+            type: "select",
+            options: [
+              { value: "5", label: "5 étoiles" },
+              { value: "4", label: "4 étoiles" },
+              { value: "3", label: "3 étoiles" },
+              { value: "2", label: "2 étoiles" },
+              { value: "1", label: "1 étoile" },
+            ],
+          },
+          { key: "text", label: "Commentaire", type: "textarea" },
+          { key: "date", label: "Date affichée", type: "text" },
+        ],
+      },
+    ],
+  },
+  {
     type: "text",
-    label: "Texte simple",
-    description: "Bloc de texte avec titre optionnel",
+    label: "Texte libre",
+    description: "Ajoute un titre et un ou plusieurs paragraphes de texte",
     icon: "📄",
     category: "content",
     defaultContent: {
@@ -404,8 +500,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "image",
-    label: "Image seule",
-    description: "Image avec legende optionnelle",
+    label: "Photo",
+    description: "Ajoute une photo avec un texte alternatif et une légende facultative",
     icon: "🖼️",
     category: "content",
     defaultContent: {
@@ -421,7 +517,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "gallery",
-    label: "Galerie photos",
+    label: "Galerie de photos",
     description: "Grille d'images",
     icon: "📸",
     category: "content",
@@ -436,8 +532,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "tarifs",
-    label: "Carte de tarifs",
-    description: "Liste d'offres avec prix",
+    label: "Tarifs et prestations",
+    description: "Présente les soins, leurs descriptions, leurs durées et leurs prix",
     icon: "💰",
     category: "services",
     defaultContent: {
@@ -467,8 +563,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "entreprise",
-    label: "Offre entreprise",
-    description: "Presentation des services B2B",
+    label: "Massages en entreprise",
+    description: "Présente les bénéfices des massages pour les équipes et les entreprises",
     icon: "🏢",
     category: "services",
     defaultContent: {
@@ -494,8 +590,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "benefits-grid",
-    label: "Grille avantages",
-    description: "Deux colonnes de benefices entreprise",
+    label: "Avantages pour les entreprises",
+    description: "Compare les bénéfices pour les équipes et pour l’entreprise",
     icon: "🧩",
     category: "services",
     defaultContent: {
@@ -521,8 +617,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "parcours",
-    label: "Parcours",
-    description: "Photo + texte de presentation personnelle",
+    label: "Mon parcours",
+    description: "Présente votre parcours personnel et professionnel avec une photo",
     icon: "👤",
     category: "about",
     defaultContent: {
@@ -536,8 +632,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "formations",
-    label: "Formations",
-    description: "Liste de certifications avec annees",
+    label: "Formations et certifications",
+    description: "Liste les formations, diplômes et certifications avec leurs années",
     icon: "🎓",
     category: "about",
     defaultContent: {
@@ -560,8 +656,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "philosophie",
-    label: "Philosophie",
-    description: "Citation ou valeurs",
+    label: "Ma philosophie",
+    description: "Partage une phrase, une valeur ou une vision de votre activité",
     icon: "🧘",
     category: "about",
     defaultContent: {
@@ -572,8 +668,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "contact-cta",
-    label: "Bloc contact",
-    description: "Appel a l'action avec bouton contact",
+    label: "Prendre rendez-vous",
+    description: "Invite les visiteurs à vous contacter ou à réserver une séance",
     icon: "📞",
     category: "cta",
     defaultContent: {
@@ -589,7 +685,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "contact-infos",
-    label: "Infos pratiques",
+    label: "Coordonnées et horaires",
     description: "Adresse, telephone, email et horaires",
     icon: "📍",
     category: "contact",
@@ -626,7 +722,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "contact-info",
-    label: "Infos pratiques (nouveau)",
+    label: "Coordonnées et horaires (ancien format)",
     description: "Adresse, telephone, email et horaires",
     icon: "📍",
     category: "contact",
@@ -658,7 +754,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "contact-form",
-    label: "Formulaire contact",
+    label: "Formulaire de contact",
     description: "Formulaire de contact front",
     icon: "✉️",
     category: "contact",
@@ -667,8 +763,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "contact-layout",
-    label: "Contact complet (Infos + Form)",
-    description: "Infos pratiques a gauche, formulaire a droite (flex desktop)",
+    label: "Contact : coordonnées + formulaire",
+    description: "Affiche les coordonnées à gauche et le formulaire de contact à droite",
     icon: "📱",
     category: "contact",
     defaultContent: {
@@ -702,8 +798,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "service-selector",
-    label: "Selecteur de soins",
-    description: "Tarifs sous forme d'onglets",
+    label: "Choisir un soin et réserver",
+    description: "Présente les prestations et les tarifs sous forme d’onglets",
     icon: "🗂️",
     category: "services",
     defaultContent: {
@@ -733,8 +829,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "services-preview",
-    label: "Apercu services",
-    description: "Cartes de services personnalisables",
+    label: "Aperçu des soins",
+    description: "Présente quelques soins sous forme de cartes avec photo et prix",
     icon: "🃏",
     category: "services",
     defaultContent: {
@@ -765,8 +861,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   },
   {
     type: "google-map",
-    label: "Carte Google Maps",
-    description: "Carte interactive avec localisation",
+    label: "Localisation et accès",
+    description: "Affiche une carte pour aider les visiteurs à trouver le lieu",
     icon: "🗺️",
     category: "contact",
     defaultContent: {

@@ -22,6 +22,7 @@ const ServiceSelector = dynamic(() => import("@/components/sections/ServiceSelec
 const ContactInfoSection = dynamic(() => import("@/components/dynamic/ContactInfoSection").then((mod) => mod.ContactInfoSection), { ssr: false });
 const BenefitsGridSection = dynamic(() => import("@/components/dynamic/BenefitsGridSection").then((mod) => mod.BenefitsGridSection), { ssr: false });
 const GoogleMapSection = dynamic(() => import("@/components/dynamic/GoogleMapSection").then((mod) => mod.GoogleMapSection), { ssr: false });
+const GoogleReviewsSection = dynamic(() => import("@/components/dynamic/GoogleReviewsSection").then((mod) => mod.GoogleReviewsSection), { ssr: false });
 const TextSection = dynamic(() => import("@/components/dynamic/TextSection").then((mod) => mod.TextSection), { ssr: false });
 const NeutralSection = dynamic(() => import("@/components/dynamic/NeutralSection").then((mod) => mod.NeutralSection), { ssr: false });
 const QuoteSection = dynamic(() => import("@/components/dynamic/QuoteSection").then((mod) => mod.QuoteSection), { ssr: false });
@@ -155,6 +156,8 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
       return withWrapper(<ContactLayout content={content as never} />);
     case "google-map":
       return withWrapper(<GoogleMapSection content={content as never} />);
+    case "google-reviews":
+      return withWrapper(<GoogleReviewsSection content={content as never} />);
     case "benefits-grid":
       return withWrapper(<BenefitsGridSection content={content as never} />);
     case "text":

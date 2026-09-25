@@ -10,6 +10,7 @@ import { GenericGallerySection } from "@/components/dynamic/GenericGallerySectio
 import { GenericHeroSection, type GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
 import { GenericTextSection } from "@/components/dynamic/GenericTextSection";
 import { GoogleMapSection } from "@/components/dynamic/GoogleMapSection";
+import { GoogleReviewsSection, type GoogleReviewsContent } from "@/components/dynamic/GoogleReviewsSection";
 import { ImageSection } from "@/components/dynamic/ImageSection";
 import { NeutralSection, type NeutralSectionContent } from "@/components/dynamic/NeutralSection";
 import { ParcoursSection } from "@/components/dynamic/ParcoursSection";
@@ -219,6 +220,11 @@ export function SectionRenderer({
           case "google-map":
             return withAnimation(
               <GoogleMapSection key={key} content={section.content as { title?: string; embedUrl?: string }} />,
+            );
+
+          case "google-reviews":
+            return withAnimation(
+              <GoogleReviewsSection key={key} content={section.content as GoogleReviewsContent} />,
             );
 
           case "services-preview": {
