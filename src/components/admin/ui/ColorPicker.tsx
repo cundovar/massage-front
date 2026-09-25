@@ -6,6 +6,8 @@ interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
   presets?: string[];
+  /** Nom du champ, annonce par les lecteurs d'ecran. */
+  label?: string;
 }
 
 const DEFAULT_PRESETS = [
@@ -19,7 +21,7 @@ const DEFAULT_PRESETS = [
   "#78716C",
 ];
 
-export function ColorPicker({ value, onChange, presets = DEFAULT_PRESETS }: ColorPickerProps) {
+export function ColorPicker({ value, onChange, presets = DEFAULT_PRESETS, label = "Couleur" }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +41,8 @@ export function ColorPicker({ value, onChange, presets = DEFAULT_PRESETS }: Colo
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label={`${label} : choisir parmi les couleurs proposées`}
+          aria-expanded={isOpen}
           className="w-10 h-10 rounded-lg border border-stone-200 shadow-sm"
           style={{ backgroundColor: value }}
         />
@@ -46,6 +50,7 @@ export function ColorPicker({ value, onChange, presets = DEFAULT_PRESETS }: Colo
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          aria-label={`${label} : code couleur`}
           className="w-28 rounded-md border border-stone-200 px-3 py-2 text-sm font-mono"
           placeholder="#000000"
         />

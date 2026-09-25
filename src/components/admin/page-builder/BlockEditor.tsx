@@ -55,7 +55,7 @@ const APPEARANCE_FIELDS: FieldDefinition[] = [
       { value: "transparent", label: "Aucun" },
       { value: "soft", label: "Léger" },
       { value: "surface", label: "Carte" },
-      { value: "accent", label: "Couleur du thème" },
+      { value: "accent", label: "Thème" },
     ],
   },
   {

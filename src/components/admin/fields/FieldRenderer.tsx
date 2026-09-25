@@ -189,7 +189,7 @@ export function FieldRenderer({ field, value, onChange, token }: FieldRendererPr
       return (
         <div>
           <FieldLabel as="span" label={field.label} help={field.help} optional={field.optional} />
-          <ColorPicker value={(value as string) ?? ""} onChange={(color) => onChange(color)} />
+          <ColorPicker label={field.label} value={(value as string) ?? ""} onChange={(color) => onChange(color)} />
         </div>
       );
 

@@ -5,7 +5,10 @@ import dynamic from "next/dynamic";
 import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 import type { PageSection } from "@/lib/api-admin";
 import type { GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
-import { getImageUrl } from "@/lib/api";
+import { Leaf } from "lucide-react";
+import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
+import type { ServicesPreviewContent } from "@/components/sections/ServicesPreview";
+import { hasRichText } from "@/lib/richText";
 import { PreviewModeProvider } from "@/contexts/PreviewModeContext";
 
 const GenericHeroSection = dynamic(() => import("@/components/dynamic/GenericHeroSection").then((mod) => mod.GenericHeroSection), { ssr: false });
@@ -30,6 +33,7 @@ const SpacerSection = dynamic(() => import("@/components/dynamic/SpacerSection")
 const ImageSection = dynamic(() => import("@/components/dynamic/ImageSection").then((mod) => mod.ImageSection), { ssr: false });
 const GenericGallerySection = dynamic(() => import("@/components/dynamic/GenericGallerySection").then((mod) => mod.GenericGallerySection), { ssr: false });
 const ParcoursSection = dynamic(() => import("@/components/dynamic/ParcoursSection").then((mod) => mod.ParcoursSection), { ssr: false });
+const ServicesPreview = dynamic(() => import("@/components/sections/ServicesPreview").then((mod) => mod.ServicesPreview), { ssr: false });
 const FormationsSection = dynamic(() => import("@/components/dynamic/FormationsSection").then((mod) => mod.FormationsSection), { ssr: false });
 
 interface LivePreviewProps {
@@ -145,7 +149,7 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
     case "entreprise":
       return withWrapper(<MassageAmma content={content as never} />);
     case "contact-cta":
-      return withWrapper(<ContactCTA content={content as { title?: string; subtitle?: string; buttonText?: string }} />);
+      return withWrapper(<ContactCTA content={content as { title?: string; subtitle?: string; buttonText?: string; buttonLink?: string }} />);
     case "contact-infos":
       return withWrapper(<ContactInfoSection content={content as never} />);
     case "contact-info":
@@ -193,48 +197,18 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
         />,
       );
     case "services-preview": {
-      const items = (content.items as Array<{ name?: string; category?: string; price?: string; image?: string | null }>) || [];
-      const validItems = items.filter((item) => item.name?.trim());
+      const previewContent = content as ServicesPreviewContent;
+      const hasItems = previewContent.items?.some((item) => hasRichText(item.name));
       return withWrapper(
-        <div className="rounded-lg border border-stone-200 bg-stone-50 px-6 py-12 text-center">
-          <p className="text-xs font-medium uppercase tracking-wide text-amber-600">
-            {(content.subtitle as string) || "Mes soins"}
-          </p>
-          <p className="mt-2 text-xl font-serif text-stone-800">
-            {(content.title as string) || "Une gamme de soins pour votre bien-être"}
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-4">
-            {validItems.length > 0 ? (
-              validItems.map((item, i) => (
-                <div key={i} className="w-40 rounded-lg border bg-white p-3 text-left shadow-sm">
-                  {item.image ? (
-                    <div
-                      className="mb-2 h-20 rounded bg-cover bg-center bg-no-repeat"
-                      style={{ backgroundImage: `url(${getImageUrl(item.image)})` }}
-                    />
-                  ) : (
-                    <div className="mb-2 h-20 rounded bg-stone-100" />
-                  )}
-                  <p className="text-xs text-stone-500">{item.category || "Catégorie"}</p>
-                  <p className="font-medium text-stone-800">{item.name}</p>
-                  {item.price && <p className="text-sm text-amber-600">{item.price}</p>}
-                </div>
-              ))
-            ) : (
-              <>
-                <div className="h-32 w-40 rounded-lg bg-stone-200" />
-                <div className="h-32 w-40 rounded-lg bg-stone-200" />
-                <div className="h-32 w-40 rounded-lg bg-stone-200" />
-              </>
-            )}
-          </div>
-          <p className="mt-6 text-sm text-stone-500">
-            {validItems.length > 0 ? `${validItems.length} service(s) configure(s)` : "Ajoutez des services ci-dessus"}
-          </p>
-          <button className="mt-4 rounded-full bg-amber-500 px-6 py-2 text-sm text-white">
-            {(content.buttonText as string) || "Voir tous les soins"}
-          </button>
-        </div>,
+        hasItems ? (
+          <ServicesPreview content={previewContent} />
+        ) : (
+          <EmptyBlockPlaceholder
+            icon={Leaf}
+            title="Aperçu des soins"
+            hint="Ajoutez des soins dans le bloc : sur le site, les soins de « Services » s'affichent sinon."
+          />
+        ),
       );
     }
     default:
