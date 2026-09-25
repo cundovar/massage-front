@@ -17,9 +17,14 @@ const PREDEFINED_LINKS = [
 interface PageLinkPickerProps {
   token: string;
   value: string;
-  onChange: (value: string) => void;
+  /** `pageLabel` : nom de la page choisie dans la liste (absent pour un lien saisi a la main). */
+  onChange: (value: string, pageLabel?: string) => void;
   label?: string;
   placeholder?: string;
+  /** Affiche la ligne "Lien : /..." sous la liste (defaut : oui). */
+  showValue?: boolean;
+  /** Nom accessible quand aucun libelle visible n'est affiche. */
+  ariaLabel?: string;
 }
 
 function getPagePath(page: PageListItem): string {
@@ -32,6 +37,8 @@ export function PageLinkPicker({
   onChange,
   label,
   placeholder,
+  showValue = true,
+  ariaLabel,
 }: PageLinkPickerProps) {
   const [pages, setPages] = useState<PageListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +96,9 @@ export function PageLinkPicker({
     }
 
     setIsCustom(false);
-    onChange(nextValue);
+    const page = pages.find((item) => getPagePath(item) === nextValue);
+    const predefined = PREDEFINED_LINKS.find((item) => item.value === nextValue);
+    onChange(nextValue, page?.title ?? (predefined && predefined.value !== "#" ? predefined.label : undefined));
   };
 
   return (
@@ -102,6 +111,7 @@ export function PageLinkPicker({
             type="text"
             value={value}
             onChange={(event) => onChange(event.target.value)}
+            aria-label={ariaLabel ? `${ariaLabel} (lien personnalisé)` : undefined}
             placeholder={placeholder || "https://... ou /chemin"}
             className="flex-1 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder-stone-400 transition-colors hover:border-stone-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
@@ -121,6 +131,7 @@ export function PageLinkPicker({
           <select
             value={value}
             onChange={(event) => handleSelectChange(event.target.value)}
+            aria-label={ariaLabel}
             disabled={loading}
             className="w-full appearance-none rounded-md border border-stone-200 bg-white px-3 py-2 pr-10 text-sm text-stone-900 transition-colors hover:border-stone-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-stone-100"
           >
@@ -154,7 +165,7 @@ export function PageLinkPicker({
       )}
 
       {loadError ? <p className="mt-1 text-xs text-amber-700">{loadError}</p> : null}
-      {value && !isCustom ? (
+      {showValue && value && !isCustom ? (
         <p className="mt-1 text-xs text-stone-500">
           Lien: <code className="rounded bg-stone-100 px-1">{value}</code>
         </p>

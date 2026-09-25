@@ -5,6 +5,7 @@ export { Textarea } from "./Textarea";
 export { Select } from "./Select";
 export { Checkbox } from "./Checkbox";
 export { Switch } from "./Switch";
+export { ToggleRow } from "./ToggleRow";
 
 // Form
 export { FormField } from "./FormField";

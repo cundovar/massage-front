@@ -1,7 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Plus, Trash2, Info } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Info,
+  MapPin,
+  Plus,
+  Scale,
+  Share2,
+  Trash2,
+  type LucideIcon,
+} from "lucide-react";
 import {
   Button,
   Card,
@@ -13,8 +26,8 @@ import {
   Input,
   PageLinkPicker,
   Select,
-  Switch,
   Textarea,
+  ToggleRow,
 } from "@/components/admin/ui";
 import { hexToRgb, prefersDarkText } from "@/lib/color";
 import type { FooterStyle, SiteSettings } from "@/types/settings";
@@ -49,6 +62,38 @@ function FooterSwatch({ background, textColor, dashed = false }: { background: s
   );
 }
 
+/** Petit bouton icone (monter, descendre, supprimer) avec libelle accessible. */
+function IconAction({
+  icon: Icon,
+  label,
+  onClick,
+  disabled = false,
+  tone = "neutral",
+}: {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  tone?: "neutral" | "danger";
+}) {
+  return (
+    <button
+      type="button"
+      title={label}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      className={[
+        "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-stone-400 transition-colors",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 disabled:cursor-not-allowed disabled:opacity-30",
+        tone === "danger" ? "hover:bg-red-50 hover:text-red-600" : "hover:bg-stone-100 hover:text-stone-700",
+      ].join(" ")}
+    >
+      <Icon className="h-4 w-4" aria-hidden="true" />
+    </button>
+  );
+}
+
 const CHECKERBOARD = "repeating-conic-gradient(#f5f5f4 0 25%, #ffffff 0 50%) 0 0 / 12px 12px";
 
 interface FooterFormProps {
@@ -65,6 +110,23 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
   const customColor = settings.footer.backgroundColor ?? "";
   const hasCustomColor = hexToRgb(customColor) !== null;
   const customTextIsDark = hasCustomColor ? prefersDarkText(customColor) : true;
+  const quickLinks = settings.footer.quickLinks;
+
+  function updateFooter(patch: Partial<SiteSettings["footer"]>) {
+    onChange({ ...settings, footer: { ...settings.footer, ...patch } });
+  }
+
+  function updateLink(index: number, patch: Partial<SiteSettings["footer"]["quickLinks"][number]>) {
+    updateFooter({ quickLinks: quickLinks.map((link, i) => (i === index ? { ...link, ...patch } : link)) });
+  }
+
+  function moveLink(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= quickLinks.length) return;
+    const next = [...quickLinks];
+    [next[index], next[target]] = [next[target], next[index]];
+    updateFooter({ quickLinks: next });
+  }
 
   return (
     <Card className="space-y-6">
@@ -181,122 +243,129 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
       </FormSection>
 
       {/* Sections a afficher */}
-      <FormSection title="Sections a afficher" description="Choisissez quels elements apparaissent dans le footer">
-        <div className="space-y-3">
-          <Switch
-            label="Afficher les liens de navigation"
-            checked={true}
-            disabled
-            onChange={() => {}}
-          />
-          <Switch
-            label="Afficher les informations de contact"
+      <FormSection title="Contenu du bas de page" description="Choisissez les éléments affichés en bas de chaque page.">
+        <div className="space-y-2">
+          <ToggleRow
+            icon={MapPin}
+            label="Coordonnées"
+            description="Adresse, téléphone et e-mail"
             checked={settings.footer.showContactInfo ?? true}
-            onChange={(e) =>
-              onChange({
-                ...settings,
-                footer: { ...settings.footer, showContactInfo: e.target.checked },
-              })
-            }
+            onChange={(checked) => updateFooter({ showContactInfo: checked })}
           />
-          <Switch
-            label="Afficher les reseaux sociaux"
-            checked={settings.footer.showSocialLinks ?? true}
-            onChange={(e) =>
-              onChange({
-                ...settings,
-                footer: { ...settings.footer, showSocialLinks: e.target.checked },
-              })
-            }
-          />
-          <Switch
-            label="Afficher les horaires"
+          <ToggleRow
+            icon={Clock}
+            label="Horaires"
+            description="Jours et heures d'ouverture"
             checked={settings.footer.showHours ?? false}
-            onChange={(e) =>
-              onChange({
-                ...settings,
-                footer: { ...settings.footer, showHours: e.target.checked },
-              })
-            }
+            onChange={(checked) => updateFooter({ showHours: checked })}
           />
-          <Switch
-            label="Afficher le lien Mentions legales"
+          <ToggleRow
+            icon={Share2}
+            label="Réseaux sociaux"
+            description="Liens Instagram, Facebook, LinkedIn"
+            checked={settings.footer.showSocialLinks ?? true}
+            onChange={(checked) => updateFooter({ showSocialLinks: checked })}
+          />
+          <ToggleRow
+            icon={Scale}
+            label="Lien « Mentions légales »"
+            description="Obligatoire pour un site professionnel"
             checked={settings.footer.showMentionsLegales ?? true}
-            onChange={(e) =>
-              onChange({
-                ...settings,
-                footer: { ...settings.footer, showMentionsLegales: e.target.checked },
-              })
-            }
+            onChange={(checked) => updateFooter({ showMentionsLegales: checked })}
           />
         </div>
+        <p className="flex items-center gap-1.5 text-xs text-stone-500">
+          <Info className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          Les liens de navigation sont toujours affichés.
+        </p>
       </FormSection>
 
       {/* Liens rapides */}
-      <FormSection title="Liens de navigation" description="Les liens affiches dans la colonne Navigation du footer">
-        <div className="space-y-2">
-          {settings.footer.quickLinks.map((link, index) => (
-            <div key={`link-${index}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-              <Input
-                placeholder="Label (ex: Accueil)"
-                value={link.label}
-                onChange={(e) => {
-                  const next = [...settings.footer.quickLinks];
-                  next[index] = { ...next[index], label: e.target.value };
-                  onChange({ ...settings, footer: { ...settings.footer, quickLinks: next } });
-                }}
-              />
-              <PageLinkPicker
-                token={token}
-                value={link.url}
-                onChange={(url) => {
-                  const next = [...settings.footer.quickLinks];
-                  next[index] = { ...next[index], url };
-                  onChange({ ...settings, footer: { ...settings.footer, quickLinks: next } });
-                }}
-                placeholder="/, /contact ou https://..."
-              />
-              <Button
-                type="button"
-                variant="danger"
-                size="sm"
-                onClick={() =>
-                  onChange({
-                    ...settings,
-                    footer: {
-                      ...settings.footer,
-                      quickLinks: settings.footer.quickLinks.filter((_, i) => i !== index),
-                    },
-                  })
-                }
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() =>
-              onChange({
-                ...settings,
-                footer: {
-                  ...settings.footer,
-                  quickLinks: [...settings.footer.quickLinks, { label: "", url: "" }],
-                },
-              })
-            }
-          >
-            <Plus className="mr-1 h-4 w-4" />
-            Ajouter un lien
-          </Button>
-        </div>
+      <FormSection
+        title="Liens de navigation"
+        description="Colonne « Navigation » du bas de page. Si le texte est vide, il reprend le nom de la page choisie."
+      >
+        {quickLinks.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-stone-300 px-4 py-6 text-center text-sm text-stone-500">
+            Aucun lien pour le moment.
+          </p>
+        ) : (
+          <ol className="space-y-3">
+            {quickLinks.map((link, index) => {
+              const position = index + 1;
+              const name = link.label.trim() || link.url || "Nouveau lien";
+              return (
+                <li key={`link-${index}`} className="min-w-0 rounded-xl border border-stone-200 bg-white">
+                  <div className="flex items-center gap-2 border-b border-stone-100 px-3 py-2">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-semibold text-amber-800">
+                      {position}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-stone-800">{name}</span>
+                    <IconAction
+                      icon={ArrowUp}
+                      label={`Monter le lien ${position}`}
+                      disabled={index === 0}
+                      onClick={() => moveLink(index, -1)}
+                    />
+                    <IconAction
+                      icon={ArrowDown}
+                      label={`Descendre le lien ${position}`}
+                      disabled={index === quickLinks.length - 1}
+                      onClick={() => moveLink(index, 1)}
+                    />
+                    <IconAction
+                      icon={Trash2}
+                      label={`Supprimer le lien ${position}`}
+                      tone="danger"
+                      onClick={() => updateFooter({ quickLinks: quickLinks.filter((_, i) => i !== index) })}
+                    />
+                  </div>
+                  <div className="grid min-w-0 gap-3 p-3 md:grid-cols-2">
+                    <div className="min-w-0">
+                      <FieldLabel as="span" label="Page" />
+                      <PageLinkPicker
+                        token={token}
+                        value={link.url}
+                        showValue={false}
+                        ariaLabel={`Page du lien ${position}`}
+                        placeholder="/contact ou https://..."
+                        onChange={(url, pageLabel) =>
+                          updateLink(index, {
+                            url,
+                            ...(!link.label.trim() && pageLabel ? { label: pageLabel } : {}),
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <FieldLabel label="Texte affiché" htmlFor={`footer-link-label-${index}`} />
+                      <Input
+                        id={`footer-link-label-${index}`}
+                        placeholder="Ex. Accueil"
+                        value={link.label}
+                        onChange={(event) => updateLink(index, { label: event.target.value })}
+                      />
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+        <button
+          type="button"
+          onClick={() => updateFooter({ quickLinks: [...quickLinks, { label: "", url: "" }] })}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 px-4 py-3 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+        >
+          <Plus className="h-4 w-4" aria-hidden="true" />
+          Ajouter un lien
+        </button>
       </FormSection>
 
       {/* Description personnalisee */}
-      <FormSection title="Description" description="Texte affiche sous le nom du site">
+      <FormSection title="Description" description="Texte affiché sous le nom du site">
         <Textarea
-          placeholder="Laissez vide pour utiliser la meta description par defaut"
+          placeholder="Laissez vide pour utiliser la description par défaut"
           rows={3}
           value={settings.footer.customDescription ?? ""}
           onChange={(e) =>
@@ -307,12 +376,12 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
           }
         />
         <p className="text-xs text-stone-500">
-          Si vide, la description par defaut sera utilisee : &quot;{settings.general.defaultMetaDescription}&quot;
+          Si vide, la description par défaut est utilisée : &quot;{settings.general.defaultMetaDescription}&quot;
         </p>
       </FormSection>
 
       {/* Copyright */}
-      <FormSection title="Copyright et mentions">
+      <FormSection title="Copyright et mentions légales">
         <FormField label="Texte de copyright">
           <Input
             placeholder="© 2024 Mon Site"
@@ -325,9 +394,9 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
             }
           />
         </FormField>
-        <FormField label="Texte du lien Mentions legales">
+        <FormField label="Texte du lien « Mentions légales »">
           <Input
-            placeholder="Mentions legales"
+            placeholder="Mentions légales"
             value={settings.footer.mentionsLegalesText ?? "Mentions legales"}
             onChange={(e) =>
               onChange({
@@ -341,11 +410,11 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
 
       {/* Coordonnees (synchronisees) */}
       <FormSection
-        title="Coordonnees"
+        title="Coordonnées"
         description={
           <span className="flex items-center gap-1">
             <Info className="h-3 w-3" />
-            Synchronisees avec les parametres de contact
+            Partagées avec la page Contact et les réglages
           </span>
         }
       >
@@ -398,7 +467,7 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
           className="flex w-full items-center justify-between rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-left text-sm hover:bg-stone-100"
         >
           <span>
-            {settings.contact.locations.length} lieu(x) synchronisé(s)
+            Modifier l’adresse principale ({settings.contact.locations.length} lieu(x) partagé(s))
           </span>
           {showContactSync ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
@@ -406,7 +475,7 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
         {showContactSync && (
           <div className="space-y-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
             <p className="text-xs text-amber-700">
-              Ces informations sont partagees avec la page Contact et les autres sections du site.
+              Ces informations sont partagées avec la page Contact et les autres sections du site.
             </p>
             <div className="grid gap-4 md:grid-cols-3">
               <Input
@@ -451,7 +520,7 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <Input
-                placeholder="Telephone"
+                placeholder="Téléphone"
                 value={settings.contact.phone}
                 onChange={(e) =>
                   onChange({
@@ -461,7 +530,7 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
                 }
               />
               <Input
-                placeholder="Email"
+                placeholder="E-mail"
                 value={settings.contact.email}
                 onChange={(e) =>
                   onChange({
@@ -478,11 +547,11 @@ export function FooterForm({ token, settings, saving, onChange, onSave }: Footer
       {/* Reseaux sociaux (synchronises) */}
       {(settings.footer.showSocialLinks ?? true) && (
         <FormSection
-          title="Reseaux sociaux"
+          title="Réseaux sociaux"
           description={
             <span className="flex items-center gap-1">
               <Info className="h-3 w-3" />
-              Synchronises avec les parametres generaux
+              Partagés avec les réglages généraux
             </span>
           }
         >
