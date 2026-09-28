@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SettingsForm } from "@/components/admin/editors/SettingsForm";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
-import { fetchSettings, revalidateFrontend, updateSettings, uploadFavicon, uploadLogo } from "@/lib/api-admin";
+import {
+  deleteFavicon,
+  deleteLogo,
+  fetchSettings,
+  revalidateFrontend,
+  updateSettings,
+  uploadFavicon,
+  uploadLogo,
+} from "@/lib/api-admin";
 import type { SiteSettings } from "@/types/settings";
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -132,36 +140,48 @@ export default function AdminSettingsPage() {
     }
   }
 
-  async function handleUploadLogo(file: File) {
+  async function runAssetAction(
+    kind: "logo" | "favicon",
+    action: (token: string) => Promise<string | null>,
+    successMessage: string,
+    fallbackError: string,
+  ) {
     if (!token) return;
-    setUploadingLogo(true);
+    const setBusy = kind === "logo" ? setUploadingLogo : setUploadingFavicon;
+    setBusy(true);
     setError(null);
     setSuccess(null);
     try {
-      const result = await uploadLogo(token, file);
-      setSettings((prev) => ({ ...prev, general: { ...prev.general, logo: result.path } }));
-      setSuccess("Logo mis a jour.");
+      const path = await action(token);
+      setSettings((prev) => ({ ...prev, general: { ...prev.general, [kind]: path } }));
+      await revalidateFrontend();
+      setSuccess(successMessage);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur upload logo.");
+      if (err instanceof Error && err.message === "UNAUTHORIZED") {
+        clearTokenFromStorage();
+        router.replace("/admin/login");
+        return;
+      }
+      setError(err instanceof Error ? err.message : fallbackError);
     } finally {
-      setUploadingLogo(false);
+      setBusy(false);
     }
   }
 
-  async function handleUploadFavicon(file: File) {
-    if (!token) return;
-    setUploadingFavicon(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const result = await uploadFavicon(token, file);
-      setSettings((prev) => ({ ...prev, general: { ...prev.general, favicon: result.path } }));
-      setSuccess("Favicon mis a jour.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur upload favicon.");
-    } finally {
-      setUploadingFavicon(false);
-    }
+  function handleUploadLogo(file: File) {
+    return runAssetAction("logo", async (t) => (await uploadLogo(t, file)).path, "Logo mis a jour.", "Erreur upload logo.");
+  }
+
+  function handleUploadFavicon(file: File) {
+    return runAssetAction("favicon", async (t) => (await uploadFavicon(t, file)).path, "Favicon mis a jour.", "Erreur upload favicon.");
+  }
+
+  function handleDeleteLogo() {
+    return runAssetAction("logo", async (t) => { await deleteLogo(t); return null; }, "Logo supprime.", "Erreur suppression logo.");
+  }
+
+  function handleDeleteFavicon() {
+    return runAssetAction("favicon", async (t) => { await deleteFavicon(t); return null; }, "Favicon supprime.", "Erreur suppression favicon.");
   }
 
   if (!mounted || !token || loading) {
@@ -182,6 +202,8 @@ export default function AdminSettingsPage() {
         onSave={handleSave}
         onUploadLogo={handleUploadLogo}
         onUploadFavicon={handleUploadFavicon}
+        onDeleteLogo={handleDeleteLogo}
+        onDeleteFavicon={handleDeleteFavicon}
       />
     </div>
   );

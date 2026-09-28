@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -28,6 +28,78 @@ interface SettingsFormProps {
   onSave: () => Promise<void>;
   onUploadLogo: (file: File) => Promise<void>;
   onUploadFavicon: (file: File) => Promise<void>;
+  onDeleteLogo: () => Promise<void>;
+  onDeleteFavicon: () => Promise<void>;
+}
+
+interface AssetFieldProps {
+  label: string;
+  value: string | null;
+  busy: boolean;
+  previewClassName: string;
+  onUpload: (file: File) => Promise<void>;
+  onDelete: () => Promise<void>;
+}
+
+function AssetField({ label, value, busy, previewClassName, onUpload, onDelete }: AssetFieldProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const lowerLabel = label.toLowerCase();
+
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-medium text-stone-600">{label}</p>
+      {value ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={getImageUrl(value) ?? value} alt={label} className={previewClassName} />
+      ) : null}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void onUpload(file);
+          event.currentTarget.value = "";
+        }}
+      />
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" loading={busy} onClick={() => inputRef.current?.click()}>
+          {busy ? "Traitement..." : value ? `Remplacer le ${lowerLabel}` : `Uploader ${lowerLabel}`}
+        </Button>
+        {value && !busy ? (
+          confirmDelete ? (
+            <>
+              <Button
+                type="button"
+                variant="danger"
+                aria-label={`Confirmer la suppression du ${lowerLabel}`}
+                onClick={() => {
+                  setConfirmDelete(false);
+                  void onDelete();
+                }}
+              >
+                Confirmer ?
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => setConfirmDelete(false)}>
+                Annuler
+              </Button>
+            </>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              aria-label={`Supprimer le ${lowerLabel}`}
+              onClick={() => setConfirmDelete(true)}
+            >
+              Supprimer
+            </Button>
+          )
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 export function SettingsForm({
@@ -40,9 +112,9 @@ export function SettingsForm({
   onSave,
   onUploadLogo,
   onUploadFavicon,
+  onDeleteLogo,
+  onDeleteFavicon,
 }: SettingsFormProps) {
-  const logoInputRef = useRef<HTMLInputElement | null>(null);
-  const faviconInputRef = useRef<HTMLInputElement | null>(null);
   const headerStyleOptions = [
     { value: "transparent", label: "Transparent (fond visible)" },
     { value: "solid", label: "Solid (couleur de fond)" },
@@ -93,48 +165,22 @@ export function SettingsForm({
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-stone-600">Logo</p>
-            {settings.general.logo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt="Logo" className="h-12 rounded border border-stone-200 bg-white p-1" />
-            ) : null}
-            <input
-              ref={logoInputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) void onUploadLogo(file);
-                event.currentTarget.value = "";
-              }}
-            />
-            <Button type="button" loading={uploadingLogo} onClick={() => logoInputRef.current?.click()}>
-              {uploadingLogo ? "Upload..." : "Uploader logo"}
-            </Button>
-          </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-stone-600">Favicon</p>
-            {settings.general.favicon ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={getImageUrl(settings.general.favicon) ?? settings.general.favicon} alt="Favicon" className="h-10 w-10 rounded border border-stone-200 bg-white p-1" />
-            ) : null}
-            <input
-              ref={faviconInputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) void onUploadFavicon(file);
-                event.currentTarget.value = "";
-              }}
-            />
-            <Button type="button" loading={uploadingFavicon} onClick={() => faviconInputRef.current?.click()}>
-              {uploadingFavicon ? "Upload..." : "Uploader favicon"}
-            </Button>
-          </div>
+          <AssetField
+            label="Logo"
+            value={settings.general.logo}
+            busy={uploadingLogo}
+            previewClassName="h-12 rounded border border-stone-200 bg-white p-1"
+            onUpload={onUploadLogo}
+            onDelete={onDeleteLogo}
+          />
+          <AssetField
+            label="Favicon"
+            value={settings.general.favicon}
+            busy={uploadingFavicon}
+            previewClassName="h-10 w-10 rounded border border-stone-200 bg-white p-1"
+            onUpload={onUploadFavicon}
+            onDelete={onDeleteFavicon}
+          />
         </div>
       </FormSection>
 
