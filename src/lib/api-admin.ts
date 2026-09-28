@@ -423,6 +423,27 @@ export async function uploadFavicon(token: string, file: File): Promise<{ path: 
   return uploadSettingsAsset(token, "/favicon", file);
 }
 
+async function deleteSettingsAsset(token: string, endpoint: "/logo" | "/favicon"): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/settings${endpoint}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(data?.error ?? "Delete failed");
+  }
+}
+
+export async function deleteLogo(token: string): Promise<void> {
+  return deleteSettingsAsset(token, "/logo");
+}
+
+export async function deleteFavicon(token: string): Promise<void> {
+  return deleteSettingsAsset(token, "/favicon");
+}
+
 export async function updateSection(
   token: string,
   slug: string,

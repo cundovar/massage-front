@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: settings.general.defaultMetaDescription,
     icons: settings.general.favicon
-      ? [{ url: settings.general.favicon }]
+      ? [{ url: getImageUrl(settings.general.favicon) ?? settings.general.favicon }]
       : [{ url: "/favicon-front.svg", type: "image/svg+xml" }],
   };
 }
