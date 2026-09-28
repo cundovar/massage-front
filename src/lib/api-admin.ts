@@ -1,5 +1,4 @@
 import type { SiteSettings } from "@/types/settings";
-import type { Service, ServiceFormData } from "@/types/service";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 export interface LoginResponse {
@@ -180,92 +179,6 @@ export async function deletePage(token: string, slug: string): Promise<void> {
     const error = (await response.json().catch(() => null)) as { error?: string } | null;
     throw new Error(error?.error ?? "Erreur lors de la suppression");
   }
-}
-
-export async function fetchServices(token: string): Promise<Service[]> {
-  const data = await fetchAdminApi<{ items: Service[] }>("/api/admin/services", token);
-  return data.items;
-}
-
-export async function fetchService(token: string, id: number): Promise<Service> {
-  return fetchAdminApi<Service>(`/api/admin/services/${id}`, token);
-}
-
-export async function createService(token: string, payload: ServiceFormData): Promise<Service> {
-  const response = await fetch(`${API_BASE_URL}/api/admin/services`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (response.status === 401) throw new Error("UNAUTHORIZED");
-  if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as { error?: string; errors?: Record<string, string> } | null;
-    const firstError = data?.errors ? Object.values(data.errors)[0] : null;
-    throw new Error(firstError ?? data?.error ?? "Failed to create service");
-  }
-
-  return (await response.json()) as Service;
-}
-
-export async function updateService(token: string, id: number, payload: Partial<ServiceFormData>): Promise<Service> {
-  const endpoint = `${API_BASE_URL}/api/admin/services/${id}`;
-  let response = await fetch(endpoint, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  // Some production reverse proxies/shared hosts reject PUT with 405.
-  // Retry with POST on the same endpoint, handled server-side as an update fallback.
-  if (response.status === 405) {
-    response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-  }
-
-  if (response.status === 401) throw new Error("UNAUTHORIZED");
-  if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as { error?: string; errors?: Record<string, string> } | null;
-    const firstError = data?.errors ? Object.values(data.errors)[0] : null;
-    throw new Error(firstError ?? data?.error ?? "Failed to update service");
-  }
-
-  return (await response.json()) as Service;
-}
-
-export async function deleteService(token: string, id: number): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/admin/services/${id}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (response.status === 401) throw new Error("UNAUTHORIZED");
-  if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(data?.error ?? "Failed to delete service");
-  }
-}
-
-export async function reorderServices(token: string, orderedIds: number[]): Promise<void> {
-  await Promise.all(
-    orderedIds.map((id, index) =>
-      updateService(token, id, { sortOrder: index }),
-    ),
-  );
 }
 
 export async function fetchPage(token: string, slug: string): Promise<PageDetail> {

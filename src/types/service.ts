@@ -3,18 +3,6 @@ export interface ServicePrice {
   price: number;
 }
 
-export interface Service {
-  id: number;
-  category: string;
-  name: string;
-  description: string;
-  prices: ServicePrice[];
-  highlight: boolean;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface ServiceItem {
   id: number;
   category: string;
@@ -24,23 +12,3 @@ export interface ServiceItem {
   highlight: boolean;
   sortOrder: number;
 }
-
-export interface ServiceFormData {
-  category: string;
-  name: string;
-  description: string;
-  prices: ServicePrice[];
-  highlight: boolean;
-  sortOrder?: number;
-}
-
-export const CATEGORIES = [
-  "Ayurveda",
-  "Kobido",
-  "Reflexologie",
-  "Prenatal",
-  "Bol Kansu",
-  "Padhabyanga",
-  "Entreprise",
-  "Autre",
-] as const;
