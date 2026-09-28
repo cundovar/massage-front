@@ -7,20 +7,19 @@ import {
   AdminMeResponse,
   fetchAdminApi,
   fetchMedia,
+  fetchPage,
   fetchPages,
-  fetchServices,
   fetchSettings,
   type PageListItem,
 } from "@/lib/api-admin";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
-import type { Service } from "@/types/service";
 import type { SiteSettings } from "@/types/settings";
 
 interface DashboardData {
   me: AdminMeResponse;
   settings: SiteSettings;
   pages: PageListItem[];
-  services: Service[];
+  tarifsPageSlug: string | null;
   mediaCount: number;
 }
 
@@ -29,12 +28,18 @@ interface ChecklistItem {
   href: string;
 }
 
-const SHORTCUTS = [
-  { label: "Modifier les tarifs", description: "Soins et prix", href: "/admin/services" },
-  { label: "Modifier une page", description: "Contenu et SEO", href: "/admin/pages" },
-  { label: "Ajouter une photo", description: "Mediatheque", href: "/admin/media" },
-  { label: "Changer les horaires", description: "Parametres du site", href: "/admin/settings" },
-];
+function buildShortcuts(tarifsPageSlug: string | null) {
+  return [
+    {
+      label: "Modifier les tarifs",
+      description: "Bloc « Tarifs et prestations »",
+      href: tarifsPageSlug ? `/admin/pages/${tarifsPageSlug}` : "/admin/pages",
+    },
+    { label: "Modifier une page", description: "Contenu et SEO", href: "/admin/pages" },
+    { label: "Ajouter une photo", description: "Mediatheque", href: "/admin/media" },
+    { label: "Changer les horaires", description: "Parametres du site", href: "/admin/settings" },
+  ];
+}
 
 function formatDate(value?: string): string {
   if (!value) return "—";
@@ -43,7 +48,7 @@ function formatDate(value?: string): string {
   return date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
-function buildChecklist({ settings, pages, services }: DashboardData): ChecklistItem[] {
+function buildChecklist({ settings, pages }: DashboardData): ChecklistItem[] {
   const items: ChecklistItem[] = [];
 
   if (!settings.general.logo) items.push({ label: "Aucun logo defini", href: "/admin/settings" });
@@ -57,12 +62,6 @@ function buildChecklist({ settings, pages, services }: DashboardData): Checklist
   for (const page of pages) {
     if (!page.metaDescription || page.metaDescription.trim() === "") {
       items.push({ label: `Page « ${page.title} » sans meta description`, href: `/admin/pages/${page.slug}` });
-    }
-  }
-
-  for (const service of services) {
-    if (!service.prices || service.prices.length === 0) {
-      items.push({ label: `Soin « ${service.name} » sans prix`, href: `/admin/services/${service.id}` });
     }
   }
 
@@ -86,11 +85,12 @@ export default function AdminDashboardPage() {
       fetchAdminApi<AdminMeResponse>("/api/admin/me", token),
       fetchSettings(token),
       fetchPages(token),
-      fetchServices(token),
       fetchMedia(token),
     ])
-      .then(([me, settings, pages, services, media]) => {
-        setData({ me, settings, pages, services, mediaCount: media.length });
+      .then(async ([me, settings, pages, media]) => {
+        const details = await Promise.all(pages.map((page) => fetchPage(token, page.slug)));
+        const tarifsPage = details.find((page) => page.sections.some((section) => section.type === "tarifs"));
+        setData({ me, settings, pages, tarifsPageSlug: tarifsPage?.slug ?? null, mediaCount: media.length });
       })
       .catch((err: Error) => {
         if (err.message === "UNAUTHORIZED") {
@@ -137,9 +137,9 @@ export default function AdminDashboardPage() {
       <section aria-labelledby="shortcuts-title">
         <h2 id="shortcuts-title" className="bo-label mb-3">Raccourcis</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SHORTCUTS.map((shortcut) => (
+          {buildShortcuts(data.tarifsPageSlug).map((shortcut) => (
             <Link
-              key={shortcut.href}
+              key={shortcut.label}
               href={shortcut.href}
               className="bo-card block p-5 transition-colors hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
@@ -152,11 +152,7 @@ export default function AdminDashboardPage() {
 
       <section aria-labelledby="content-title">
         <h2 id="content-title" className="bo-label mb-3">Contenu du site</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Link href="/admin/services" className="bo-card block p-5 hover:border-amber-400">
-            <p className="text-sm text-stone-500">Soins</p>
-            <p className="mt-1 text-3xl font-semibold text-amber-600">{data.services.length}</p>
-          </Link>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Link href="/admin/pages" className="bo-card block p-5 hover:border-amber-400">
             <p className="text-sm text-stone-500">Pages</p>
             <p className="mt-1 text-3xl font-semibold text-amber-600">{data.pages.length}</p>
