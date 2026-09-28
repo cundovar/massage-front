@@ -242,7 +242,7 @@ export function SectionRenderer({
                   key={key}
                   icon={Leaf}
                   title="Aperçu des soins"
-                  hint="Ajoutez des soins dans le bloc, ou créez des soins dans « Services »."
+                  hint="Ajoutez des soins dans le bloc."
                 />
               );
             }
