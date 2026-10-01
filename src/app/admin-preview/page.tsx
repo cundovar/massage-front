@@ -39,6 +39,19 @@ export default function AdminPreviewPage() {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+  const activeSection = preview?.activeSection ?? null;
+
+  // Amène le bloc sélectionné dans la liste à l’écran s’il n’y est pas déjà.
+  useEffect(() => {
+    if (!activeSection) return;
+    const element = document.querySelector<HTMLElement>(`[data-preview-section="${CSS.escape(activeSection)}"]`);
+    if (!element) return;
+    const { top, bottom } = element.getBoundingClientRect();
+    if (top < 0 || bottom > window.innerHeight) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeSection]);
+
   function selectSection(key: string) {
     window.parent.postMessage({ type: "page-builder-preview:select", key }, window.location.origin);
   }

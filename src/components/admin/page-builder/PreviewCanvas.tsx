@@ -108,6 +108,7 @@ function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
 
     return (
       <div
+        data-preview-section={section.key}
         onClick={onClick ? handleClick : undefined}
         className={[
           "relative mb-4 transition-all",
