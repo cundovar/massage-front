@@ -15,8 +15,8 @@ export function Presentation({ content }: PresentationProps) {
   const paragraphs = (content.paragraphs ?? []).filter((paragraph) => hasRichText(paragraph));
 
   return (
-    <section id="bienvenue" className="mt-16 grid gap-10 md:grid-cols-[5fr_2fr]">
-      <ScrollReveal>
+    <section id="bienvenue" className="mt-16 grid gap-10 px-5 sm:px-0 md:grid-cols-[3fr_2fr] md:items-center lg:gap-16 xl:grid-cols-[minmax(0,1fr)_28rem]">
+      <ScrollReveal className="min-w-0">
         <div className="js-section-left space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" />
           {hasRichText(title) ? (
@@ -43,15 +43,15 @@ export function Presentation({ content }: PresentationProps) {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <div className="js-section-right glass-panel group relative aspect-[3/4] overflow-hidden rounded-2xl">
+      <ScrollReveal className="min-w-0">
+        <div className="js-section-right glass-panel group relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl md:aspect-[3/4]">
           {imageUrl ? (
             <Image
               src={imageUrl}
               alt="Presentation"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, 30vw"
+              sizes="(max-width: 768px) 100vw, 448px"
             />
           ) : (
             <div
