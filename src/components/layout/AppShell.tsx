@@ -21,7 +21,7 @@ interface AppShellProps {
 
 export function AppShell({ children, initialNavItems, initialSettings }: AppShellProps) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+  const isAdmin = pathname?.startsWith("/admin") || pathname === "/admin-preview";
   const [navItems, setNavItems] = useState<NavItem[]>(
     initialNavItems?.length ? initialNavItems : FALLBACK_NAV,
   );
