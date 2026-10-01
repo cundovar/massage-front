@@ -192,7 +192,7 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
       primaryStart: "#78716C",
       primaryEnd: "#57534E",
       textPrimary: "#1C1917",
-      textSecondary: "#78716C",
+      textSecondary: "#57534E",
       background: "#FFFFFF",
       backgroundAlt: "#FAFAF9",
       cardBg: "#FFFFFF",

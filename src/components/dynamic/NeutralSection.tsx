@@ -54,25 +54,25 @@ export function NeutralSection({ content }: { content: NeutralSectionContent }) 
           ].join(" ")}
         >
           {hasRichText(content.eyebrow) ? (
-            <p className="mb-3 text-sm font-medium uppercase tracking-[0.14em] text-[var(--primary-start)]">
+            <p className="block-eyebrow mb-3">
               <RichText value={content.eyebrow} />
             </p>
           ) : null}
 
           {hasRichText(content.title) ? (
-            <h2 className="text-3xl font-light tracking-normal text-[var(--text-primary)] md:text-5xl">
+            <h2 className="block-title">
               <RichText value={content.title} />
             </h2>
           ) : null}
 
           {hasRichText(content.subtitle) ? (
-            <p className={`mt-4 text-lg text-[var(--text-secondary)] ${isCentered ? "mx-auto max-w-3xl" : "max-w-3xl"}`}>
+            <p className={`block-body mt-4 ${isCentered ? "mx-auto max-w-3xl" : "max-w-3xl"}`}>
               <RichText value={content.subtitle} />
             </p>
           ) : null}
 
           {paragraphs.length > 0 ? (
-            <div className={`mt-7 space-y-4 text-base leading-8 text-[var(--text-secondary)] md:text-lg ${isCentered ? "mx-auto max-w-3xl" : "max-w-3xl"}`}>
+            <div className={`block-body mt-7 space-y-4 ${isCentered ? "mx-auto max-w-3xl" : "max-w-3xl"}`}>
               {paragraphs.map((paragraph, index) => (
                 <p key={`${index}-${paragraph.slice(0, 24)}`}>
                   <RichText value={paragraph} />

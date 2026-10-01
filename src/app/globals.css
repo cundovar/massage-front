@@ -121,13 +121,67 @@ textarea:focus-visible {
   font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 400;
   line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
 }
 
+/* Échelle typographique commune aux blocs publics. Les Hero conservent
+   volontairement leurs propres styles via .heading-hero. */
+.block-eyebrow {
+  /* Accent seul trop clair sur fond clair (WCAG AA) : mélangé au texte principal. */
+  color: color-mix(in srgb, var(--primary-start) 45%, var(--text-primary));
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.block-title {
+  font-family: var(--font-heading), var(--font-serif), serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.block-body,
 .body-text {
   font-family: var(--font-sans), sans-serif;
-  font-size: 1rem;
+  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.65;
+  letter-spacing: normal;
+  color: var(--text-secondary);
+}
+
+.block-card-title {
+  font-family: var(--font-heading), var(--font-serif), serif;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: normal;
+  color: var(--text-primary);
+}
+
+.block-quote {
+  font-family: var(--font-heading), var(--font-serif), serif;
+  font-size: clamp(1.125rem, 2.4vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: var(--text-secondary);
+}
+
+.block-title--on-accent,
+.block-card-title--on-accent {
+  color: var(--color-text-on-gradient);
+}
+
+.block-body--on-accent,
+.block-quote--on-accent {
+  color: color-mix(in srgb, var(--color-text-on-gradient) 88%, transparent);
 }
 
 .text-display {

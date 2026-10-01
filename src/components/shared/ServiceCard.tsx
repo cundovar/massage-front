@@ -42,29 +42,25 @@ export function ServiceCard({
         flex flex-col
         rounded-[24px]
         border border-[var(--primary-start)]/15
-        bg-white/90
+        bg-[var(--card-bg)]/90
         p-8 md:p-10
         shadow-xl shadow-black/[0.03]
         backdrop-blur-md
         transition-all duration-500
         hover:border-[var(--primary-start)]/25
         hover:shadow-2xl hover:shadow-black/[0.08]
-        dark:bg-[var(--card-bg)]/90
         ${className}
       `}
     >
       {/* Catégorie / Sous-titre */}
       {hasRichText(category) ? (
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary-start)]/80">
+        <p className="block-eyebrow mb-3">
           <RichText value={category} />
         </p>
       ) : null}
 
       {/* Titre principal */}
-      <h3
-        className="text-3xl font-light tracking-tight text-[var(--text-primary)] md:text-4xl"
-        style={{ fontFamily: "var(--font-title)" }}
-      >
+      <h3 className="block-card-title">
         <RichText value={title} />
       </h3>
 
@@ -73,7 +69,7 @@ export function ServiceCard({
 
       {/* Description */}
       {hasRichText(description) ? (
-        <p className="flex-grow leading-relaxed text-[var(--text-secondary)]">
+        <p className="block-body flex-grow">
           <RichText value={description} />
         </p>
       ) : (
@@ -96,13 +92,13 @@ export function ServiceCard({
                 hover:bg-[var(--background-alt)]
               "
             >
-              <span className="text-sm font-medium text-[var(--text-secondary)]">
+              <span className="block-body text-sm font-medium">
                 {price.label}
               </span>
               <span className="text-2xl font-semibold text-[var(--primary-start)]">
                 {typeof price.price === "number" ? formatPrice(price.price) : null}
                 {price.unit ? (
-                  <span className="ml-1 text-sm font-normal text-[var(--text-secondary)]">
+                  <span className="block-body ml-1 text-sm font-normal">
                     / {price.unit}
                   </span>
                 ) : null}
@@ -123,14 +119,14 @@ export function ServiceCard({
               inline-flex w-full items-center justify-center
               rounded-full
               px-8 py-4
-              text-sm font-semibold uppercase tracking-wider text-white
+              text-sm font-semibold text-[var(--btn-text)]
               shadow-lg shadow-[var(--primary-start)]/20
               transition-all duration-300
               hover:scale-[1.02] hover:shadow-xl hover:shadow-[var(--primary-start)]/30
               active:scale-[0.98]
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-start)] focus-visible:ring-offset-2
             "
-            style={{ background: "var(--gradient-primary)" }}
+            style={{ background: "var(--btn-bg)" }}
           >
             Réserver ce soin
           </TransitionLink>

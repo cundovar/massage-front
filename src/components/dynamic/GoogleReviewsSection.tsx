@@ -53,27 +53,27 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
         <div className="grid gap-8 lg:grid-cols-[0.8fr_2fr] lg:items-end">
           <div>
             {hasRichText(eyebrow) ? (
-              <p className="text-sm font-medium uppercase tracking-[0.22em] text-[var(--primary-start)]">
+              <p className="block-eyebrow">
                 <RichText value={eyebrow} />
               </p>
             ) : null}
             {hasRichText(title) ? (
-              <h2 className="mt-3 font-serif text-4xl font-light text-[var(--text-primary)] md:text-5xl">
+              <h2 className="block-title mt-3">
                 <RichText value={title} />
               </h2>
             ) : null}
             {hasRichText(content.subtitle) ? (
-              <p className="mt-4 max-w-xl text-lg leading-relaxed text-[var(--text-secondary)]">
+              <p className="block-body mt-4 max-w-xl">
                 <RichText value={content.subtitle} />
               </p>
             ) : null}
           </div>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-3 lg:justify-end">
-            <span className="font-serif text-5xl text-[var(--text-primary)]">{averageRating.toFixed(1)}</span>
+            <span className="block-title text-5xl">{averageRating.toFixed(1)}</span>
             <div>
               <Stars rating={averageRating} label={`Note moyenne ${averageRating.toFixed(1)} sur 5`} />
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              <p className="block-body mt-1 text-sm">
                 {content.totalReviews ? `${content.totalReviews} avis sur Google` : "Avis publiés sur Google"}
               </p>
             </div>
@@ -93,12 +93,12 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
                   <Stars rating={rating} label={`${rating} étoiles sur 5`} />
                   <Quote className="h-7 w-7 text-[var(--primary-start)] opacity-45" aria-hidden="true" />
                 </div>
-                <p className="mt-6 flex-1 text-base leading-relaxed text-[var(--text-secondary)]">
+                <p className="block-body mt-6 flex-1">
                   <RichText value={review.text} />
                 </p>
                 <footer className="mt-7 border-t border-[var(--card-border)] pt-5">
                   <p className="font-medium text-[var(--text-primary)]">{review.name || "Cliente Google"}</p>
-                  {review.date ? <p className="mt-1 text-sm text-[var(--text-secondary)]">{review.date}</p> : null}
+                  {review.date ? <p className="block-body mt-1 text-sm">{review.date}</p> : null}
                 </footer>
               </article>
             );
@@ -112,7 +112,8 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
               href={content.googleUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--primary-start)] px-7 py-3 font-medium text-white transition-transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-full px-7 py-3 font-medium text-[var(--btn-text)] transition-transform hover:-translate-y-0.5"
+              style={{ background: "var(--btn-bg)" }}
             >
               {content.buttonText || "Voir tous les avis Google"}
               <ExternalLink className="h-4 w-4" aria-hidden="true" />

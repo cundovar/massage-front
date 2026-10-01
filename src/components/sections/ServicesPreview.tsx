@@ -55,12 +55,12 @@ export function ServicesPreview({ services = [], content }: ServicesPreviewProps
       <div className="mx-auto max-w-7xl px-6">
         <AnimatedSection className="mb-16 text-center">
           {hasRichText(subtitle) ? (
-            <p className="mb-4 text-sm font-medium uppercase tracking-wide text-[var(--primary-start)]">
+            <p className="block-eyebrow mb-4">
               <RichText value={subtitle} />
             </p>
           ) : null}
           {hasRichText(title) ? (
-            <h2 data-animate="title" className="text-4xl font-serif text-[var(--text-primary)] md:text-5xl">
+            <h2 data-animate="title" className="block-title">
               <RichText value={title} />
             </h2>
           ) : null}
@@ -169,13 +169,13 @@ function ServiceCard({ index, name, category, description, price, image, link }:
           )}
 
           {/* Nom */}
-          <h3 className="mb-2 text-xl font-serif text-[var(--text-primary)]">
+          <h3 className="block-card-title mb-2">
             <RichText value={name} />
           </h3>
 
           {/* Description */}
           {hasRichText(description) && (
-            <p className="mb-4 line-clamp-2 text-[var(--text-secondary)]">
+            <p className="block-body mb-4 line-clamp-2">
               <RichText value={description} />
             </p>
           )}

@@ -189,7 +189,7 @@ export function Approche({ content }: ApprocheProps) {
       <div ref={rightRef}>
         <div className="space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" data-anim-child />
-          <h2 className="text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }} data-anim-child>
+          <h2 className="block-title" data-anim-child>
             <RichText value={title} />
           </h2>
           {hasRichText(bulletsTitle) || bullets.length > 0 ? (
@@ -202,12 +202,12 @@ export function Approche({ content }: ApprocheProps) {
               data-anim-child
             >
               {hasRichText(bulletsTitle) ? (
-                <p className={`text-xl font-semibold text-[var(--text-primary)] ${bullets.length > 0 ? "mb-2" : ""}`}>
+                <h3 className={`block-card-title ${bullets.length > 0 ? "mb-2" : ""}`}>
                   <RichText value={bulletsTitle} />
-                </p>
+                </h3>
               ) : null}
               {bullets.length > 0 ? (
-                <ul className="space-y-2 text-lg leading-relaxed">
+                <ul className="block-body space-y-2">
                   {bullets.map((bullet, index) => (
                     <li key={`${index}-${bullet.slice(0, 24)}`}>
                       • <RichText value={bullet} />
@@ -218,7 +218,7 @@ export function Approche({ content }: ApprocheProps) {
             </div>
           ) : null}
           {hasRichText(quote) ? (
-            <p className="text-xl font-semibold italic text-[var(--text-secondary)]" data-anim-child>
+            <p className="block-quote italic" data-anim-child>
               <RichText value={quote} />
             </p>
           ) : null}

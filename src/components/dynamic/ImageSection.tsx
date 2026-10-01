@@ -24,7 +24,7 @@ export function ImageSection({ content }: ImageSectionProps) {
           <Image src={imageUrl} alt={content.alt || ""} fill className="object-cover" />
         </div>
         {hasRichText(content.caption) ? (
-          <figcaption className="mt-4 text-center text-sm text-gray-500">
+          <figcaption className="block-body mt-4 text-center text-sm">
             <RichText value={content.caption} />
           </figcaption>
         ) : null}

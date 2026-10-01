@@ -11,18 +11,18 @@ export function ContactInfo({ content }: ContactInfoProps) {
   const email = content?.email ?? "";
 
   return (
-    <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>Informations pratiques</h2>
+    <section className="rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-sm">
+      <h2 className="block-title">Informations pratiques</h2>
       {street || city ? (
         <>
-          <p className="mt-4 text-gray-600">{street}</p>
-          <p className="text-gray-600">{city}</p>
+          <p className="block-body mt-4">{street}</p>
+          <p className="block-body">{city}</p>
         </>
       ) : null}
-      {phone ? <p className="mt-4 text-gray-600">Tel: {phone}</p> : null}
-      {email ? <p className="text-gray-600">Email: {email}</p> : null}
+      {phone ? <p className="block-body mt-4">Tel: {phone}</p> : null}
+      {email ? <p className="block-body">Email: {email}</p> : null}
       {content.hours?.length ? (
-        <ul className="mt-4 space-y-2 text-gray-600">
+        <ul className="block-body mt-4 space-y-2">
           {content.hours.map((row) => (
             <li key={row.days}>
               {row.days}: {row.hours}
