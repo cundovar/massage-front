@@ -3,14 +3,24 @@ import { getImageUrl } from "@/lib/api";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
+import type { BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 
 interface GenericGalleryContent {
   title?: string;
   images?: string[];
+  _appearance?: BlockAppearance;
 }
 
 export function GenericGallerySection({ content }: { content: GenericGalleryContent }) {
   const images = content.images ?? [];
+  const layout = content._appearance?.layout;
+  const tabletColumns = layout?.tabletColumns === "1" ? "md:grid-cols-1" : "md:grid-cols-2";
+  const desktopColumns =
+    layout?.desktopColumns === "1"
+      ? "lg:grid-cols-1"
+      : layout?.desktopColumns === "2"
+        ? "lg:grid-cols-2"
+        : "lg:grid-cols-3";
 
   return (
     <section className="px-6 py-16 md:px-12">
@@ -23,7 +33,7 @@ export function GenericGallerySection({ content }: { content: GenericGalleryCont
           </ScrollReveal>
         ) : null}
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className={`grid grid-cols-1 gap-6 ${tabletColumns} ${desktopColumns}`}>
           {images.map((image, index) => {
             const url = getImageUrl(image);
             if (!url) return null;
