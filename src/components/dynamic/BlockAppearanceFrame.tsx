@@ -1,11 +1,20 @@
 import type { CSSProperties, ReactNode } from "react";
 
+export interface BlockResponsiveLayout {
+  mobileOrder?: "default" | "text-first" | "image-first";
+  tabletLayout?: "default" | "stacked" | "two-columns";
+  desktopLayout?: "default" | "stacked" | "two-columns";
+  tabletColumns?: "default" | "1" | "2";
+  desktopColumns?: "default" | "1" | "2" | "3";
+}
+
 export interface BlockAppearance {
   background?: "transparent" | "soft" | "surface" | "accent";
   width?: "full" | "wide" | "normal" | "narrow";
   paddingTop?: "none" | "sm" | "md" | "lg";
   paddingBottom?: "none" | "sm" | "md" | "lg";
   radius?: "none" | "md" | "lg";
+  layout?: BlockResponsiveLayout;
 }
 
 interface BlockAppearanceFrameProps {

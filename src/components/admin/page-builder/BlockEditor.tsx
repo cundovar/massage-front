@@ -109,6 +109,74 @@ const APPEARANCE_DEFAULTS: Record<string, string> = {
   "_appearance.radius": "none",
 };
 
+const RESPONSIVE_LAYOUT_FIELDS: Record<NonNullable<BlockDefinition["responsiveLayout"]>, FieldDefinition[]> = {
+  "text-image": [
+    {
+      key: "_appearance.layout.mobileOrder",
+      label: "Sur mobile",
+      type: "select",
+      widget: "segmented",
+      help: "Choisit quel élément apparaît en premier sur téléphone.",
+      options: [
+        { value: "default", label: "Automatique" },
+        { value: "text-first", label: "Texte d'abord" },
+        { value: "image-first", label: "Image d'abord" },
+      ],
+    },
+    {
+      key: "_appearance.layout.tabletLayout",
+      label: "Sur tablette",
+      type: "select",
+      widget: "segmented",
+      help: "Garde les éléments l'un sous l'autre ou les affiche côte à côte.",
+      options: [
+        { value: "default", label: "Automatique" },
+        { value: "stacked", label: "L'un sous l'autre" },
+        { value: "two-columns", label: "2 colonnes" },
+      ],
+    },
+    {
+      key: "_appearance.layout.desktopLayout",
+      label: "Sur bureau",
+      type: "select",
+      widget: "segmented",
+      help: "Garde les éléments l'un sous l'autre ou les affiche côte à côte.",
+      options: [
+        { value: "default", label: "Automatique" },
+        { value: "stacked", label: "L'un sous l'autre" },
+        { value: "two-columns", label: "2 colonnes" },
+      ],
+    },
+  ],
+  "card-grid": [
+    {
+      key: "_appearance.layout.tabletColumns",
+      label: "Sur tablette",
+      type: "select",
+      widget: "segmented",
+      help: "Nombre de cartes par ligne. Sur mobile, les cartes restent sur une colonne pour rester lisibles.",
+      options: [
+        { value: "default", label: "Automatique" },
+        { value: "1", label: "1 colonne" },
+        { value: "2", label: "2 colonnes" },
+      ],
+    },
+    {
+      key: "_appearance.layout.desktopColumns",
+      label: "Sur bureau",
+      type: "select",
+      widget: "segmented",
+      help: "Nombre de cartes par ligne sur un grand écran.",
+      options: [
+        { value: "default", label: "Automatique" },
+        { value: "1", label: "1 colonne" },
+        { value: "2", label: "2 colonnes" },
+        { value: "3", label: "3 colonnes" },
+      ],
+    },
+  ],
+};
+
 const GROUPS: Array<{
   id: FieldGroupId;
   title: string;
@@ -260,10 +328,13 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
       {GROUPS.map((group) => {
         const fields = visibleFields.filter((field) => getFieldGroup(field) === group.id);
         const appearanceFields = group.id === "design" ? APPEARANCE_FIELDS : [];
+        const responsiveLayoutFields = group.id === "design" && definition.responsiveLayout
+          ? RESPONSIVE_LAYOUT_FIELDS[definition.responsiveLayout]
+          : [];
         const hasGenericAnimation = group.id === "animation" && !isHeroType;
         const hasBlockName = group.id === "advanced";
 
-        if (fields.length === 0 && appearanceFields.length === 0 && !hasGenericAnimation && !hasBlockName) {
+        if (fields.length === 0 && appearanceFields.length === 0 && responsiveLayoutFields.length === 0 && !hasGenericAnimation && !hasBlockName) {
           return null;
         }
 
@@ -283,6 +354,13 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
                   <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Cadre du bloc</p>
                 ) : null}
                 {appearanceFields.map(renderField)}
+              </div>
+            ) : null}
+
+            {responsiveLayoutFields.length > 0 ? (
+              <div className="space-y-4 border-t border-stone-100 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Disposition responsive</p>
+                {responsiveLayoutFields.map(renderField)}
               </div>
             ) : null}
 

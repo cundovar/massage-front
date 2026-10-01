@@ -44,6 +44,7 @@ export interface BlockDefinition {
   category: string;
   defaultContent: Record<string, unknown>;
   fields: FieldDefinition[];
+  responsiveLayout?: "text-image" | "card-grid";
 }
 
 /** Section de l'editeur dans laquelle un champ est range. */
@@ -517,6 +518,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Présentation avec photo",
     description: "Présente une personne ou une activité avec une photo et du texte",
     icon: Sparkles,
+    responsiveLayout: "text-image",
     category: "content",
     defaultContent: {
       title: "",
@@ -616,6 +618,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Témoignages clients",
     description: "Présente une note globale et des témoignages de clientes",
     icon: Star,
+    responsiveLayout: "card-grid",
     category: "content",
     defaultContent: {
       eyebrow: "Avis Google",
@@ -705,6 +708,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Texte libre",
     description: "Ajoute un titre et un ou plusieurs paragraphes de texte",
     icon: AlignLeft,
+    responsiveLayout: "text-image",
     category: "content",
     defaultContent: {
       title: "",
@@ -751,6 +755,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Galerie de photos",
     description: "Grille d'images",
     icon: Images,
+    responsiveLayout: "card-grid",
     category: "content",
     defaultContent: {
       title: "",
@@ -1102,6 +1107,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Aperçu des soins",
     description: "Présente quelques soins sous forme de cartes avec photo et prix",
     icon: Leaf,
+    responsiveLayout: "card-grid",
     category: "services",
     defaultContent: {
       subtitle: "Mes soins",
