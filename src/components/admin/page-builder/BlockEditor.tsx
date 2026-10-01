@@ -101,13 +101,37 @@ const APPEARANCE_FIELDS: FieldDefinition[] = [
   },
 ];
 
-const APPEARANCE_DEFAULTS: Record<string, string> = {
+const APPEARANCE_DEFAULTS: Record<string, string | boolean> = {
   "_appearance.background": "transparent",
   "_appearance.width": "full",
   "_appearance.paddingTop": "none",
   "_appearance.paddingBottom": "none",
   "_appearance.radius": "none",
+  "_appearance.visibility.mobile": true,
+  "_appearance.visibility.tablet": true,
+  "_appearance.visibility.desktop": true,
 };
+
+const VISIBILITY_FIELDS: FieldDefinition[] = [
+  {
+    key: "_appearance.visibility.mobile",
+    label: "Afficher sur mobile",
+    type: "toggle",
+    help: "Visible sur les téléphones.",
+  },
+  {
+    key: "_appearance.visibility.tablet",
+    label: "Afficher sur tablette",
+    type: "toggle",
+    help: "Visible entre les formats téléphone et bureau.",
+  },
+  {
+    key: "_appearance.visibility.desktop",
+    label: "Afficher sur bureau",
+    type: "toggle",
+    help: "Visible sur les grands écrans.",
+  },
+];
 
 const RESPONSIVE_LAYOUT_FIELDS: Record<NonNullable<BlockDefinition["responsiveLayout"]>, FieldDefinition[]> = {
   "text-image": [
@@ -303,7 +327,7 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
       );
     }
 
-    const value = field.type === "select" ? getValueOrDefault(field.key) : getValue(field.key);
+    const value = field.type === "select" || field.type === "toggle" ? getValueOrDefault(field.key) : getValue(field.key);
 
     return (
       <FieldRenderer
@@ -328,13 +352,21 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
       {GROUPS.map((group) => {
         const fields = visibleFields.filter((field) => getFieldGroup(field) === group.id);
         const appearanceFields = group.id === "design" ? APPEARANCE_FIELDS : [];
+        const visibilityFields = group.id === "design" ? VISIBILITY_FIELDS : [];
         const responsiveLayoutFields = group.id === "design" && definition.responsiveLayout
           ? RESPONSIVE_LAYOUT_FIELDS[definition.responsiveLayout]
           : [];
         const hasGenericAnimation = group.id === "animation" && !isHeroType;
         const hasBlockName = group.id === "advanced";
 
-        if (fields.length === 0 && appearanceFields.length === 0 && responsiveLayoutFields.length === 0 && !hasGenericAnimation && !hasBlockName) {
+        if (
+          fields.length === 0 &&
+          appearanceFields.length === 0 &&
+          visibilityFields.length === 0 &&
+          responsiveLayoutFields.length === 0 &&
+          !hasGenericAnimation &&
+          !hasBlockName
+        ) {
           return null;
         }
 
@@ -354,6 +386,13 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
                   <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Cadre du bloc</p>
                 ) : null}
                 {appearanceFields.map(renderField)}
+              </div>
+            ) : null}
+
+            {visibilityFields.length > 0 ? (
+              <div className="space-y-4 border-t border-stone-100 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Affichage selon l&apos;écran</p>
+                {visibilityFields.map(renderField)}
               </div>
             ) : null}
 

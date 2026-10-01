@@ -1,40 +1,7 @@
 "use client";
 
-import { Component, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
-import dynamic from "next/dynamic";
-import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PageSection } from "@/lib/api-admin";
-import type { GenericHeroContent } from "@/components/dynamic/GenericHeroSection";
-import { Leaf } from "lucide-react";
-import { EmptyBlockPlaceholder } from "@/components/dynamic/EmptyBlockPlaceholder";
-import type { ServicesPreviewContent } from "@/components/sections/ServicesPreview";
-import { hasRichText } from "@/lib/richText";
-import { PreviewModeProvider } from "@/contexts/PreviewModeContext";
-
-const GenericHeroSection = dynamic(() => import("@/components/dynamic/GenericHeroSection").then((mod) => mod.GenericHeroSection), { ssr: false });
-const Hero = dynamic(() => import("@/components/home/Hero").then((mod) => mod.Hero), { ssr: false });
-const Presentation = dynamic(() => import("@/components/home/Presentation").then((mod) => mod.Presentation), { ssr: false });
-const Approche = dynamic(() => import("@/components/home/Approche").then((mod) => mod.Approche), { ssr: false });
-const Tarifs = dynamic(() => import("@/components/home/Tarifs").then((mod) => mod.Tarifs), { ssr: false });
-const MassageAmma = dynamic(() => import("@/components/entreprise/MassageAmma").then((mod) => mod.MassageAmma), { ssr: false });
-const ContactCTA = dynamic(() => import("@/components/sections/ContactCTA").then((mod) => mod.ContactCTA), { ssr: false });
-const ContactForm = dynamic(() => import("@/components/sections/ContactForm").then((mod) => mod.ContactForm), { ssr: false });
-const ContactInfo = dynamic(() => import("@/components/sections/ContactInfo").then((mod) => mod.ContactInfo), { ssr: false });
-const ContactLayout = dynamic(() => import("@/components/sections/ContactLayout").then((mod) => mod.ContactLayout), { ssr: false });
-const ServiceSelector = dynamic(() => import("@/components/sections/ServiceSelector").then((mod) => mod.ServiceSelector), { ssr: false });
-const ContactInfoSection = dynamic(() => import("@/components/dynamic/ContactInfoSection").then((mod) => mod.ContactInfoSection), { ssr: false });
-const BenefitsGridSection = dynamic(() => import("@/components/dynamic/BenefitsGridSection").then((mod) => mod.BenefitsGridSection), { ssr: false });
-const GoogleMapSection = dynamic(() => import("@/components/dynamic/GoogleMapSection").then((mod) => mod.GoogleMapSection), { ssr: false });
-const GoogleReviewsSection = dynamic(() => import("@/components/dynamic/GoogleReviewsSection").then((mod) => mod.GoogleReviewsSection), { ssr: false });
-const TextSection = dynamic(() => import("@/components/dynamic/TextSection").then((mod) => mod.TextSection), { ssr: false });
-const NeutralSection = dynamic(() => import("@/components/dynamic/NeutralSection").then((mod) => mod.NeutralSection), { ssr: false });
-const QuoteSection = dynamic(() => import("@/components/dynamic/QuoteSection").then((mod) => mod.QuoteSection), { ssr: false });
-const SpacerSection = dynamic(() => import("@/components/dynamic/SpacerSection").then((mod) => mod.SpacerSection), { ssr: false });
-const ImageSection = dynamic(() => import("@/components/dynamic/ImageSection").then((mod) => mod.ImageSection), { ssr: false });
-const GenericGallerySection = dynamic(() => import("@/components/dynamic/GenericGallerySection").then((mod) => mod.GenericGallerySection), { ssr: false });
-const ParcoursSection = dynamic(() => import("@/components/dynamic/ParcoursSection").then((mod) => mod.ParcoursSection), { ssr: false });
-const ServicesPreview = dynamic(() => import("@/components/sections/ServicesPreview").then((mod) => mod.ServicesPreview), { ssr: false });
-const FormationsSection = dynamic(() => import("@/components/dynamic/FormationsSection").then((mod) => mod.FormationsSection), { ssr: false });
 
 interface LivePreviewProps {
   sections: PageSection[];
@@ -43,213 +10,137 @@ interface LivePreviewProps {
 }
 
 const PREVIEW_VIEWPORTS = {
-  mobile: { label: "Mobile", width: "375px", scale: 1 },
-  tablet: { label: "Tablette", width: "768px", scale: 0.7 },
-  desktop: { label: "Bureau", width: "1280px", scale: 0.5 },
+  mobile: { label: "Mobile", width: 390 },
+  tablet: { label: "Tablette", width: 768 },
+  desktop: { label: "Bureau", width: 1440 },
 } as const;
+
+// Hauteur minimale du viewport simulé (px CSS dans l’iframe).
+const MIN_PREVIEW_HEIGHT = 480;
 
 type PreviewViewport = keyof typeof PREVIEW_VIEWPORTS;
 
-class PreviewErrorBoundary extends Component<{ children: ReactNode; sectionType: string }, { hasError: boolean }> {
-  state = { hasError: false };
+type PreviewMessage =
+  | { type: "page-builder-preview:ready" }
+  | { type: "page-builder-preview:select"; key: string };
 
-  static getDerivedStateFromError(): { hasError: boolean } {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error(`Erreur apercu bloc ${this.props.sectionType}`, error, info);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 px-6 py-8 text-center text-sm text-rose-700">
-          Apercu indisponible pour ce bloc.
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-export function LivePreview({ sections, activeSection, onSelectSection }: LivePreviewProps) {
-  const sortedSections = useMemo(() => [...sections].sort((a, b) => a.sortOrder - b.sortOrder), [sections]);
-  const [viewport, setViewport] = useState<PreviewViewport>("desktop");
-  const viewportConfig = PREVIEW_VIEWPORTS[viewport];
-
+function isPreviewMessage(value: unknown): value is PreviewMessage {
+  if (!value || typeof value !== "object" || !("type" in value)) return false;
+  const message = value as { type?: unknown; key?: unknown };
   return (
-    <PreviewModeProvider>
-      <div className="min-h-full">
-        <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b bg-stone-100 px-4 py-2">
-          <p className="text-sm text-stone-500">Aperçu en temps réel — cliquez sur une section pour la modifier</p>
-          <div className="inline-flex rounded-lg border border-stone-200 bg-white p-1" role="group" aria-label="Largeur de l’aperçu">
-            {(Object.keys(PREVIEW_VIEWPORTS) as PreviewViewport[]).map((mode) => {
-              const isActive = mode === viewport;
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setViewport(mode)}
-                  aria-pressed={isActive}
-                  className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1 ${
-                    isActive ? "bg-amber-600 text-white" : "text-stone-600 hover:bg-stone-100"
-                  }`}
-                >
-                  {PREVIEW_VIEWPORTS[mode].label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="flex min-h-full justify-center overflow-x-hidden p-4">
-          <div
-            className="origin-top"
-            style={{ width: viewportConfig.width, transform: `scale(${viewportConfig.scale})` }}
-          >
-            {sortedSections.map((section) => (
-              <PreviewErrorBoundary key={section.key} sectionType={section.type}>
-                <PreviewSection
-                  section={section}
-                  isActive={activeSection === section.key}
-                  onClick={() => onSelectSection(section.key)}
-                />
-              </PreviewErrorBoundary>
-            ))}
-
-            {sortedSections.length === 0 ? (
-              <div className="flex h-96 items-center justify-center text-stone-400">
-                <p>Ajoutez des blocs pour voir l&apos;aperçu</p>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-    </PreviewModeProvider>
+    message.type === "page-builder-preview:ready" ||
+    (message.type === "page-builder-preview:select" && typeof message.key === "string")
   );
 }
 
-interface PreviewSectionProps {
-  section: PageSection;
-  isActive: boolean;
-  onClick: () => void;
-}
+export function LivePreview({ sections, activeSection, onSelectSection }: LivePreviewProps) {
+  const [viewport, setViewport] = useState<PreviewViewport>("desktop");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [availableSize, setAvailableSize] = useState({ width: 0, height: 0 });
+  const viewportConfig = PREVIEW_VIEWPORTS[viewport];
+  // Le viewport simulé garde sa vraie largeur CSS et est réduit pour tenir dans le panneau.
+  const scale = availableSize.width > 0 ? Math.min(1, availableSize.width / viewportConfig.width) : 1;
+  // L’iframe occupe exactement la hauteur visible du panneau : un seul défilement,
+  // à l’intérieur de l’aperçu, et des unités vh cohérentes avec un vrai écran.
+  const frameHeight = Math.max(MIN_PREVIEW_HEIGHT, Math.floor(availableSize.height / scale));
 
-function PreviewSection({ section, isActive, onClick }: PreviewSectionProps) {
-  const content = section.content as Record<string, unknown>;
-  const sectionType = section.type ?? "text";
-  const isVisible = section.visible ?? true;
-  const blockAppearance = content._appearance as BlockAppearance | undefined;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  function withWrapper(children: ReactNode) {
-    return (
-      <div
-        onClick={onClick}
-        className={[
-          "relative mb-4 cursor-pointer transition-all",
-          isActive ? "ring-inset ring-4 ring-amber-500" : "hover:ring-2 hover:ring-inset hover:ring-amber-300",
-          !isVisible ? "opacity-45 grayscale" : "",
-        ].join(" ")}
-      >
-        <BlockAppearanceFrame appearance={blockAppearance}>
-          {children}
-        </BlockAppearanceFrame>
-        {!isVisible ? (
-          <div className="absolute left-2 top-2 z-10 rounded bg-stone-900 px-2 py-1 text-xs text-white">Masque sur le site</div>
-        ) : null}
-        {isActive ? (
-          <div className="absolute right-2 top-2 z-10 rounded bg-amber-500 px-2 py-1 text-xs text-white">En edition</div>
-        ) : null}
-      </div>
-    );
-  }
-
-  switch (sectionType) {
-    case "hero-home":
-      return withWrapper(<Hero content={content as never} />);
-    case "hero":
-      return withWrapper(<GenericHeroSection content={content as GenericHeroContent} />);
-    case "hero-compact":
-      return withWrapper(<GenericHeroSection content={{ ...(content as GenericHeroContent), compact: true }} />);
-    case "presentation":
-      return withWrapper(<Presentation content={content as never} />);
-    case "approche":
-      return withWrapper(<Approche content={content as never} />);
-    case "tarifs":
-      return withWrapper(<Tarifs content={content as never} />);
-    case "entreprise":
-      return withWrapper(<MassageAmma content={content as never} />);
-    case "contact-cta":
-      return withWrapper(<ContactCTA content={content as { title?: string; subtitle?: string; buttonText?: string; buttonLink?: string }} />);
-    case "contact-infos":
-      return withWrapper(<ContactInfoSection content={content as never} />);
-    case "contact-info":
-      return withWrapper(<ContactInfo content={content as never} />);
-    case "contact-form":
-      return withWrapper(<ContactForm />);
-    case "contact-layout":
-      return withWrapper(<ContactLayout content={content as never} />);
-    case "google-map":
-      return withWrapper(<GoogleMapSection content={content as never} />);
-    case "google-reviews":
-      return withWrapper(<GoogleReviewsSection content={content as never} />);
-    case "benefits-grid":
-      return withWrapper(<BenefitsGridSection content={content as never} />);
-    case "text":
-      return withWrapper(<TextSection content={content as never} />);
-    case "neutral":
-      return withWrapper(<NeutralSection content={content as never} />);
-    case "spacer":
-      return withWrapper(
-        <div className="relative bg-stone-100/70">
-          <SpacerSection content={content as never} />
-          <div className="absolute inset-x-0 top-1/2 border-t border-dashed border-stone-300" />
-        </div>,
-      );
-    case "quote":
-    case "philosophie":
-      return withWrapper(<QuoteSection content={content as never} />);
-    case "image":
-      return withWrapper(<ImageSection content={content as never} />);
-    case "gallery":
-      return withWrapper(<GenericGallerySection content={content as never} />);
-    case "parcours":
-      return withWrapper(<ParcoursSection content={content as never} />);
-    case "formations":
-      return withWrapper(<FormationsSection content={content as never} />);
-    case "service-selector":
-      return withWrapper(
-        <ServiceSelector
-          content={{
-            title: (content.title as string) ?? "Carte & tarifs",
-            subtitle: (content.subtitle as string | undefined) ?? "",
-            offers: (content.offers as Array<{ title: string; description: string; prices: string[] }>) ?? [],
-          }}
-        />,
-      );
-    case "services-preview": {
-      const previewContent = content as ServicesPreviewContent;
-      const hasItems = previewContent.items?.some((item) => hasRichText(item.name));
-      return withWrapper(
-        hasItems ? (
-          <ServicesPreview content={previewContent} />
-        ) : (
-          <EmptyBlockPlaceholder
-            icon={Leaf}
-            title="Aperçu des soins"
-            hint="Ajoutez des soins dans le bloc : sur le site, les soins de « Services » s'affichent sinon."
-          />
-        ),
-      );
+    function measure() {
+      if (!canvas) return;
+      const style = window.getComputedStyle(canvas);
+      setAvailableSize({
+        width: canvas.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+        height: canvas.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+      });
     }
-    default:
-      return withWrapper(
-        <div className="rounded-lg bg-stone-100 px-6 py-12 text-center text-stone-500">
-          <p className="font-medium">{sectionType}</p>
-          <p className="text-sm">Apercu non disponible</p>
-        </div>,
-      );
-  }
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  const sendPreview = useCallback(() => {
+    iframeRef.current?.contentWindow?.postMessage(
+      {
+        type: "page-builder-preview:update",
+        sections,
+        activeSection,
+      },
+      window.location.origin,
+    );
+  }, [activeSection, sections]);
+
+  useEffect(() => {
+    sendPreview();
+  }, [sendPreview, viewport]);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent<unknown>) {
+      if (event.origin !== window.location.origin || event.source !== iframeRef.current?.contentWindow) return;
+      if (!isPreviewMessage(event.data)) return;
+
+      if (event.data.type === "page-builder-preview:ready") {
+        sendPreview();
+      }
+
+      if (event.data.type === "page-builder-preview:select") {
+        onSelectSection(event.data.key);
+      }
+    }
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [onSelectSection, sendPreview]);
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b bg-stone-100 px-4 py-2">
+        <p className="text-sm text-stone-500">Aperçu en temps réel — cliquez sur une section pour la modifier</p>
+        <div className="inline-flex rounded-lg border border-stone-200 bg-white p-1" role="group" aria-label="Largeur de l’aperçu">
+          {(Object.keys(PREVIEW_VIEWPORTS) as PreviewViewport[]).map((mode) => {
+            const isActive = mode === viewport;
+            return (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setViewport(mode)}
+                aria-pressed={isActive}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1 ${
+                  isActive ? "bg-amber-600 text-white" : "text-stone-600 hover:bg-stone-100"
+                }`}
+              >
+                {PREVIEW_VIEWPORTS[mode].label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div ref={canvasRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-stone-100 p-4">
+        <div
+          className="mx-auto overflow-hidden bg-white shadow-sm"
+          style={{ width: `${viewportConfig.width * scale}px`, height: `${frameHeight * scale}px` }}
+        >
+          <iframe
+            ref={iframeRef}
+            title={`Aperçu ${viewportConfig.label.toLowerCase()} de la page`}
+            src="/admin-preview"
+            onLoad={sendPreview}
+            className="block border-0 bg-white"
+            style={{
+              width: `${viewportConfig.width}px`,
+              height: `${frameHeight}px`,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }

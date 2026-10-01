@@ -8,6 +8,12 @@ export interface BlockResponsiveLayout {
   desktopColumns?: "default" | "1" | "2" | "3";
 }
 
+export interface BlockVisibility {
+  mobile?: boolean;
+  tablet?: boolean;
+  desktop?: boolean;
+}
+
 export interface BlockAppearance {
   background?: "transparent" | "soft" | "surface" | "accent";
   width?: "full" | "wide" | "normal" | "narrow";
@@ -15,6 +21,7 @@ export interface BlockAppearance {
   paddingBottom?: "none" | "sm" | "md" | "lg";
   radius?: "none" | "md" | "lg";
   layout?: BlockResponsiveLayout;
+  visibility?: BlockVisibility;
 }
 
 interface BlockAppearanceFrameProps {
@@ -49,6 +56,17 @@ const radiusClasses: Record<NonNullable<BlockAppearance["radius"]>, string> = {
   lg: "rounded-3xl",
 };
 
+const visibilityClasses: Record<string, string> = {
+  "true-true-true": "",
+  "false-true-true": "hidden md:block",
+  "true-false-true": "block md:hidden lg:block",
+  "true-true-false": "block lg:hidden",
+  "false-false-true": "hidden lg:block",
+  "false-true-false": "hidden md:block lg:hidden",
+  "true-false-false": "block md:hidden",
+  "false-false-false": "hidden",
+};
+
 function getBackgroundStyle(background: NonNullable<BlockAppearance["background"]>): CSSProperties | undefined {
   if (background === "transparent") return undefined;
 
@@ -76,6 +94,11 @@ export function BlockAppearanceFrame({ appearance, children }: BlockAppearanceFr
   const paddingTop = appearance?.paddingTop ?? "none";
   const paddingBottom = appearance?.paddingBottom ?? "none";
   const radius = appearance?.radius ?? "none";
+  const visibility = appearance?.visibility;
+  const mobileVisible = visibility?.mobile ?? true;
+  const tabletVisible = visibility?.tablet ?? true;
+  const desktopVisible = visibility?.desktop ?? true;
+  const visibilityClass = visibilityClasses[`${mobileVisible}-${tabletVisible}-${desktopVisible}`];
 
   const hasFrame =
     background !== "transparent" ||
@@ -84,12 +107,12 @@ export function BlockAppearanceFrame({ appearance, children }: BlockAppearanceFr
     paddingBottom !== "none" ||
     radius !== "none";
 
-  if (!hasFrame) {
+  if (!hasFrame && !visibilityClass) {
     return <>{children}</>;
   }
 
   return (
-    <div className={`${spacingClasses[paddingTop]} ${bottomSpacingClasses[paddingBottom]}`}>
+    <div className={`${visibilityClass} ${spacingClasses[paddingTop]} ${bottomSpacingClasses[paddingBottom]}`}>
       <div
         className={`${widthClasses[width]} ${radiusClasses[radius]} ${background === "transparent" ? "" : "overflow-hidden p-6 md:p-8"}`}
         style={getBackgroundStyle(background)}
