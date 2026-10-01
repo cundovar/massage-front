@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
 :root {
+  /* Espacement des lettres : texte, titres et petits sur-titres. Les bannières gardent le leur. */
+  --tracking-text: -0.01em;
+  --tracking-title: -0.02em;
+  --tracking-eyebrow: 0.03em;
+  --tracking-banner: 0.01em;
+
   --primary-start: #ffce67;
   --primary-end: #f67e54;
   --gradient-primary: linear-gradient(135deg, #ffce67 0%, #f67e54 100%);
@@ -88,7 +94,7 @@ body {
   color: var(--color-text-primary);
   background-color: transparent;
   font-family: var(--font-sans), system-ui, sans-serif;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--tracking-text);
   line-height: 1.7;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -116,12 +122,17 @@ textarea:focus-visible {
   letter-spacing: -0.02em;
 }
 
+/* Bannières (Hero) : espacement d'origine, non resserré. */
+.banner-text {
+  letter-spacing: var(--tracking-banner);
+}
+
 .heading-section {
   font-family: var(--font-heading), var(--font-serif), serif;
   font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-title);
   color: var(--text-primary);
 }
 
@@ -133,7 +144,7 @@ textarea:focus-visible {
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
 }
 
@@ -142,7 +153,7 @@ textarea:focus-visible {
   font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-title);
   color: var(--text-primary);
 }
 
@@ -152,7 +163,7 @@ textarea:focus-visible {
   font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
   font-weight: 400;
   line-height: 1.65;
-  letter-spacing: normal;
+  letter-spacing: var(--tracking-text);
   color: var(--text-secondary);
 }
 
@@ -161,7 +172,7 @@ textarea:focus-visible {
   font-size: clamp(1.25rem, 2.4vw, 1.75rem);
   font-weight: 400;
   line-height: 1.25;
-  letter-spacing: normal;
+  letter-spacing: var(--tracking-title);
   color: var(--text-primary);
 }
 
@@ -170,7 +181,7 @@ textarea:focus-visible {
   font-size: clamp(1.125rem, 2.4vw, 1.5rem);
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: normal;
+  letter-spacing: var(--tracking-text);
   color: var(--text-secondary);
 }
 
