@@ -97,7 +97,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
                   href={item.path}
                   className={`rounded-full px-4 py-2 transition-all duration-200 ${
                     isActive(item.path)
-                      ? "font-medium text-[var(--btn-text)]"
+                      ? "font-medium text-[var(--text-on-primary)]"
                       : "text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,var(--primary-start)_12%,transparent)] hover:text-[var(--primary-end)]"
                   }`}
                   style={isActive(item.path) ? { background: "var(--gradient-primary)" } : undefined}
