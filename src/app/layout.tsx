@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Inter } from "next/font/google";
+import { DM_Serif_Display, Inter, Playfair_Display } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import { getImageUrl, getNavigation, getSettings } from "@/lib/api";
 import { THEME_PRESETS, generateThemeCSS } from "@/lib/themes";
@@ -12,9 +12,15 @@ const dmSerif = DM_Serif_Display({
   display: "swap",
 });
 
-
-
-
+// Police de titre du thème Spa Luxe : pas de préchargement, le fichier n'est
+// téléchargé que si le thème actif l'utilise.
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+  display: "swap",
+  preload: false,
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -56,7 +62,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const bodyBackgroundImage = getImageUrl(initialSettings.appearance.bodyBackgroundImage);
 
   return (
-    <html lang="fr" className={`${dmSerif.variable} ${inter.variable}`}>
+    <html lang="fr" className={`${dmSerif.variable} ${playfair.variable} ${inter.variable}`}>
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
       </head>
