@@ -11,7 +11,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <Sidebar />
       <div className="lg:ml-64">
         <AdminHeader />
-        <main className="mx-auto max-w-6xl p-5 md:p-8">{children}</main>
+        <main className="min-w-0 p-5 md:p-8">{children}</main>
       </div>
     </div>
   );
