@@ -17,12 +17,12 @@ export function QuoteSection({ content }: QuoteSectionProps) {
 
   return (
     <section className="mx-auto max-w-4xl px-6 py-16">
-      <blockquote className="border-l-4 border-orange-400 pl-6">
-        <p className="text-2xl italic text-gray-700">
+      <blockquote className="border-l-4 border-[var(--primary-start)] pl-6">
+        <p className="block-quote italic">
           <RichText value={content.text} />
         </p>
         {hasRichText(content.author) ? (
-          <footer className="mt-4 text-gray-500">
+          <footer className="block-body mt-4 text-sm">
             - <RichText value={content.author} />
           </footer>
         ) : null}

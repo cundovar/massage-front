@@ -27,20 +27,20 @@ function BenefitsColumn({ subtitle, title, items }: { subtitle: string; title: s
   return (
     <div>
       {hasRichText(subtitle) ? (
-        <p className="mb-4 font-medium text-orange-500">
+        <p className="block-eyebrow mb-4">
           <RichText value={subtitle} />
         </p>
       ) : null}
       {hasRichText(title) ? (
-        <h2 className="heading-section">
+        <h3 className="block-card-title">
           <RichText value={title} />
-        </h2>
+        </h3>
       ) : null}
       {visibleItems.length > 0 ? (
-        <ul className="mt-6 space-y-3 text-lg text-gray-600">
+        <ul className="block-body mt-6 space-y-3">
           {visibleItems.map((item, index) => (
             <li key={`${index}-${item.slice(0, 24)}`} className="flex items-start gap-3">
-              <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-orange-500" />
+              <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--primary-start)]" />
               <span>
                 <RichText value={item} />
               </span>
@@ -80,7 +80,7 @@ export function BenefitsGridSection({ content }: BenefitsGridSectionProps) {
             {visibleTags.map((tag, index) => (
               <span
                 key={`${index}-${tag.slice(0, 24)}`}
-                className="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-600"
+                className="block-body rounded-full border border-[var(--card-border)] px-4 py-2 text-sm"
               >
                 <RichText value={tag} />
               </span>
@@ -89,7 +89,7 @@ export function BenefitsGridSection({ content }: BenefitsGridSectionProps) {
         ) : null}
 
         {hasRichText(quote) ? (
-          <blockquote className="mt-12 border-l-4 border-orange-400 pl-6 text-xl italic text-gray-700">
+          <blockquote className="block-quote mt-12 border-l-4 border-[var(--primary-start)] pl-6 italic">
             <RichText value={quote} />
           </blockquote>
         ) : null}

@@ -60,10 +60,10 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <section className="rounded-2xl border border-green-200 bg-green-50 p-6">
-        <h2 className="text-2xl text-green-800" style={{ fontFamily: "var(--font-serif)" }}>
+        <h2 className="block-card-title text-green-800">
           Message envoye !
         </h2>
-        <p className="mt-2 text-green-700">Merci pour votre message. Je vous repondrai dans les plus brefs delais.</p>
+        <p className="block-body mt-2 text-green-700">Merci pour votre message. Je vous repondrai dans les plus brefs delais.</p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
@@ -76,8 +76,8 @@ export function ContactForm() {
   }
 
   return (
-    <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+    <section className="rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-sm">
+      <h2 className="block-title">
         Envoyer un message
       </h2>
 
@@ -87,7 +87,7 @@ export function ContactForm() {
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label className="text-sm text-gray-600" htmlFor="name">
+          <label className="block-body text-sm" htmlFor="name">
             Nom *
           </label>
           <input
@@ -96,12 +96,12 @@ export function ContactForm() {
             required
             value={formData.name}
             onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
-            className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3"
+            className="mt-1 w-full rounded-xl border border-[var(--card-border)] bg-[var(--background-alt)] px-4 py-3"
           />
         </div>
 
         <div>
-          <label className="text-sm text-gray-600" htmlFor="email">
+          <label className="block-body text-sm" htmlFor="email">
             Email *
           </label>
           <input
@@ -111,12 +111,12 @@ export function ContactForm() {
             required
             value={formData.email}
             onChange={(event) => setFormData((prev) => ({ ...prev, email: event.target.value }))}
-            className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3"
+            className="mt-1 w-full rounded-xl border border-[var(--card-border)] bg-[var(--background-alt)] px-4 py-3"
           />
         </div>
 
         <div>
-          <label className="text-sm text-gray-600" htmlFor="phone">
+          <label className="block-body text-sm" htmlFor="phone">
             Telephone
           </label>
           <input
@@ -125,12 +125,12 @@ export function ContactForm() {
             type="tel"
             value={formData.phone}
             onChange={(event) => setFormData((prev) => ({ ...prev, phone: event.target.value }))}
-            className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3"
+            className="mt-1 w-full rounded-xl border border-[var(--card-border)] bg-[var(--background-alt)] px-4 py-3"
           />
         </div>
 
         <div>
-          <label className="text-sm text-gray-600" htmlFor="message">
+          <label className="block-body text-sm" htmlFor="message">
             Message *
           </label>
           <textarea
@@ -140,14 +140,15 @@ export function ContactForm() {
             required
             value={formData.message}
             onChange={(event) => setFormData((prev) => ({ ...prev, message: event.target.value }))}
-            className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3"
+            className="mt-1 w-full rounded-xl border border-[var(--card-border)] bg-[var(--background-alt)] px-4 py-3"
           />
         </div>
 
         <button
           type="submit"
           disabled={status === "loading"}
-          className="button-lift inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#ffce67] to-[#f67e54] px-6 py-3 text-sm font-medium text-white disabled:opacity-50"
+          className="button-lift inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-medium text-[var(--btn-text)] disabled:opacity-50"
+          style={{ background: "var(--btn-bg)" }}
         >
           {status === "loading" ? "Envoi en cours..." : "Envoyer"}
         </button>

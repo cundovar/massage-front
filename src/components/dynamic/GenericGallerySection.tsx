@@ -17,7 +17,7 @@ export function GenericGallerySection({ content }: { content: GenericGalleryCont
       <div className="mx-auto max-w-6xl">
         {hasRichText(content.title) ? (
           <ScrollReveal>
-            <h2 className="mb-8 text-center text-3xl font-serif text-brown-darker">
+            <h2 className="block-title mb-8 text-center">
               <RichText value={content.title} />
             </h2>
           </ScrollReveal>

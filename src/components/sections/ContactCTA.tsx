@@ -23,18 +23,18 @@ export function ContactCTA({ content }: ContactCTAProps) {
 
   return (
     <section
-      className="py-24 text-white md:py-32"
+      className="py-24 md:py-32"
       style={{ background: "var(--gradient-primary)" }}
       data-animate="section"
     >
       <div className="mx-auto max-w-4xl px-6 text-center">
         {hasRichText(title) ? (
-          <h2 data-animate="title" className="mb-6 text-4xl font-serif md:text-5xl">
+          <h2 data-animate="title" className="block-title block-title--on-accent mb-6">
             <RichText value={title} />
           </h2>
         ) : null}
         {hasRichText(subtitle) ? (
-          <p data-animate="text" className="mx-auto mb-8 max-w-2xl text-xl opacity-90">
+          <p data-animate="text" className="block-body block-body--on-accent mx-auto mb-8 max-w-2xl">
             <RichText value={subtitle} />
           </p>
         ) : null}

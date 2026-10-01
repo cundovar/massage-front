@@ -18,7 +18,7 @@ export function TextSection({ content }: TextSectionProps) {
   return (
     <section className="mx-auto max-w-4xl px-6 py-16">
       {hasRichText(content.title) ? (
-        <h2 className="heading-section mb-8">
+        <h2 className="block-title mb-8">
           <RichText value={content.title} />
         </h2>
       ) : null}
@@ -29,7 +29,7 @@ export function TextSection({ content }: TextSectionProps) {
           </div>
         ) : null}
         {paragraphs.length > 0 ? (
-          <div className="space-y-4 text-lg text-gray-600">
+          <div className="block-body space-y-4">
             {paragraphs.map((paragraph, index) => (
               <p key={`${index}-${paragraph.slice(0, 24)}`}>
                 <RichText value={paragraph} />
