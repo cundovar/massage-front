@@ -80,7 +80,7 @@ export function MassageAmma({ content }: MassageAmmaProps) {
   }, []);
 
   return (
-    <section className="scroll-mt-28 border-t border-[var(--card-border)] overflow-hidden pt-24 sm:pt-28 lg:pt-0" aria-labelledby="entreprise">
+    <section className="scroll-mt-28 overflow-hidden border-t border-[var(--card-border)] px-5 pt-24 sm:px-0 sm:pt-28 lg:pt-0" aria-labelledby="entreprise">
       <div className="space-y-16">
         <ScrollReveal>
           <div className="space-y-6 text-center">

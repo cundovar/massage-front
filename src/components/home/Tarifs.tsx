@@ -38,7 +38,7 @@ export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
   const offers = (content.offers ?? []).filter((offer) => hasRichText(offer.title) || hasRichText(offer.description));
 
   return (
-    <section id="tarifs" className="mt-20" data-animate="section">
+    <section id="tarifs" className="mt-20 px-5 sm:px-0" data-animate="section">
       <ScrollReveal>
         <div className="js-tarifs-header mx-auto max-w-3xl text-center">
           <div className="mx-auto h-px w-24 bg-[var(--primary-start)]" />

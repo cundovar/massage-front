@@ -95,7 +95,7 @@ export function Approche({ content }: ApprocheProps) {
   }, []);
 
   return (
-    <section ref={sectionRef} id="parcours" className="mb-10 mt-20 grid gap-10 lg:grid-cols-2">
+    <section ref={sectionRef} id="parcours" className="mb-10 mt-20 grid gap-10 px-5 sm:px-0 lg:grid-cols-2">
       <div className="lg:hidden">
         {imageUrls.length > 0 ? (
           <div className="glass-panel group relative aspect-[4/3] overflow-hidden rounded-2xl">
