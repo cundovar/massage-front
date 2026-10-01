@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, useMemo, type ErrorInfo, type ReactNode } from "react";
+import { Component, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { BlockAppearanceFrame, type BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 import type { PageSection } from "@/lib/api-admin";
@@ -42,6 +42,14 @@ interface LivePreviewProps {
   onSelectSection: (key: string) => void;
 }
 
+const PREVIEW_VIEWPORTS = {
+  mobile: { label: "Mobile", width: "375px", scale: 1 },
+  tablet: { label: "Tablette", width: "768px", scale: 0.7 },
+  desktop: { label: "Bureau", width: "1280px", scale: 0.5 },
+} as const;
+
+type PreviewViewport = keyof typeof PREVIEW_VIEWPORTS;
+
 class PreviewErrorBoundary extends Component<{ children: ReactNode; sectionType: string }, { hasError: boolean }> {
   state = { hasError: false };
 
@@ -68,30 +76,55 @@ class PreviewErrorBoundary extends Component<{ children: ReactNode; sectionType:
 
 export function LivePreview({ sections, activeSection, onSelectSection }: LivePreviewProps) {
   const sortedSections = useMemo(() => [...sections].sort((a, b) => a.sortOrder - b.sortOrder), [sections]);
+  const [viewport, setViewport] = useState<PreviewViewport>("desktop");
+  const viewportConfig = PREVIEW_VIEWPORTS[viewport];
 
   return (
     <PreviewModeProvider>
       <div className="min-h-full">
-        <div className="sticky top-0 z-10 border-b bg-stone-100 px-4 py-2 text-sm text-stone-500">
-          Apercu en temps reel - Cliquez sur une section pour la modifier
+        <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b bg-stone-100 px-4 py-2">
+          <p className="text-sm text-stone-500">Aperçu en temps réel — cliquez sur une section pour la modifier</p>
+          <div className="inline-flex rounded-lg border border-stone-200 bg-white p-1" role="group" aria-label="Largeur de l’aperçu">
+            {(Object.keys(PREVIEW_VIEWPORTS) as PreviewViewport[]).map((mode) => {
+              const isActive = mode === viewport;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setViewport(mode)}
+                  aria-pressed={isActive}
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1 ${
+                    isActive ? "bg-amber-600 text-white" : "text-stone-600 hover:bg-stone-100"
+                  }`}
+                >
+                  {PREVIEW_VIEWPORTS[mode].label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="origin-top-left p-4" style={{ transform: "scale(0.7)", width: "142.85%" }}>
-          {sortedSections.map((section) => (
-            <PreviewErrorBoundary key={section.key} sectionType={section.type}>
-              <PreviewSection
-                section={section}
-                isActive={activeSection === section.key}
-                onClick={() => onSelectSection(section.key)}
-              />
-            </PreviewErrorBoundary>
-          ))}
+        <div className="flex min-h-full justify-center overflow-x-hidden p-4">
+          <div
+            className="origin-top"
+            style={{ width: viewportConfig.width, transform: `scale(${viewportConfig.scale})` }}
+          >
+            {sortedSections.map((section) => (
+              <PreviewErrorBoundary key={section.key} sectionType={section.type}>
+                <PreviewSection
+                  section={section}
+                  isActive={activeSection === section.key}
+                  onClick={() => onSelectSection(section.key)}
+                />
+              </PreviewErrorBoundary>
+            ))}
 
-          {sortedSections.length === 0 ? (
-            <div className="flex h-96 items-center justify-center text-stone-400">
-              <p>Ajoutez des blocs pour voir l&apos;apercu</p>
-            </div>
-          ) : null}
+            {sortedSections.length === 0 ? (
+              <div className="flex h-96 items-center justify-center text-stone-400">
+                <p>Ajoutez des blocs pour voir l&apos;aperçu</p>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </PreviewModeProvider>
