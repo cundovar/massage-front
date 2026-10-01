@@ -95,7 +95,7 @@ export function MobileNavLinkButton({
       style={getVariantStyle(variant, isActive)}
     >
       {icon}
-      <span className="text-[10px] font-medium tracking-wide">{label}</span>
+      <span className="text-[10px] font-medium">{label}</span>
       {variant === "default" && isActive ? (
         <span
           className="absolute -bottom-0.5 h-1 w-4 rounded-full"
@@ -123,7 +123,7 @@ export function MobileNavButton({
       style={getVariantStyle(variant, isActive)}
     >
       {icon}
-      <span className="text-[10px] font-medium tracking-wide">{label}</span>
+      <span className="text-[10px] font-medium">{label}</span>
       {variant === "default" && isActive ? (
         <span
           className="absolute -bottom-0.5 h-1 w-4 rounded-full"

@@ -74,7 +74,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
             <span>{settings.general.siteName || "Helene"}</span>
           </TransitionLink>
 
-          <nav className="hidden flex-1 flex-wrap gap-1 text-sm tracking-wide md:flex" aria-label="Navigation principale">
+          <nav className="hidden flex-1 flex-wrap gap-1 text-sm md:flex" aria-label="Navigation principale">
             {navItems.map((item) =>
               item.isExternal ? (
                 <a

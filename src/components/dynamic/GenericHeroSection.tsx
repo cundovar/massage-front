@@ -55,7 +55,7 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
 
   if (isCompact) {
     return (
-      <section className="relative overflow-hidden py-20">
+      <section className="banner-text relative overflow-hidden py-20">
         {isBackgroundAnimation ? (
           <ViewportAnimation className="absolute inset-0">
             <AnimationComponent />
@@ -101,7 +101,7 @@ export function GenericHeroSection({ content }: { content: GenericHeroContent })
   }
 
   return (
-    <section className={`relative min-h-[60vh] w-full overflow-hidden ${isTransparent ? "" : "rounded-3xl"}`}>
+    <section className={`banner-text relative min-h-[60vh] w-full overflow-hidden ${isTransparent ? "" : "rounded-3xl"}`}>
       <div className="absolute inset-0">
         {isBackgroundAnimation ? (
           <ViewportAnimation className="absolute inset-0">
