@@ -110,6 +110,15 @@ const APPEARANCE_DEFAULTS: Record<string, string | boolean> = {
   "_appearance.visibility.mobile": true,
   "_appearance.visibility.tablet": true,
   "_appearance.visibility.desktop": true,
+  "_appearance.showTitle": true,
+};
+
+/** Affiché sous le champ « Titre » de chaque bloc (hors bannières). */
+const SHOW_TITLE_FIELD: FieldDefinition = {
+  key: "_appearance.showTitle",
+  label: "Afficher le titre",
+  type: "toggle",
+  help: "Masque le titre sur le site sans l'effacer.",
 };
 
 const VISIBILITY_FIELDS: FieldDefinition[] = [
@@ -388,7 +397,9 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
             description={group.description}
             defaultOpen={group.defaultOpen}
           >
-            {fields.map(renderField)}
+            {fields.flatMap((field) =>
+              field.key === "title" && !isHeroType ? [renderField(field), renderField(SHOW_TITLE_FIELD)] : [renderField(field)],
+            )}
 
             {appearanceFields.length > 0 ? (
               <div className={fields.length > 0 ? "space-y-4 border-t border-stone-100 pt-4" : "space-y-4"}>

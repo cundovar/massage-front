@@ -22,6 +22,8 @@ export interface BlockAppearance {
   radius?: "none" | "md" | "lg";
   layout?: BlockResponsiveLayout;
   visibility?: BlockVisibility;
+  /** false masque le titre principal du bloc (.block-title) sans effacer son contenu. */
+  showTitle?: boolean;
 }
 
 interface BlockAppearanceFrameProps {
@@ -99,6 +101,7 @@ export function BlockAppearanceFrame({ appearance, children }: BlockAppearanceFr
   const tabletVisible = visibility?.tablet ?? true;
   const desktopVisible = visibility?.desktop ?? true;
   const visibilityClass = visibilityClasses[`${mobileVisible}-${tabletVisible}-${desktopVisible}`];
+  const titleClass = appearance?.showTitle === false ? "[&_.block-title]:hidden" : "";
 
   const hasFrame =
     background !== "transparent" ||
@@ -107,12 +110,12 @@ export function BlockAppearanceFrame({ appearance, children }: BlockAppearanceFr
     paddingBottom !== "none" ||
     radius !== "none";
 
-  if (!hasFrame && !visibilityClass) {
+  if (!hasFrame && !visibilityClass && !titleClass) {
     return <>{children}</>;
   }
 
   return (
-    <div className={`${visibilityClass} ${spacingClasses[paddingTop]} ${bottomSpacingClasses[paddingBottom]}`}>
+    <div className={`${visibilityClass} ${titleClass} ${spacingClasses[paddingTop]} ${bottomSpacingClasses[paddingBottom]}`}>
       <div
         className={`${widthClasses[width]} ${radiusClasses[radius]} ${background === "transparent" ? "" : "overflow-hidden p-6 md:p-8"}`}
         style={getBackgroundStyle(background)}
