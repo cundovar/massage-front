@@ -128,7 +128,8 @@ textarea:focus-visible {
 /* Échelle typographique commune aux blocs publics. Les Hero conservent
    volontairement leurs propres styles via .heading-hero. */
 .block-eyebrow {
-  color: var(--primary-start);
+  /* Accent seul trop clair sur fond clair (WCAG AA) : mélangé au texte principal. */
+  color: color-mix(in srgb, var(--primary-start) 45%, var(--text-primary));
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.4;

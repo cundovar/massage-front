@@ -27,12 +27,12 @@ export function ParcoursSection({ content }: ParcoursSectionProps) {
 
           <div className="min-w-0 space-y-6">
             {hasRichText(title) ? (
-              <h2 className="break-words text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
+              <h2 className="block-title break-words">
                 <RichText value={title} />
               </h2>
             ) : null}
             {paragraphs.map((paragraph, index) => (
-              <p key={`${index}-${paragraph.slice(0, 24)}`} className="break-words text-lg leading-loose text-[var(--text-secondary)]">
+              <p key={`${index}-${paragraph.slice(0, 24)}`} className="block-body break-words">
                 <RichText value={paragraph} />
               </p>
             ))}

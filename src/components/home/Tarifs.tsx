@@ -43,16 +43,12 @@ export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
         <div className="js-tarifs-header mx-auto max-w-3xl text-center">
           <div className="mx-auto h-px w-24 bg-[var(--primary-start)]" />
           {hasRichText(content.title) ? (
-            <h2
-              data-animate="title"
-              className="mt-6 text-4xl font-light md:text-5xl"
-              style={{ fontFamily: "var(--font-title)" }}
-            >
+            <h2 data-animate="title" className="block-title mt-6">
               <RichText value={content.title} />
             </h2>
           ) : null}
           {hasRichText(content.subtitle) ? (
-            <p data-animate="text" className="mt-5 text-lg text-[var(--text-secondary)]">
+            <p data-animate="text" className="block-body mt-5">
               <RichText value={content.subtitle} />
             </p>
           ) : null}

@@ -80,24 +80,20 @@ export function MassageAmma({ content }: MassageAmmaProps) {
   }, []);
 
   return (
-    <section className="scroll-mt-28 border-t border-sand-800/20 overflow-hidden pt-24 sm:pt-28 lg:pt-0" aria-labelledby="entreprise">
+    <section className="scroll-mt-28 border-t border-[var(--card-border)] overflow-hidden pt-24 sm:pt-28 lg:pt-0" aria-labelledby="entreprise">
       <div className="space-y-16">
         <ScrollReveal>
           <div className="space-y-6 text-center">
             <div className="flex justify-center">
-              <div className="h-px w-12 bg-amber-500/60" />
+              <div className="h-px w-12 bg-[color-mix(in_srgb,var(--primary-start)_60%,transparent)]" />
             </div>
             {hasRichText(content.title) ? (
-              <h2
-                id="entreprise"
-                className="font-serif text-5xl font-extralight tracking-tight leading-tight text-sand-100 sm:text-6xl"
-                style={{ fontFamily: "var(--font-title)" }}
-              >
+              <h2 id="entreprise" className="block-title">
                 <RichText value={content.title} />
               </h2>
             ) : null}
             {hasRichText(content.subtitle) ? (
-              <p className="mx-auto max-w-3xl text-xl font-light leading-relaxed text-sand-200/70">
+              <p className="block-body mx-auto max-w-3xl">
                 <RichText value={content.subtitle} />
               </p>
             ) : null}
@@ -106,10 +102,10 @@ export function MassageAmma({ content }: MassageAmmaProps) {
 
         <div className="grid gap-16 md:grid-cols-2 max-w-5xl mx-auto">
           <ScrollReveal>
-            <div className="border border-sand-800/20 bg-gradient-to-br from-sand-900/10 to-transparent p-10">
+            <div className="border border-[var(--card-border)] bg-[var(--card-bg)] p-10">
               <div className="mb-8 flex justify-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/10">
-                  <svg className="h-7 w-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--primary-start)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary-start)_10%,transparent)]">
+                  <svg className="h-7 w-7 text-[var(--primary-start)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -120,15 +116,15 @@ export function MassageAmma({ content }: MassageAmmaProps) {
                 </div>
               </div>
               {hasRichText(content.teamTitle) ? (
-                <h3 className="mb-8 text-center text-2xl font-light tracking-wide text-sand-100">
+                <h3 className="block-card-title mb-8 text-center">
                   <RichText value={content.teamTitle} />
                 </h3>
               ) : null}
               {teamBenefits.length > 0 ? (
-              <ul className="space-y-4 text-lg font-light leading-relaxed text-sand-200/70">
+              <ul className="block-body space-y-4">
                 {teamBenefits.map((item, index) => (
                   <li key={`${index}-${item.slice(0, 24)}`} className="flex items-start">
-                    <svg className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-amber-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-[color-mix(in_srgb,var(--primary-start)_60%,transparent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     <span>
@@ -142,10 +138,10 @@ export function MassageAmma({ content }: MassageAmmaProps) {
           </ScrollReveal>
 
           <ScrollReveal>
-            <div className="border border-sand-800/20 bg-gradient-to-br from-sand-900/10 to-transparent p-10">
+            <div className="border border-[var(--card-border)] bg-[var(--card-bg)] p-10">
               <div className="mb-8 flex justify-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/10">
-                  <svg className="h-7 w-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--primary-start)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary-start)_10%,transparent)]">
+                  <svg className="h-7 w-7 text-[var(--primary-start)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -156,15 +152,15 @@ export function MassageAmma({ content }: MassageAmmaProps) {
                 </div>
               </div>
               {hasRichText(content.companyTitle) ? (
-                <h3 className="mb-8 text-center text-2xl font-light tracking-wide text-sand-100">
+                <h3 className="block-card-title mb-8 text-center">
                   <RichText value={content.companyTitle} />
                 </h3>
               ) : null}
               {companyBenefits.length > 0 ? (
-              <ul className="space-y-4 text-lg font-light leading-relaxed text-sand-200/70">
+              <ul className="block-body space-y-4">
                 {companyBenefits.map((item, index) => (
                   <li key={`${index}-${item.slice(0, 24)}`} className="flex items-start">
-                    <svg className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-amber-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="mr-3 mt-1 h-5 w-5 flex-shrink-0 text-[color-mix(in_srgb,var(--primary-start)_60%,transparent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     <span>
@@ -179,16 +175,16 @@ export function MassageAmma({ content }: MassageAmmaProps) {
         </div>
 
         <ScrollReveal>
-          <div className="mx-auto max-w-4xl border-2 border-amber-700/30 bg-gradient-to-br from-sand-900/15 to-transparent p-12">
+          <div className="mx-auto max-w-4xl border-2 border-[color-mix(in_srgb,var(--primary-start)_30%,transparent)] bg-[var(--card-bg)] p-12">
             <div ref={iconContainerRef} className="flex flex-wrap items-center justify-center gap-8">
               {characteristicItems.slice(0, 4).map((label, index) => (
                 <div key={`${index}-${label.slice(0, 24)}`} data-amma-icon className="flex max-lg:w-1/2 flex-col items-center space-y-2">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/10">
-                    <svg className="h-8 w-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--primary-start)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary-start)_10%,transparent)]">
+                    <svg className="h-8 w-8 text-[var(--primary-start)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={characteristics[index]?.path ?? characteristics[0].path} />
                     </svg>
                   </div>
-                  <span className="text-sm text-sand-300/70">
+                  <span className="block-body text-sm">
                     <RichText value={label} />
                   </span>
                 </div>
@@ -198,10 +194,10 @@ export function MassageAmma({ content }: MassageAmmaProps) {
             {hasRichText(content.quote) ? (
               <>
                 <div className="my-8 flex justify-center">
-                  <div className="h-px w-24 bg-amber-500/30" />
+                  <div className="h-px w-24 bg-[color-mix(in_srgb,var(--primary-start)_30%,transparent)]" />
                 </div>
 
-                <p className="mx-auto max-w-2xl text-center text-2xl font-light italic leading-relaxed text-sand-100">
+                <p className="block-quote mx-auto max-w-2xl text-center italic">
                   <RichText value={content.quote} />
                 </p>
               </>

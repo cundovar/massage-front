@@ -20,18 +20,18 @@ export function Presentation({ content }: PresentationProps) {
         <div className="js-section-left space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" />
           {hasRichText(title) ? (
-            <h2 className="text-5xl font-extralight md:text-6xl" style={{ fontFamily: "var(--font-title)" }}>
+            <h2 className="block-title">
               <RichText value={title} />
             </h2>
           ) : null}
           {paragraphs.map((paragraph, index) => (
-            <p key={`${index}-${paragraph.slice(0, 24)}`} className="text-lg leading-loose text-[var(--text-secondary)]">
+            <p key={`${index}-${paragraph.slice(0, 24)}`} className="block-body">
               <RichText value={paragraph} />
             </p>
           ))}
           {hasRichText(content.quote) ? (
             <blockquote
-              className="rounded-r-xl px-5 py-4 text-xl italic text-[var(--text-primary)]"
+              className="block-quote rounded-r-xl px-5 py-4 italic"
               style={{
                 borderLeft: "2px solid color-mix(in srgb, var(--primary-start) 40%, transparent)",
                 background: "color-mix(in srgb, var(--primary-start) 10%, transparent)",

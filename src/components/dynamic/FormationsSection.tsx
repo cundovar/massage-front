@@ -20,7 +20,7 @@ export function FormationsSection({ content }: FormationsSectionProps) {
       <ScrollReveal>
         <div className="min-w-0 space-y-8">
           {hasRichText(title) ? (
-            <h2 className="break-words text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
+            <h2 className="block-title break-words">
               <RichText value={title} />
             </h2>
           ) : null}
@@ -49,7 +49,7 @@ export function FormationsSection({ content }: FormationsSectionProps) {
                   {item.year?.trim() ? (
                     <span className="text-sm font-semibold text-[var(--primary-start)]">{item.year}</span>
                   ) : null}
-                  <span className="min-w-0 break-words text-lg text-[var(--text-secondary)]">
+                  <span className="block-body min-w-0 break-words">
                     <RichText value={item.title} />
                   </span>
                 </li>
