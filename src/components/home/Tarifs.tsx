@@ -3,6 +3,7 @@ import { ServiceCard, type ServicePrice } from "@/components/shared/ServiceCard"
 import type { TarifsContent } from "@/types";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
+import { getBlockLayout, getCardGrid, type GridColumnCount } from "@/components/dynamic/responsiveLayout";
 
 interface TarifsProps {
   content: TarifsContent;
@@ -36,6 +37,16 @@ export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
   const bookingLinkNewTab = String(content.bookingLinkNewTab ?? "false") === "true";
   // Une offre sans nom ni description n'est pas affichee.
   const offers = (content.offers ?? []).filter((offer) => hasRichText(offer.title) || hasRichText(offer.description));
+  // Grille adaptative : 1, 2 ou 3 colonnes selon le nombre d'offres, ajustable dans « Apparence ».
+  const maxColumns: GridColumnCount = offers.length <= 1 ? 1 : offers.length === 2 ? 2 : 3;
+  const grid = getCardGrid(getBlockLayout(content), {
+    defaultTablet: Math.min(maxColumns, 2) as GridColumnCount,
+    defaultDesktop: maxColumns,
+    max: maxColumns,
+    desktopBreakpoint: "xl",
+  });
+  const widestColumns = Math.max(grid.tabletColumns, grid.desktopColumns);
+  const gridWidth = widestColumns === 1 ? "max-w-xl" : widestColumns === 2 ? "max-w-3xl" : "max-w-6xl";
 
   return (
     <section id="tarifs" className="mt-20 px-5 sm:px-0" data-animate="section">
@@ -55,16 +66,7 @@ export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
         </div>
       </ScrollReveal>
 
-      {/* Grille adaptative : centrée si 1-2 items, grille complète si 3+ */}
-      <div
-        className={`js-offers-grid mx-auto mt-12 grid gap-8 ${
-          offers.length === 1
-            ? "max-w-xl"
-            : offers.length === 2
-              ? "max-w-3xl md:grid-cols-2"
-              : "max-w-6xl md:grid-cols-2 xl:grid-cols-3"
-        }`}
-      >
+      <div className={`js-offers-grid mx-auto mt-12 grid gap-8 ${gridWidth} ${grid.className}`}>
         {offers.map((offer, index) => (
           <ScrollReveal key={`${index}-${offer.title.slice(0, 24)}`} className="h-full">
             <div className="js-offer-card h-full">

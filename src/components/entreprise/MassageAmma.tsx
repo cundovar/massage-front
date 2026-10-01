@@ -7,6 +7,7 @@ import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import type { EntrepriseContent } from "@/types";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
+import { getBlockLayout, getCardGrid } from "@/components/dynamic/responsiveLayout";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -79,6 +80,8 @@ export function MassageAmma({ content }: MassageAmmaProps) {
     };
   }, []);
 
+  const grid = getCardGrid(getBlockLayout(content), { defaultTablet: 2, defaultDesktop: 2, max: 2 });
+
   return (
     <section className="scroll-mt-28 overflow-hidden border-t border-[var(--card-border)] px-5 pt-24 sm:px-0 sm:pt-28 lg:pt-0" aria-labelledby="entreprise">
       <div className="space-y-16">
@@ -100,7 +103,7 @@ export function MassageAmma({ content }: MassageAmmaProps) {
           </div>
         </ScrollReveal>
 
-        <div className="grid gap-16 md:grid-cols-2 max-w-5xl mx-auto">
+        <div className={`mx-auto grid max-w-5xl gap-16 ${grid.className}`}>
           <ScrollReveal>
             <div className="border border-[var(--card-border)] bg-[var(--card-bg)] p-10">
               <div className="mb-8 flex justify-center">

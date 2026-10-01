@@ -201,6 +201,16 @@ const RESPONSIVE_LAYOUT_FIELDS: Record<NonNullable<BlockDefinition["responsiveLa
   ],
 };
 
+/** Retire les choix de colonnes au-delà de ce que le bloc peut afficher. */
+function limitColumnOptions(fields: FieldDefinition[], maxColumns: 2 | 3 | undefined): FieldDefinition[] {
+  if (!maxColumns) return fields;
+  return fields.map((field) =>
+    field.options
+      ? { ...field, options: field.options.filter((option) => !/^\d$/.test(option.value) || Number(option.value) <= maxColumns) }
+      : field,
+  );
+}
+
 const GROUPS: Array<{
   id: FieldGroupId;
   title: string;
@@ -354,7 +364,7 @@ export function BlockEditor({ section, definition, onUpdate, token }: BlockEdito
         const appearanceFields = group.id === "design" ? APPEARANCE_FIELDS : [];
         const visibilityFields = group.id === "design" ? VISIBILITY_FIELDS : [];
         const responsiveLayoutFields = group.id === "design" && definition.responsiveLayout
-          ? RESPONSIVE_LAYOUT_FIELDS[definition.responsiveLayout]
+          ? limitColumnOptions(RESPONSIVE_LAYOUT_FIELDS[definition.responsiveLayout], definition.responsiveMaxColumns)
           : [];
         const hasGenericAnimation = group.id === "animation" && !isHeroType;
         const hasBlockName = group.id === "advanced";

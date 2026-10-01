@@ -8,6 +8,7 @@ import { getImageUrl } from "@/lib/api";
 import type { ApprocheContent } from "@/lib/api";
 import { hasRichText } from "@/lib/richText";
 import { RichText } from "@/components/dynamic/RichText";
+import { getBlockLayout, getSplitLayout } from "@/components/dynamic/responsiveLayout";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -31,6 +32,28 @@ export function Approche({ content }: ApprocheProps) {
   const imageUrls = imageSources
     .map((src) => getImageUrl(src))
     .filter((src): src is string => Boolean(src));
+  const split = getSplitLayout(getBlockLayout(content), {
+    tabletColumns: "md:grid-cols-2",
+    desktopColumns: "lg:grid-cols-2",
+    defaultTablet: "stacked",
+    defaultDesktop: "two-columns",
+    mediaFirstByDefault: true,
+  });
+  // Photo seule quand le bloc est empilé, collage de photos quand il est sur 2 colonnes.
+  const collageVisibility = split.tabletSplit
+    ? split.desktopSplit
+      ? "hidden md:block"
+      : "hidden md:block lg:hidden"
+    : split.desktopSplit
+      ? "hidden lg:block"
+      : "hidden";
+  const singleImageVisibility = split.tabletSplit
+    ? split.desktopSplit
+      ? "md:hidden"
+      : "md:hidden lg:block"
+    : split.desktopSplit
+      ? "lg:hidden"
+      : "";
   // Titre vide = titre par defaut (ancien comportement, le titre etait fixe).
   const title = hasRichText(content.title) ? content.title : "Approche";
   const bulletsTitle = content.bulletsTitle ?? "Ce qui guide mes mains :";
@@ -95,8 +118,8 @@ export function Approche({ content }: ApprocheProps) {
   }, []);
 
   return (
-    <section ref={sectionRef} id="parcours" className="mb-10 mt-20 grid gap-10 px-5 sm:px-0 lg:grid-cols-2">
-      <div className="lg:hidden">
+    <section ref={sectionRef} id="parcours" className={`mb-10 mt-20 grid gap-10 px-5 sm:px-0 ${split.container}`}>
+      <div className={`${singleImageVisibility} ${split.media}`}>
         {imageUrls.length > 0 ? (
           <div className="glass-panel group relative aspect-[4/3] overflow-hidden rounded-2xl">
             <Image
@@ -119,7 +142,7 @@ export function Approche({ content }: ApprocheProps) {
         )}
       </div>
 
-      <div ref={leftRef} className="hidden lg:block">
+      <div ref={leftRef} className={`${collageVisibility} ${split.media}`}>
         {imageUrls.length > 0 ? (
           imageUrls.length === 1 ? (
             <div className="glass-panel group relative h-[500px] overflow-hidden rounded-2xl" data-approche-card>
@@ -186,7 +209,7 @@ export function Approche({ content }: ApprocheProps) {
         )}
       </div>
 
-      <div ref={rightRef}>
+      <div ref={rightRef} className={split.text}>
         <div className="space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" data-anim-child />
           <h2 className="block-title" data-anim-child>

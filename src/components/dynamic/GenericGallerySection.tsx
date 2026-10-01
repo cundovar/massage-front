@@ -4,6 +4,7 @@ import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
 import type { BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
+import { getCardGrid } from "@/components/dynamic/responsiveLayout";
 
 interface GenericGalleryContent {
   title?: string;
@@ -13,14 +14,7 @@ interface GenericGalleryContent {
 
 export function GenericGallerySection({ content }: { content: GenericGalleryContent }) {
   const images = content.images ?? [];
-  const layout = content._appearance?.layout;
-  const tabletColumns = layout?.tabletColumns === "1" ? "md:grid-cols-1" : "md:grid-cols-2";
-  const desktopColumns =
-    layout?.desktopColumns === "1"
-      ? "lg:grid-cols-1"
-      : layout?.desktopColumns === "2"
-        ? "lg:grid-cols-2"
-        : "lg:grid-cols-3";
+  const grid = getCardGrid(content._appearance?.layout, { defaultTablet: 2, defaultDesktop: 3 });
 
   return (
     <section className="px-6 py-16 md:px-12">
@@ -33,7 +27,7 @@ export function GenericGallerySection({ content }: { content: GenericGalleryCont
           </ScrollReveal>
         ) : null}
 
-        <div className={`grid grid-cols-1 gap-6 ${tabletColumns} ${desktopColumns}`}>
+        <div className={`grid gap-6 ${grid.className}`}>
           {images.map((image, index) => {
             const url = getImageUrl(image);
             if (!url) return null;
