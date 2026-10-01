@@ -5,6 +5,7 @@ import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { RichText } from "@/components/dynamic/RichText";
 import { getImageUrl } from "@/lib/api";
 import { hasRichText, toPlainText } from "@/lib/richText";
+import type { BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
 
 interface ImageValueObject {
   path?: string | null;
@@ -26,7 +27,20 @@ export interface ServicesPreviewContent {
   buttonText?: string;
   buttonLink?: string;
   items?: ServicePreviewItem[];
+  _appearance?: BlockAppearance;
 }
+
+const TABLET_GRID_COLUMNS = {
+  1: "md:grid-cols-1",
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-3",
+} as const;
+
+const DESKTOP_GRID_COLUMNS = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+} as const;
 
 interface ServicesPreviewProps {
   services?: ServiceItem[];
@@ -43,12 +57,19 @@ export function ServicesPreview({ services = [], content }: ServicesPreviewProps
 
   // Adapter le nombre de colonnes selon le nombre d'items
   const itemCount = useManualItems ? manualItems.length : services.length;
-  const gridCols =
-    itemCount === 1
-      ? "md:grid-cols-1 max-w-md mx-auto"
-      : itemCount === 2
-        ? "md:grid-cols-2 max-w-3xl mx-auto"
-        : "md:grid-cols-3";
+  const layout = content?._appearance?.layout;
+  const defaultColumns = itemCount === 1 ? 1 : itemCount === 2 ? 2 : 3;
+  const requestedTabletColumns = layout?.tabletColumns === "1" ? 1 : layout?.tabletColumns === "2" ? 2 : defaultColumns;
+  const requestedDesktopColumns = layout?.desktopColumns === "1" ? 1 : layout?.desktopColumns === "2" ? 2 : layout?.desktopColumns === "3" ? 3 : defaultColumns;
+  const tabletColumns = Math.min(requestedTabletColumns, defaultColumns);
+  const desktopColumns = Math.min(requestedDesktopColumns, defaultColumns);
+  const gridCols = `${TABLET_GRID_COLUMNS[tabletColumns as 1 | 2 | 3]} ${DESKTOP_GRID_COLUMNS[desktopColumns as 1 | 2 | 3]} ${
+    Math.max(tabletColumns, desktopColumns) === 1
+      ? "max-w-md mx-auto"
+      : Math.max(tabletColumns, desktopColumns) === 2
+        ? "max-w-3xl mx-auto"
+        : ""
+  }`;
 
   return (
     <section className="bg-transparent py-24 md:py-32" data-animate="section">
