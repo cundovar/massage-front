@@ -282,6 +282,35 @@ export const THEME_PRESETS: Record<ThemePreset, ThemeConfig> = {
   },
 };
 
+const LIGHT_TEXT = "#FFFFFF";
+const DARK_TEXT = "#1C1917";
+
+function relativeLuminance(hex: string): number | null {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!match) return null;
+  const value = Number.parseInt(match[1], 16);
+  const channel = (shift: number) => {
+    const c = ((value >> shift) & 0xff) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(16) + 0.7152 * channel(8) + 0.0722 * channel(0);
+}
+
+function contrastRatio(a: number, b: number): number {
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+
+/** Texte le plus lisible (blanc ou foncé) sur toute la largeur du dégradé principal. */
+export function readableTextOn(...backgrounds: string[]): string {
+  const luminances = backgrounds.map(relativeLuminance).filter((value): value is number => value !== null);
+  if (luminances.length === 0) return LIGHT_TEXT;
+  const light = relativeLuminance(LIGHT_TEXT) ?? 1;
+  const dark = relativeLuminance(DARK_TEXT) ?? 0;
+  const worstWithLight = Math.min(...luminances.map((value) => contrastRatio(light, value)));
+  const worstWithDark = Math.min(...luminances.map((value) => contrastRatio(dark, value)));
+  return worstWithLight >= worstWithDark ? LIGHT_TEXT : DARK_TEXT;
+}
+
 export function generateThemeCSS(theme: ThemeConfig, customAccentColor?: string): string {
   const primaryStart = customAccentColor || theme.colors.primaryStart;
   const primaryEnd = theme.colors.primaryEnd;
@@ -293,6 +322,7 @@ export function generateThemeCSS(theme: ThemeConfig, customAccentColor?: string)
       --primary-start: ${primaryStart};
       --primary-end: ${primaryEnd};
       --gradient-primary: linear-gradient(135deg, ${primaryStart} 0%, ${primaryEnd} 100%);
+      --text-on-primary: ${readableTextOn(primaryStart, primaryEnd)};
 
       --text-primary: ${theme.colors.textPrimary};
       --text-secondary: ${theme.colors.textSecondary};
@@ -334,6 +364,7 @@ export function generateThemeCSS(theme: ThemeConfig, customAccentColor?: string)
       --primary-start: ${darkPrimaryStart};
       --primary-end: ${darkPrimaryEnd};
       --gradient-primary: linear-gradient(135deg, ${darkPrimaryStart} 0%, ${darkPrimaryEnd} 100%);
+      --text-on-primary: ${readableTextOn(darkPrimaryStart, darkPrimaryEnd)};
 
       --text-primary: ${theme.dark.textPrimary};
       --text-secondary: ${theme.dark.textSecondary};

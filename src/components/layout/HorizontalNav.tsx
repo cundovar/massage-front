@@ -94,7 +94,7 @@ export function HorizontalNav({ items }: HorizontalNavProps) {
                 href={item.path}
                 className={`block rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[var(--primary-start)] focus-visible:outline-none ${
                   active
-                    ? "text-[var(--btn-text)] shadow-md"
+                    ? "text-[var(--text-on-primary)] shadow-md"
                     : "bg-[var(--background-alt)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
                 style={active ? { background: "var(--gradient-primary)" } : undefined}

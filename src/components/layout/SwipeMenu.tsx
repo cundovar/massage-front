@@ -175,7 +175,7 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
         onClick={() => setOpen(true)}
         aria-label="Ouvrir le menu de navigation"
         aria-expanded={open}
-        className={`fixed top-1/2 left-0 z-40 flex h-16 w-7 -translate-y-1/2 items-center justify-center rounded-r-xl text-[var(--btn-text)] shadow-lg transition-[opacity,transform] duration-300 ${
+        className={`fixed top-1/2 left-0 z-40 flex h-16 w-7 -translate-y-1/2 items-center justify-center rounded-r-xl text-[var(--text-on-primary)] shadow-lg transition-[opacity,transform] duration-300 ${
           headerHidden && !open
             ? "translate-x-0 opacity-100"
             : "pointer-events-none -translate-x-full opacity-0"
@@ -216,14 +216,14 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
           className="relative z-10 flex items-center justify-between px-5 py-4"
           style={{ background: "var(--gradient-primary)" }}
         >
-          <span className="text-lg font-semibold text-[var(--btn-text)]" style={{ fontFamily: "var(--font-heading)" }}>
+          <span className="text-lg font-semibold text-[var(--text-on-primary)]" style={{ fontFamily: "var(--font-heading)" }}>
             Menu
           </span>
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Fermer le menu"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--btn-text)] transition-colors hover:bg-[color-mix(in_srgb,var(--btn-text)_14%,transparent)]"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-on-primary)] transition-colors hover:bg-[color-mix(in_srgb,var(--text-on-primary)_14%,transparent)]"
           >
             <X className="h-5 w-5" strokeWidth={2} />
           </button>
@@ -252,7 +252,7 @@ export function SwipeMenu({ initialNavItems }: SwipeMenuProps) {
                       aria-current={active ? "page" : undefined}
                       className={`block rounded-xl px-4 py-3 font-medium transition-colors ${
                         active
-                          ? "text-[var(--btn-text)]"
+                          ? "text-[var(--text-on-primary)]"
                           : "text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,var(--primary-start)_12%,transparent)]"
                       }`}
                       style={active ? { background: "var(--gradient-primary)" } : undefined}

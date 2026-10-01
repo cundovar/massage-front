@@ -34,7 +34,7 @@
 
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
-  --color-text-on-gradient: #ffffff;
+  --color-text-on-gradient: var(--text-on-primary, #ffffff);
   --color-background: var(--background);
   --color-background-alt: var(--background-alt);
 
