@@ -99,7 +99,7 @@ export function Footer({ initialSettings }: FooterProps) {
         <div className="grid gap-12 md:grid-cols-4">
           {/* Titre + Description + Réseaux sociaux */}
           <div className="md:col-span-2">
-            <h3 className="mb-4 text-2xl font-serif drop-shadow-sm">{settings.general.siteName}</h3>
+            <h3 className="mb-4 font-[family-name:var(--font-heading)] text-2xl drop-shadow-sm">{settings.general.siteName}</h3>
             <p
               className="mb-6 max-w-md break-words"
               style={{ color: "var(--footer-text-muted, #A8A29E)" }}
