@@ -101,7 +101,7 @@ export function Footer({ initialSettings }: FooterProps) {
           <div className="md:col-span-2">
             <h3 className="mb-4 text-2xl font-serif drop-shadow-sm">{settings.general.siteName}</h3>
             <p
-              className="mb-6 max-w-md"
+              className="mb-6 max-w-md break-words"
               style={{ color: "var(--footer-text-muted, #A8A29E)" }}
             >
               {settings.footer.customDescription || settings.general.defaultMetaDescription}
@@ -146,8 +146,8 @@ export function Footer({ initialSettings }: FooterProps) {
           </div>
 
           {/* Navigation + Contact : flex sur mobile, colonnes séparées sur desktop */}
-          <div className="flex flex-row gap-8 md:contents">
-            <div className="flex-1">
+          <div className="flex flex-col gap-10 sm:flex-row sm:gap-8 md:contents">
+            <div className="min-w-0 flex-1">
               <h4 className="mb-4 font-medium drop-shadow-sm">Navigation</h4>
               <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
                 {quickLinks.map((link) => (
@@ -167,13 +167,13 @@ export function Footer({ initialSettings }: FooterProps) {
             </div>
 
             {(settings.footer.showContactInfo ?? true) && (
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <h4 className="mb-4 font-medium drop-shadow-sm">Contact</h4>
                 <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
                   {settings.footer.addressDisplay === "summary" ? (
                     <li>{settings.footer.addressSummary || "Plusieurs lieux de massage"}</li>
                   ) : footerLocations.map((location, index) => (
-                    <li key={`${location.street}-${index}`} className="space-y-0.5">
+                    <li key={`${location.street}-${index}`} className="space-y-0.5 break-words">
                       {location.label ? <span className="block font-medium">{location.label}</span> : null}
                       <span className="block">{location.street}</span>
                       <span className="block">{[location.postalCode, location.city].filter(Boolean).join(" ")}</span>
@@ -185,7 +185,7 @@ export function Footer({ initialSettings }: FooterProps) {
                     </a>
                   </li>
                   <li>
-                    <a href={`mailto:${settings.contact.email}`} className="footer-link transition">
+                    <a href={`mailto:${settings.contact.email}`} className="footer-link break-all transition">
                       {settings.contact.email}
                     </a>
                   </li>
@@ -194,7 +194,7 @@ export function Footer({ initialSettings }: FooterProps) {
             )}
 
             {(settings.footer.showHours ?? false) && settings.hours.schedule.length > 0 && (
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <h4 className="mb-4 font-medium drop-shadow-sm">Horaires</h4>
                 <ul className="space-y-2" style={{ color: "var(--footer-text-muted, #A8A29E)" }}>
                   {settings.hours.schedule.map((slot, index) => (
@@ -218,7 +218,7 @@ export function Footer({ initialSettings }: FooterProps) {
             color: "var(--footer-text-muted, #A8A29E)",
           }}
         >
-          <p>{settings.footer.copyrightText || FALLBACK_SETTINGS.footer.copyrightText}</p>
+          <p className="max-w-full break-words text-center md:text-left">{settings.footer.copyrightText || FALLBACK_SETTINGS.footer.copyrightText}</p>
           <div className="flex flex-col items-center gap-2 md:flex-row md:gap-6">
             {(settings.footer.showMentionsLegales ?? true) && (
               <TransitionLink href="/mentions-legales" className="footer-link transition">

@@ -16,11 +16,11 @@ export function FormationsSection({ content }: FormationsSectionProps) {
   const items = (content.items ?? []).filter((item) => hasRichText(item.title) || item.year?.trim());
 
   return (
-    <section className="py-16">
+    <section className="px-5 py-12 sm:px-0 sm:py-16">
       <ScrollReveal>
-        <div className="space-y-8">
+        <div className="min-w-0 space-y-8">
           {hasRichText(title) ? (
-            <h2 className="text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
+            <h2 className="break-words text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
               <RichText value={title} />
             </h2>
           ) : null}
@@ -45,11 +45,11 @@ export function FormationsSection({ content }: FormationsSectionProps) {
           {items.length > 0 ? (
             <ul className="space-y-3">
               {items.map((item, index) => (
-                <li key={`${item.year}-${index}`} className="flex items-baseline gap-4">
+                <li key={`${item.year}-${index}`} className="flex min-w-0 items-baseline gap-4">
                   {item.year?.trim() ? (
                     <span className="text-sm font-semibold text-[var(--primary-start)]">{item.year}</span>
                   ) : null}
-                  <span className="text-lg text-[var(--text-secondary)]">
+                  <span className="min-w-0 break-words text-lg text-[var(--text-secondary)]">
                     <RichText value={item.title} />
                   </span>
                 </li>

@@ -66,7 +66,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
     <>
       <header className={headerClass}>
         <div className="mx-auto flex items-center justify-between gap-4">
-          <TransitionLink href="/" className="flex items-center gap-3 text-3xl leading-none font-serif text-brown-darker">
+          <TransitionLink href="/" className="flex items-center gap-3 text-3xl leading-none font-serif text-[var(--text-primary)]">
             {settings.general.logo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={getImageUrl(settings.general.logo) ?? settings.general.logo} alt={settings.general.siteName} className="h-9 w-auto rounded-sm" />
@@ -82,7 +82,7 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
                   href={item.path}
                   target={item.openInNewTab ? "_blank" : undefined}
                   rel={item.openInNewTab ? "noopener noreferrer" : undefined}
-                  className="flex items-center gap-1 rounded-full px-4 py-2 text-brown-darker transition-all duration-200 hover:bg-sand-light/10 hover:text-gold-default"
+                  className="flex items-center gap-1 rounded-full px-4 py-2 text-[var(--text-primary)] transition-all duration-200 hover:bg-[color-mix(in_srgb,var(--primary-start)_12%,transparent)] hover:text-[var(--primary-end)]"
                 >
                   {item.title}
                   {item.openInNewTab && (
@@ -97,9 +97,10 @@ export function Header({ initialNavItems, initialSettings }: HeaderProps) {
                   href={item.path}
                   className={`rounded-full px-4 py-2 transition-all duration-200 ${
                     isActive(item.path)
-                      ? "bg-gold-default font-medium text-brown-darker"
-                      : "text-brown-darker hover:bg-sand-light/10 hover:text-gold-default"
+                      ? "font-medium text-[var(--btn-text)]"
+                      : "text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,var(--primary-start)_12%,transparent)] hover:text-[var(--primary-end)]"
                   }`}
+                  style={isActive(item.path) ? { background: "var(--gradient-primary)" } : undefined}
                 >
                   {item.title}
                 </TransitionLink>

@@ -16,23 +16,23 @@ export function ParcoursSection({ content }: ParcoursSectionProps) {
   const paragraphs = (content.paragraphs ?? []).filter((paragraph) => hasRichText(paragraph));
 
   return (
-    <section className="py-16">
+    <section className="px-5 py-12 sm:px-0 sm:py-16">
       <ScrollReveal>
-        <div className="grid gap-10 md:grid-cols-[1fr_2fr]">
+        <div className="grid min-w-0 gap-10 md:grid-cols-[1fr_2fr]">
           {imageUrl ? (
             <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
               <Image src={imageUrl} alt="Parcours" fill className="object-cover" />
             </div>
           ) : null}
 
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             {hasRichText(title) ? (
-              <h2 className="text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
+              <h2 className="break-words text-4xl font-extralight" style={{ fontFamily: "var(--font-title)" }}>
                 <RichText value={title} />
               </h2>
             ) : null}
             {paragraphs.map((paragraph, index) => (
-              <p key={`${index}-${paragraph.slice(0, 24)}`} className="text-lg leading-loose text-[var(--text-secondary)]">
+              <p key={`${index}-${paragraph.slice(0, 24)}`} className="break-words text-lg leading-loose text-[var(--text-secondary)]">
                 <RichText value={paragraph} />
               </p>
             ))}
