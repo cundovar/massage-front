@@ -45,6 +45,8 @@ export interface BlockDefinition {
   defaultContent: Record<string, unknown>;
   fields: FieldDefinition[];
   responsiveLayout?: "text-image" | "card-grid";
+  /** Nombre maximal de colonnes proposé pour une grille de cartes (3 par défaut). */
+  responsiveMaxColumns?: 2 | 3;
 }
 
 /** Section de l'editeur dans laquelle un champ est range. */
@@ -552,6 +554,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Points forts et approche",
     description: "Présente les points forts, la méthode et les valeurs de l’activité",
     icon: ListChecks,
+    responsiveLayout: "text-image",
     category: "content",
     defaultContent: {
       title: "",
@@ -771,6 +774,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Tarifs et prestations",
     description: "Présente les soins, leurs descriptions, leurs durées et leurs prix",
     icon: HandCoins,
+    responsiveLayout: "card-grid",
     category: "services",
     defaultContent: {
       title: "Tarifs",
@@ -813,6 +817,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Massages en entreprise",
     description: "Présente les bénéfices des massages pour les équipes et les entreprises",
     icon: Building2,
+    responsiveLayout: "card-grid",
+    responsiveMaxColumns: 2,
     category: "services",
     defaultContent: {
       title: "",
@@ -861,6 +867,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Avantages pour les entreprises",
     description: "Compare les bénéfices pour les équipes et pour l’entreprise",
     icon: LayoutGrid,
+    responsiveLayout: "card-grid",
+    responsiveMaxColumns: 2,
     category: "services",
     defaultContent: {
       leftTitle: "Pour vos equipes",
@@ -896,6 +904,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
     label: "Mon parcours",
     description: "Présente votre parcours personnel et professionnel avec une photo",
     icon: Route,
+    responsiveLayout: "text-image",
     category: "about",
     defaultContent: {
       image: null,

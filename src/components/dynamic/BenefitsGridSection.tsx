@@ -1,6 +1,7 @@
 import { AnimationWrapper, type AnimationEffect } from "@/components/animations/AnimationWrapper";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
+import { getBlockLayout, getCardGrid } from "@/components/dynamic/responsiveLayout";
 
 export interface BenefitsGridContent {
   leftTitle?: string;
@@ -66,11 +67,12 @@ export function BenefitsGridSection({ content }: BenefitsGridSectionProps) {
     animationDelay = 0,
   } = content;
   const visibleTags = tags.filter((tag) => hasRichText(tag));
+  const grid = getCardGrid(getBlockLayout(content), { defaultTablet: 2, defaultDesktop: 2, max: 2 });
 
   return (
     <AnimationWrapper effect={animation} delay={animationDelay}>
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="grid gap-10 md:grid-cols-2">
+        <div className={`grid gap-10 ${grid.className}`}>
           <BenefitsColumn subtitle={leftSubtitle} title={leftTitle} items={leftItems} />
           <BenefitsColumn subtitle={rightSubtitle} title={rightTitle} items={rightItems} />
         </div>

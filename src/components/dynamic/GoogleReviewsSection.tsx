@@ -2,6 +2,7 @@ import { ExternalLink, Quote, Star } from "lucide-react";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
 import type { BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
+import { getCardGrid } from "@/components/dynamic/responsiveLayout";
 
 export interface GoogleReviewItem {
   name?: string;
@@ -47,19 +48,7 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
   const reviews = (Array.isArray(content.reviews) ? content.reviews : []).filter((review) => hasRichText(review.text));
   const eyebrow = content.eyebrow ?? "Avis Google";
   const title = content.title ?? "Elles partagent leur expérience";
-  const layout = content._appearance?.layout;
-  const reviewTabletColumns =
-    layout?.tabletColumns === "1"
-      ? "md:grid-cols-1"
-      : layout?.tabletColumns === "2"
-        ? "md:grid-cols-2"
-        : "md:grid-cols-3";
-  const reviewDesktopColumns =
-    layout?.desktopColumns === "1"
-      ? "lg:grid-cols-1"
-      : layout?.desktopColumns === "2"
-        ? "lg:grid-cols-2"
-        : "lg:grid-cols-3";
+  const reviewGrid = getCardGrid(content._appearance?.layout, { defaultTablet: 3, defaultDesktop: 3 });
 
   return (
     <section className="relative overflow-hidden px-6 py-20">
@@ -96,7 +85,7 @@ export function GoogleReviewsSection({ content }: { content: GoogleReviewsConten
         </div>
 
         {reviews.length > 0 ? (
-        <div className={`mt-10 grid gap-5 ${reviewTabletColumns} ${reviewDesktopColumns}`}>
+        <div className={`mt-10 grid gap-5 ${reviewGrid.className}`}>
           {reviews.map((review, index) => {
             const rating = normalizeRating(review.rating);
             return (

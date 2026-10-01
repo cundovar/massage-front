@@ -4,7 +4,7 @@ import { getImageUrl } from "@/lib/api";
 import type { PresentationContent } from "@/lib/api";
 import { hasRichText } from "@/lib/richText";
 import { RichText } from "@/components/dynamic/RichText";
-import type { BlockAppearance } from "@/components/dynamic/BlockAppearanceFrame";
+import { getBlockLayout, getSplitLayout } from "@/components/dynamic/responsiveLayout";
 
 interface PresentationProps {
   content: PresentationContent;
@@ -14,20 +14,17 @@ export function Presentation({ content }: PresentationProps) {
   const imageUrl = getImageUrl(content.image);
   const title = content.title ?? "Presentation";
   const paragraphs = (content.paragraphs ?? []).filter((paragraph) => hasRichText(paragraph));
-  const layout = (content as PresentationContent & { _appearance?: BlockAppearance })._appearance?.layout;
-  const imageFirstOnMobile = layout?.mobileOrder === "image-first";
-  const tabletLayout = layout?.tabletLayout ?? "default";
-  const desktopLayout = layout?.desktopLayout ?? "default";
-  const contentLayoutClasses =
-    tabletLayout === "stacked"
-      ? desktopLayout === "stacked"
-        ? ""
-        : "lg:grid-cols-[3fr_2fr] lg:items-center xl:grid-cols-[minmax(0,1fr)_28rem]"
-      : `md:grid-cols-[3fr_2fr] md:items-center${desktopLayout === "stacked" ? " lg:grid-cols-1" : " xl:grid-cols-[minmax(0,1fr)_28rem]"}`;
+  const split = getSplitLayout(getBlockLayout(content), {
+    tabletColumns: "md:grid-cols-[3fr_2fr] md:items-center",
+    desktopColumns: "lg:grid-cols-[3fr_2fr] lg:items-center xl:grid-cols-[minmax(0,1fr)_28rem]",
+    defaultTablet: "two-columns",
+    defaultDesktop: "two-columns",
+    mediaFirstByDefault: false,
+  });
 
   return (
-    <section id="bienvenue" className={`mt-16 grid gap-10 px-5 sm:px-0 lg:gap-16 ${contentLayoutClasses}`}>
-      <ScrollReveal className={`min-w-0 ${imageFirstOnMobile ? "order-2 md:order-none" : "order-1"}`}>
+    <section id="bienvenue" className={`mt-16 grid gap-10 px-5 sm:px-0 lg:gap-16 ${split.container}`}>
+      <ScrollReveal className={`min-w-0 ${split.text}`}>
         <div className="js-section-left space-y-6">
           <div className="h-px w-16 bg-[var(--primary-start)]" />
           {hasRichText(title) ? (
@@ -54,7 +51,7 @@ export function Presentation({ content }: PresentationProps) {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal className={`min-w-0 ${imageFirstOnMobile ? "order-1 md:order-none" : "order-2 md:order-none"}`}>
+      <ScrollReveal className={`min-w-0 ${split.media}`}>
         <div className="js-section-right glass-panel group relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl md:aspect-[3/4]">
           {imageUrl ? (
             <Image
