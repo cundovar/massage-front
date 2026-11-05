@@ -1,6 +1,7 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import { SectionRenderer } from "@/components/dynamic/SectionRenderer";
-import { getPage } from "@/lib/api";
+import { GrapesPage } from "@/components/grapes/GrapesPage";
+import { getPageWithOutageFallback } from "@/lib/api";
 import { getPublicPagePath } from "@/lib/page-paths";
 
 const DEDICATED_ROUTES = new Set(["mentions-legales", "admin", "register"]);
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: DynamicPageProps) {
     return {};
   }
 
-  const page = await getPage(resolvedSlug, { fallback: false });
+  const page = await getPageWithOutageFallback(resolvedSlug);
   if (!page) {
     return {};
   }
@@ -39,13 +40,21 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
     notFound();
   }
 
-  const page = await getPage(resolvedSlug, { fallback: false });
+  const page = await getPageWithOutageFallback(resolvedSlug);
   if (!page) {
     notFound();
   }
 
   if (page.slug !== resolvedSlug) {
     permanentRedirect(getPublicPagePath(page.slug));
+  }
+
+  if (page.html != null) {
+    return (
+      <main className="page-transition ">
+        <GrapesPage html={page.html} css={page.css ?? ""} />
+      </main>
+    );
   }
 
   const sections = Object.entries(page.sections)

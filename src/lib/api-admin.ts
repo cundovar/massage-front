@@ -122,6 +122,7 @@ export interface PageDetail {
   navOrder: number;
   navTitle: string | null;
   slugEditable?: boolean;
+  publishedInBuilder?: boolean;
   sections: PageSection[];
   updatedAt: string;
 }
@@ -390,6 +391,47 @@ export async function syncContactPage(token: string): Promise<void> {
   if (!response.ok) {
     console.warn("Contact sync failed");
   }
+}
+
+export interface SiteBuilderPage {
+  id: number;
+  slug: string;
+  title: string;
+  publishedInBuilder: boolean;
+}
+
+export interface SiteBuilderData {
+  project: Record<string, unknown> | null;
+  updatedAt: string | null;
+  pages: SiteBuilderPage[];
+}
+
+export interface SiteBuilderSavePayload {
+  project: Record<string, unknown>;
+  pages: Record<string, { html: string; css: string }>;
+  updatedAt: string | null;
+}
+
+export async function fetchSiteBuilder(token: string): Promise<SiteBuilderData> {
+  return fetchAdminApi<SiteBuilderData>("/api/admin/site-builder", token);
+}
+
+export async function saveSiteBuilder(
+  token: string,
+  payload: SiteBuilderSavePayload,
+): Promise<{ updatedAt: string; slugs: string[] }> {
+  const response = await fetch(`${API_BASE_URL}/api/admin/site-builder`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(error?.error ?? "Enregistrement impossible.");
+  }
+
+  return response.json();
 }
 
 export async function revalidateFrontend(path?: string): Promise<void> {

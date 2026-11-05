@@ -132,6 +132,8 @@ interface PageResponse {
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
+  html?: string | null;
+  css?: string | null;
   sections: Record<string, { type?: string; title: string | null; content: Record<string, unknown>; sortOrder?: number }>;
 }
 
@@ -217,6 +219,7 @@ const FALLBACK_PAGES: Record<string, PageResponse> = {
         content: DEFAULT_CONTACT.hero as Record<string, unknown>,
       },
       infos: {
+        type: "contact-info",
         title: null,
         content: DEFAULT_CONTACT.infos,
       },
@@ -348,6 +351,34 @@ export async function getPage(slug: string, options?: { fallback?: boolean }): P
   }
 }
 
+/**
+ * For routes where an unknown slug must stay a 404: the fallback content only
+ * applies when the API is unreachable or failing, not when it says the page does not exist.
+ */
+export async function getPageWithOutageFallback(slug: string): Promise<PageResponse | null> {
+  if (shouldSkipRemoteFetch()) {
+    return FALLBACK_PAGES[slug] ?? null;
+  }
+
+  try {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/api/pages/${slug}`, {
+      cache: "no-store",
+    });
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (response.ok) {
+      return (await response.json()) as PageResponse;
+    }
+  } catch {
+    // API injoignable : on bascule sur le contenu de secours.
+  }
+
+  return FALLBACK_PAGES[slug] ?? null;
+}
+
 export function getSectionContent<T>(page: PageResponse, key: string, fallback: T): T {
   const section = page.sections?.[key];
   if (!section || !section.content) {
@@ -395,6 +426,8 @@ export function mapPageDetail(page: PageDetail): PageResponse {
     title: page.title,
     metaTitle: page.metaTitle,
     metaDescription: page.metaDescription,
+    html: page.html,
+    css: page.css,
     sections,
   };
 }

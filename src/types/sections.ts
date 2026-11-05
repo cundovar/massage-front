@@ -134,5 +134,7 @@ export interface PageDetail {
   title: string;
   metaTitle: string | null;
   metaDescription: string | null;
+  html?: string | null;
+  css?: string | null;
   sections: Record<string, PageSection>;
 }
