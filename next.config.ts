@@ -2,7 +2,13 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+
 const nextConfig: NextConfig = {
+  // Les images du canvas GrapesJS sont en chemin relatif, servies par l'API.
+  async rewrites() {
+    return [{ source: "/images/:path*", destination: `${apiUrl}/images/:path*` }];
+  },
   experimental: {
     viewTransition: true,
   },

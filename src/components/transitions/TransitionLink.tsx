@@ -7,6 +7,7 @@ import { useTransitionSafe } from "@/contexts/TransitionContext";
 
 interface TransitionLinkProps {
   href: string;
+  id?: string;
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
@@ -15,7 +16,7 @@ interface TransitionLinkProps {
   rel?: string;
 }
 
-export function TransitionLink({ href, children, className, onClick, style, target, rel }: TransitionLinkProps) {
+export function TransitionLink({ href, id, children, className, onClick, style, target, rel }: TransitionLinkProps) {
   const pathname = usePathname();
   const ctx = useTransitionSafe();
 
@@ -47,6 +48,7 @@ export function TransitionLink({ href, children, className, onClick, style, targ
   return (
     <Link
       href={href}
+      id={id}
       className={className}
       onClick={handleClick}
       target={target}

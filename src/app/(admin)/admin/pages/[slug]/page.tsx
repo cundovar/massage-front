@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { PageBuilder } from "@/components/admin/page-builder/PageBuilder";
-import { Alert, Card, Spinner } from "@/components/admin/ui";
+import { Alert, Button, Card, Spinner } from "@/components/admin/ui";
 import { clearTokenFromStorage, getTokenFromStorage } from "@/lib/auth";
 import { getPublicPagePath } from "@/lib/page-paths";
 import {
@@ -18,6 +19,11 @@ import {
   type PageSection,
 } from "@/lib/api-admin";
 
+const GrapesEditor = dynamic(
+  () => import("@/components/admin/page-builder/GrapesEditor").then((module) => module.GrapesEditor),
+  { ssr: false },
+);
+
 export default function PageEditorPage() {
   const params = useParams<{ slug: string }>();
   const router = useRouter();
@@ -25,6 +31,7 @@ export default function PageEditorPage() {
   const [token] = useState<string | null>(() => (typeof window === "undefined" ? null : getTokenFromStorage()));
   const [page, setPage] = useState<PageDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [useGrapes, setUseGrapes] = useState(false);
   const skipNextFetchForSlug = useRef<string | null>(null);
 
   useEffect(() => {
@@ -156,8 +163,29 @@ export default function PageEditorPage() {
     );
   }
 
+  if (page.publishedInBuilder || useGrapes) {
+    return (
+      <GrapesEditor
+        token={token}
+        pageId={page.id}
+        pageTitle={page.title}
+        pageSlug={page.slug}
+        slugEditable={page.slugEditable !== false}
+        initiallyPublished={page.publishedInBuilder === true}
+        onBack={page.publishedInBuilder ? undefined : () => setUseGrapes(false)}
+        onUpdatePageDetails={handleUpdatePageDetails}
+      />
+    );
+  }
+
   return (
-    <PageBuilder
+    <>
+      <div className="mb-4 flex justify-end">
+        <Button variant="secondary" size="sm" onClick={() => setUseGrapes(true)}>
+          Recréer dans GrapesJS
+        </Button>
+      </div>
+      <PageBuilder
       token={token}
       pageSlug={page.slug}
       pageTitle={page.title}
@@ -167,6 +195,7 @@ export default function PageEditorPage() {
       onSave={handleSave}
       onToggleNav={handleToggleNav}
       onUpdatePageDetails={handleUpdatePageDetails}
-    />
+      />
+    </>
   );
 }
