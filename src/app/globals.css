@@ -1,6 +1,18 @@
 @import "tailwindcss";
 
 :root {
+  /* Blocs grapesjs-advance-components : ils suivent le thème du site */
+  --aac-accent: var(--primary-start);
+  --aac-accent-hover: var(--primary-end);
+  --aac-accent-fg: var(--text-on-primary, #ffffff);
+  --aac-fg: var(--text-primary);
+  --aac-muted: var(--text-secondary);
+  --aac-border: var(--card-border);
+  --aac-bg: var(--background);
+  --aac-surface: var(--card-bg);
+  --aac-track: var(--card-border);
+  --aac-radius: var(--card-radius);
+
   /* Espacement des lettres : texte, titres et petits sur-titres. Les bannières gardent le leur. */
   --tracking-text: -0.01em;
   --tracking-title: -0.02em;
