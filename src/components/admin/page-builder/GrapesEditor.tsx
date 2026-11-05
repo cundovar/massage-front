@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import grapesjs, { type Component, type Editor } from "grapesjs";
+import advanceComponents from "grapesjs-advance-components";
 import basicBlocks from "grapesjs-blocks-basic";
+import postcssParser from "grapesjs-parser-postcss";
+import richTextExtensions from "grapesjs-rte-extensions";
 import fr from "grapesjs/locale/fr.mjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { Alert, Button } from "@/components/admin/ui";
@@ -17,7 +20,7 @@ import {
 import { parseHeroSlides } from "@/lib/grapesContent";
 import { getPublicPagePath } from "@/lib/page-paths";
 import type { HeroSlide } from "@/types";
-import { BASIC_BLOCKS_OPTIONS, ensureBlockStyles, refreshSharedBlocks, registerGrapesBlocks } from "./grapesBlocks";
+import { BASIC_BLOCKS_OPTIONS, RICH_TEXT_OPTIONS, ensureBlockStyles, refreshSharedBlocks, registerGrapesBlocks } from "./grapesBlocks";
 import { PageDetailsModal } from "./PageDetailsModal";
 import { SlidesModal } from "./SlidesModal";
 
@@ -110,7 +113,12 @@ export function GrapesEditor({
           width: "auto",
           fromElement: false,
           storageManager: false,
-          plugins: [(instance) => basicBlocks(instance, BASIC_BLOCKS_OPTIONS)],
+          plugins: [
+            postcssParser,
+            (instance) => basicBlocks(instance, BASIC_BLOCKS_OPTIONS),
+            (instance) => advanceComponents(instance, { pages: false }),
+            (instance) => richTextExtensions(instance, RICH_TEXT_OPTIONS),
+          ],
           canvasCss: "body { background-color: var(--background) !important; }",
           i18n: { locale: "fr", detectLocale: false, messages: { fr } },
           colorPicker: { showPalette: true, palette: [themePalette()] },

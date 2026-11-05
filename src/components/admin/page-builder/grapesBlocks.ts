@@ -6,6 +6,18 @@ const DYNAMIC_CATEGORY = "Automatique";
 const SHARED_CATEGORY = "Composants partagés";
 const PLACEHOLDER_IMAGE = "/block-placeholder.svg";
 
+export const RICH_TEXT_OPTIONS = {
+  base: { bold: true, italic: true, underline: true, strikethrough: true, link: true },
+  fonts: { fontColor: true, hilite: true },
+  format: { heading1: true, heading2: true, heading3: true, paragraph: true, clearFormatting: true },
+  list: true,
+  align: true,
+  indentOutdent: false,
+  actions: false,
+  extra: false,
+  undoredo: false,
+};
+
 const TABLET_QUERY = "(max-width: 1023px)";
 const MOBILE_QUERY = "(max-width: 767px)";
 
@@ -193,9 +205,83 @@ export function ensureBlockStyles(editor: Editor) {
   }
 }
 
+const ADVANCE_CATEGORIES: Record<string, string> = {
+  Commerce: "Commerce",
+  Content: "Articles",
+  Custom: "Éléments",
+  Form: "Formulaires",
+  Media: "Médias",
+  Sections: "Sections",
+  "Social proof": "Témoignages et chiffres",
+  Text: "Textes",
+};
+
+const ADVANCE_LABELS: Record<string, string> = {
+  Checkout: "Paiement",
+  Pricing: "Tarif",
+  "Comparison table": "Tableau comparatif",
+  "Blog list": "Liste d'articles",
+  Link: "Lien",
+  Button: "Bouton",
+  Divider: "Séparateur",
+  "Progress Bar": "Barre de progression",
+  Slider: "Carrousel",
+  Header: "En-tête",
+  Footer: "Pied de page",
+  Map: "Carte (iframe)",
+  "Contact form": "Formulaire de contact",
+  Newsletter: "Newsletter",
+  Input: "Champ",
+  Checkbox: "Case à cocher",
+  Radio: "Bouton radio",
+  Select: "Liste déroulante",
+  Textarea: "Zone de texte",
+  Image: "Image",
+  Video: "Vidéo",
+  Hero: "Hero",
+  Features: "Atouts",
+  "Call to action": "Appel à l'action",
+  Team: "Équipe",
+  Steps: "Étapes",
+  Banner: "Bannière",
+  Tabs: "Onglets",
+  Testimonials: "Témoignages",
+  "Logo wall": "Mur de logos",
+  Stats: "Chiffres clés",
+  Faq: "FAQ",
+  "Heading H1": "Titre H1",
+  "Heading H2": "Titre H2",
+  "Heading H3": "Titre H3",
+  "Heading H4": "Titre H4",
+  "Heading H5": "Titre H5",
+  "Heading H6": "Titre H6",
+  Paragraph: "Paragraphe",
+  Quote: "Citation",
+  List: "Liste",
+};
+
+/** The plugin only ships English block names, so they are translated once it has registered them. */
+function translateAdvanceBlocks(editor: Editor) {
+  const labelPattern = /(<div class="gjs-block-label">)([^<]+)(<\/div>)/;
+
+  editor.Blocks.getAll()
+    .filter((block: Block) => block.getId().endsWith("-block"))
+    .forEach((block: Block) => {
+      const { label, category, ...attributes } = block.attributes;
+      const categoryName = block.getCategoryLabel();
+      editor.Blocks.remove(block.getId());
+      editor.Blocks.add(block.getId(), {
+        ...attributes,
+        label: String(label).replace(labelPattern, (_match, open: string, name: string, close: string) => `${open}${ADVANCE_LABELS[name] ?? name}${close}`),
+        category: ADVANCE_CATEGORIES[categoryName] ?? categoryName ?? category,
+      });
+    });
+}
+
 /** Replaces the default GrapesJS content by the short list of blocks offered to the editor. */
 export function registerGrapesBlocks(editor: Editor) {
   registerDynamicTypes(editor);
+  translateAdvanceBlocks(editor);
 
   // Remplace les textes anglais et les couleurs fixes des blocs du plugin.
   editor.Blocks.get("text")?.set("content", { type: "text", content: "Votre texte ici.", classes: ["hm-text"] });
