@@ -55,6 +55,7 @@ interface GrapesToolbarProps {
   isShared: boolean;
   onLeave: (event: React.MouseEvent) => void;
   onBackToOldEditor?: () => void;
+  onReimport?: () => void;
   onDevice: (device: GrapesDevice) => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -83,6 +84,7 @@ export function GrapesToolbar({
   isShared,
   onLeave,
   onBackToOldEditor,
+  onReimport,
   onDevice,
   onUndo,
   onRedo,
@@ -113,6 +115,11 @@ export function GrapesToolbar({
         {onBackToOldEditor && (
           <Button variant="dark" size="sm" onClick={onBackToOldEditor}>
             Ancien éditeur
+          </Button>
+        )}
+        {onReimport && (
+          <Button variant="dark" size="sm" onClick={onReimport}>
+            Reprendre l&apos;ancien contenu
           </Button>
         )}
       </div>

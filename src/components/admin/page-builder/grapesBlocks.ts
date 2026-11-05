@@ -1,4 +1,5 @@
 import type { Block, Editor } from "grapesjs";
+import { SECTION_MEDIA_RULES, SECTION_RULES } from "./sectionsToGrapes";
 
 const STRUCTURE_CATEGORY = "Structure";
 const CONTENT_CATEGORY = "Contenu";
@@ -189,13 +190,13 @@ function registerDynamicTypes(editor: Editor) {
  * They go through setRule because the GrapesJS CSS parser drops shorthands containing var().
  */
 export function ensureBlockStyles(editor: Editor) {
-  for (const [selector, style] of Object.entries(BLOCK_RULES)) {
+  for (const [selector, style] of Object.entries({ ...BLOCK_RULES, ...SECTION_RULES })) {
     if (!editor.Css.getRule(selector)) {
       editor.Css.setRule(selector, style);
     }
   }
 
-  for (const [query, rules] of Object.entries(BLOCK_MEDIA_RULES)) {
+  for (const [query, rules] of [...Object.entries(BLOCK_MEDIA_RULES), ...Object.entries(SECTION_MEDIA_RULES)]) {
     const options = { atRuleType: "media", atRuleParams: query };
     for (const [selector, style] of Object.entries(rules)) {
       if (!editor.Css.getRule(selector, options)) {

@@ -3,12 +3,7 @@
 import { RichText } from "@/components/dynamic/RichText";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { hasRichText } from "@/lib/richText";
-
-export interface ServicePrice {
-  label: string;
-  price?: number;
-  unit?: string;
-}
+import { formatPrice, type ServicePrice } from "@/lib/servicePrice";
 
 export interface ServiceCardProps {
   category?: string;
@@ -19,10 +14,6 @@ export interface ServiceCardProps {
   bookingLinkNewTab?: boolean;
   showBookingButton?: boolean;
   className?: string;
-}
-
-function formatPrice(price: number): string {
-  return `${new Intl.NumberFormat("fr-FR").format(price)}€`;
 }
 
 export function ServiceCard({

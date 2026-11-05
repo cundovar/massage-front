@@ -16,6 +16,7 @@ import {
   revalidateFrontend,
   saveSiteBuilder,
   uploadMedia,
+  type PageSection,
   type SiteBuilderPage,
 } from "@/lib/api-admin";
 import { parseHeroSlides } from "@/lib/grapesContent";
@@ -25,6 +26,7 @@ import { BASIC_BLOCKS_OPTIONS, RICH_TEXT_OPTIONS, ensureBlockStyles, refreshShar
 import { GRAPES_DEVICES, GRAPES_STYLE_SECTORS, type GrapesDevice } from "./grapesConfig";
 import { GrapesLeftPanel, GrapesRightPanel, type LeftTab, type RightTab } from "./GrapesPanels";
 import { GrapesToolbar } from "./GrapesToolbar";
+import { sectionsToGrapes } from "./sectionsToGrapes";
 import { PageDetailsModal } from "./PageDetailsModal";
 import { SlidesModal } from "./SlidesModal";
 
@@ -35,6 +37,7 @@ interface GrapesEditorProps {
   pageSlug: string;
   slugEditable: boolean;
   initiallyPublished: boolean;
+  sections: PageSection[];
   onBack?: () => void;
   onUpdatePageDetails: (details: { title: string; slug?: string }) => Promise<void>;
 }
@@ -42,6 +45,7 @@ interface GrapesEditorProps {
 const OUTLINE_COMMAND = "core:component-outline";
 const PREVIEW_COMMAND = "core:preview";
 const LEAVE_MESSAGE = "Des modifications ne sont pas enregistrées. Quitter quand même ?";
+const REIMPORT_MESSAGE = "Remplacer le contenu de cette page par celui de l'ancien éditeur ?";
 const WIDE_SCREEN = 1024;
 
 function normalizeSearch(text: string): string {
@@ -62,6 +66,19 @@ function copySiteStyles(canvas: Window) {
   document.head.querySelectorAll("style, link[rel='stylesheet']").forEach((node) => {
     frame.head.appendChild(node.cloneNode(true));
   });
+}
+
+/** Scales the page down when its device width does not fit, so that the editor shows its real layout. */
+function fitCanvas(editor: Editor, container: HTMLElement) {
+  const width = Number.parseInt(editor.Devices.getSelected()?.get("width") ?? "", 10);
+  const zoom = Number.isFinite(width) ? Math.min(100, (container.clientWidth / width) * 100) : 100;
+  editor.Canvas.setZoom(zoom);
+
+  // GrapesJS réduit depuis le centre : la page réduite doit partir du coin et remplir toute la hauteur.
+  const frames = editor.Canvas.getFramesEl();
+  frames.style.transformOrigin = "0 0";
+  frames.style.width = `${(100 / zoom) * 100}%`;
+  frames.style.height = `${(100 / zoom) * 100}%`;
 }
 
 /** Keeps one GrapesJS page per site page, identified by its stable database id. */
@@ -86,6 +103,7 @@ export function GrapesEditor({
   pageSlug,
   slugEditable,
   initiallyPublished,
+  sections,
   onBack,
   onUpdatePageDetails,
 }: GrapesEditorProps) {
@@ -98,6 +116,7 @@ export function GrapesEditor({
   const editorRef = useRef<Editor | null>(null);
   const updatedAtRef = useRef<string | null>(null);
   const publishedRef = useRef<Map<string, string>>(new Map());
+  const sectionsRef = useRef(sections);
 
   const [isReady, setIsReady] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -118,6 +137,12 @@ export function GrapesEditor({
   const [history, setHistory] = useState({ canUndo: false, canRedo: false, isDirty: false });
   const [blockQuery, setBlockQuery] = useState("");
   const [noBlockMatch, setNoBlockMatch] = useState(false);
+
+  const importSections = useCallback((editor: Editor) => {
+    const { html, unsupported } = sectionsToGrapes(sectionsRef.current);
+    editor.getWrapper()?.components(html);
+    setError(unsupported.length > 0 ? `Blocs à refaire à la main : ${[...new Set(unsupported)].join(", ")}.` : null);
+  }, []);
 
   const syncHistory = useCallback(() => {
     const editor = editorRef.current;
@@ -153,6 +178,7 @@ export function GrapesEditor({
           height: "100%",
           width: "auto",
           fromElement: false,
+          projectData: data.project ?? undefined,
           // Pas "false" : GrapesJS garderait son enregistrement auto, qui remet le compteur de modifications à zéro.
           storageManager: { autosave: false, autoload: false },
           panels: { defaults: [] },
@@ -194,24 +220,38 @@ export function GrapesEditor({
         editor.on("component:deselected", () => setSelected(null));
         editor.Commands.add("hm:edit-slides", (instance: Editor) => setSlidesTarget(instance.getSelected() ?? null));
 
-        if (data.project) {
-          editor.loadProjectData(data.project);
-        }
-        syncProjectPages(editor, data.pages, pageId);
-        ensureBlockStyles(editor);
-        refreshSharedBlocks(editor);
+        // GrapesJS resélectionne sa première page au chargement : la page voulue se choisit ensuite.
+        editor.onReady(() => {
+          if (cancelled || !editor || !containerRef.current) {
+            return;
+          }
 
-        selectorsRef.current?.replaceChildren(editor.Selectors.render([]));
-        editor.runCommand(OUTLINE_COMMAND);
-        editor.UndoManager.clear();
-        editor.clearDirtyCount();
+          syncProjectPages(editor, data.pages, pageId);
+          ensureBlockStyles(editor);
+          // Page encore vide dans GrapesJS : elle reprend ce qu'affiche l'ancien éditeur.
+          if (!editor.getWrapper()?.components().length) {
+            importSections(editor);
+          }
+          refreshSharedBlocks(editor);
 
-        editorRef.current = editor;
-        editor.on("update run:core:undo run:core:redo", syncHistory);
-        resizeObserver = new ResizeObserver(() => editorRef.current?.refresh());
-        resizeObserver.observe(containerRef.current);
-        syncHistory();
-        setIsReady(true);
+          selectorsRef.current?.replaceChildren(editor.Selectors.render([]));
+          editor.runCommand(OUTLINE_COMMAND);
+          editor.UndoManager.clear();
+          editor.clearDirtyCount();
+
+          editorRef.current = editor;
+          editor.on("update run:core:undo run:core:redo", syncHistory);
+          const container = containerRef.current;
+          resizeObserver = new ResizeObserver(() => {
+            if (editorRef.current) {
+              fitCanvas(editorRef.current, container);
+              editorRef.current.refresh();
+            }
+          });
+          resizeObserver.observe(container);
+          syncHistory();
+          setIsReady(true);
+        });
       } catch {
         if (!cancelled) {
           setError("Impossible de charger l'éditeur.");
@@ -227,7 +267,7 @@ export function GrapesEditor({
       editor?.destroy();
       editorRef.current = null;
     };
-  }, [pageId, syncHistory, token]);
+  }, [importSections, pageId, syncHistory, token]);
 
   useEffect(() => {
     function warnIfDirty(event: BeforeUnloadEvent) {
@@ -293,8 +333,22 @@ export function GrapesEditor({
     }
   }
 
+  function reimportSections() {
+    const editor = editorRef.current;
+    if (editor && window.confirm(REIMPORT_MESSAGE)) {
+      importSections(editor);
+      setSelected(null);
+    }
+  }
+
   function selectDevice(next: GrapesDevice) {
-    editorRef.current?.setDevice(next);
+    const editor = editorRef.current;
+    if (editor) {
+      editor.setDevice(next);
+      if (containerRef.current) {
+        fitCanvas(editor, containerRef.current);
+      }
+    }
     setDevice(next);
   }
 
@@ -388,6 +442,7 @@ export function GrapesEditor({
         isShared={isShared}
         onLeave={confirmLeave}
         onBackToOldEditor={onBack}
+        onReimport={isPublished ? undefined : reimportSections}
         onDevice={selectDevice}
         onUndo={() => editorRef.current?.runCommand("core:undo")}
         onRedo={() => editorRef.current?.runCommand("core:redo")}
