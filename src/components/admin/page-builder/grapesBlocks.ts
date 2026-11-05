@@ -1,5 +1,6 @@
 import type { Block, Editor } from "grapesjs";
 
+const STRUCTURE_CATEGORY = "Structure";
 const CONTENT_CATEGORY = "Contenu";
 const DYNAMIC_CATEGORY = "Automatique";
 const SHARED_CATEGORY = "Composants partagés";
@@ -10,8 +11,27 @@ const MOBILE_QUERY = "(max-width: 767px)";
 
 type RuleStyles = Record<string, string>;
 
+// Options du plugin officiel : ses styles de base sont remplacés par BLOCK_RULES (thème et mobile).
+export const BASIC_BLOCKS_OPTIONS = {
+  blocks: ["column1", "column2", "column3", "column3-7", "text", "link", "image"],
+  category: STRUCTURE_CATEGORY,
+  flexGrid: true,
+  addBasicStyle: false,
+  stylePrefix: "hm-",
+  labelColumn1: "Section vide",
+  labelColumn2: "2 colonnes",
+  labelColumn3: "3 colonnes",
+  labelColumn37: "2 colonnes 30/70",
+  labelText: "Paragraphe",
+  labelLink: "Lien",
+  labelImage: "Image",
+};
+
 // Couleurs et polices passent par les variables du thème : les blocs suivent Réglages et le mode sombre.
 const BLOCK_RULES: Record<string, RuleStyles> = {
+  ".hm-row": { display: "flex", "justify-content": "flex-start", "align-items": "stretch", "flex-wrap": "nowrap", gap: "1.5rem", "max-width": "72rem", margin: "0 auto", padding: "1.5rem" },
+  ".hm-cell": { "min-height": "75px", "flex-grow": "1", "flex-basis": "100%", "min-width": "0" },
+  ".hm-link": { color: "var(--text-primary)", "text-decoration": "underline" },
   ".hm-section": { padding: "4rem 1.5rem", color: "var(--text-primary)" },
   ".hm-inner": { "max-width": "72rem", margin: "0 auto" },
   ".hm-title": { "font-family": "var(--font-heading)", "font-size": "2.25rem", "line-height": "1.2", margin: "0 0 1rem", color: "var(--text-primary)" },
@@ -40,6 +60,8 @@ const BLOCK_MEDIA_RULES: Record<string, Record<string, RuleStyles>> = {
     ".hm-cards": { "grid-template-columns": "repeat(2, minmax(0, 1fr))" },
   },
   [MOBILE_QUERY]: {
+    ".hm-row": { "flex-wrap": "wrap", padding: "1rem" },
+    ".hm-cell": { "flex-basis": "100%" },
     ".hm-section": { padding: "3rem 1rem" },
     ".hm-title": { "font-size": "1.75rem" },
     ".hm-hero": { "min-height": "50vh", padding: "4rem 1rem" },
@@ -174,6 +196,15 @@ export function ensureBlockStyles(editor: Editor) {
 /** Replaces the default GrapesJS content by the short list of blocks offered to the editor. */
 export function registerGrapesBlocks(editor: Editor) {
   registerDynamicTypes(editor);
+
+  // Remplace les textes anglais et les couleurs fixes des blocs du plugin.
+  editor.Blocks.get("text")?.set("content", { type: "text", content: "Votre texte ici.", classes: ["hm-text"] });
+  editor.Blocks.get("link")?.set("content", { type: "link", content: "Votre lien", classes: ["hm-link"] });
+  editor.Blocks.add("hm-heading", {
+    label: "Titre",
+    category: STRUCTURE_CATEGORY,
+    content: `<h2 class="hm-title">Votre titre</h2>`,
+  });
 
   for (const block of BLOCKS) {
     editor.Blocks.add(block.id, { label: block.label, category: CONTENT_CATEGORY, content: block.content });
