@@ -1,6 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 
-type IconButtonVariant = "default" | "danger" | "ghost";
+type IconButtonVariant = "default" | "danger" | "ghost" | "dark" | "darkActive";
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ReactNode;
@@ -13,6 +13,8 @@ const variantStyles: Record<IconButtonVariant, string> = {
   default: "text-stone-600 hover:bg-stone-100 hover:text-stone-900",
   danger: "text-rose-600 hover:bg-rose-50 hover:text-rose-700",
   ghost: "text-stone-400 hover:bg-stone-100 hover:text-stone-600",
+  dark: "text-stone-300 hover:bg-stone-700 hover:text-white focus:ring-offset-stone-900",
+  darkActive: "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 focus:ring-offset-stone-900",
 };
 
 const sizeStyles = {

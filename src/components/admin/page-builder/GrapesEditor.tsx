@@ -1,14 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import grapesjs, { type Component, type Editor } from "grapesjs";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import grapesjs, { type Block, type Component, type Editor } from "grapesjs";
 import advanceComponents from "grapesjs-advance-components";
 import basicBlocks from "grapesjs-blocks-basic";
 import postcssParser from "grapesjs-parser-postcss";
 import richTextExtensions from "grapesjs-rte-extensions";
 import fr from "grapesjs/locale/fr.mjs";
 import "grapesjs/dist/css/grapes.min.css";
-import { Alert, Button } from "@/components/admin/ui";
+import "./grapes-editor.css";
+import { Alert, Spinner } from "@/components/admin/ui";
 import {
   fetchMedia,
   fetchSiteBuilder,
@@ -21,6 +22,9 @@ import { parseHeroSlides } from "@/lib/grapesContent";
 import { getPublicPagePath } from "@/lib/page-paths";
 import type { HeroSlide } from "@/types";
 import { BASIC_BLOCKS_OPTIONS, RICH_TEXT_OPTIONS, ensureBlockStyles, refreshSharedBlocks, registerGrapesBlocks } from "./grapesBlocks";
+import { GRAPES_DEVICES, GRAPES_STYLE_SECTORS, type GrapesDevice } from "./grapesConfig";
+import { GrapesLeftPanel, GrapesRightPanel, type LeftTab, type RightTab } from "./GrapesPanels";
+import { GrapesToolbar } from "./GrapesToolbar";
 import { PageDetailsModal } from "./PageDetailsModal";
 import { SlidesModal } from "./SlidesModal";
 
@@ -33,6 +37,15 @@ interface GrapesEditorProps {
   initiallyPublished: boolean;
   onBack?: () => void;
   onUpdatePageDetails: (details: { title: string; slug?: string }) => Promise<void>;
+}
+
+const OUTLINE_COMMAND = "core:component-outline";
+const PREVIEW_COMMAND = "core:preview";
+const LEAVE_MESSAGE = "Des modifications ne sont pas enregistrées. Quitter quand même ?";
+const WIDE_SCREEN = 1024;
+
+function normalizeSearch(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 const THEME_COLORS = ["--primary-start", "--primary-end", "--text-primary", "--text-secondary", "--background", "--background-alt", "--card-bg", "--card-border"];
@@ -77,6 +90,11 @@ export function GrapesEditor({
   onUpdatePageDetails,
 }: GrapesEditorProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const blocksRef = useRef<HTMLDivElement | null>(null);
+  const layersRef = useRef<HTMLDivElement | null>(null);
+  const selectorsRef = useRef<HTMLDivElement | null>(null);
+  const stylesRef = useRef<HTMLDivElement | null>(null);
+  const traitsRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<Editor | null>(null);
   const updatedAtRef = useRef<string | null>(null);
   const publishedRef = useRef<Map<string, string>>(new Map());
@@ -90,10 +108,32 @@ export function GrapesEditor({
   const [slidesTarget, setSlidesTarget] = useState<Component | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [, refreshSharedState] = useState(0);
+  const [pages, setPages] = useState<SiteBuilderPage[]>([]);
+  const [leftTab, setLeftTab] = useState<LeftTab | null>(() => (window.innerWidth >= WIDE_SCREEN ? "blocks" : null));
+  const [rightTab, setRightTab] = useState<RightTab>("styles");
+  const [rightPanelOpen, setRightPanelOpen] = useState(() => window.innerWidth >= WIDE_SCREEN);
+  const [device, setDevice] = useState<GrapesDevice>("desktop");
+  const [previewing, setPreviewing] = useState(false);
+  const [outlines, setOutlines] = useState(true);
+  const [history, setHistory] = useState({ canUndo: false, canRedo: false, isDirty: false });
+  const [blockQuery, setBlockQuery] = useState("");
+  const [noBlockMatch, setNoBlockMatch] = useState(false);
+
+  const syncHistory = useCallback(() => {
+    const editor = editorRef.current;
+    if (editor) {
+      setHistory({
+        canUndo: editor.UndoManager.hasUndo(),
+        canRedo: editor.UndoManager.hasRedo(),
+        isDirty: editor.getDirtyCount() > 0,
+      });
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     let editor: Editor | null = null;
+    let resizeObserver: ResizeObserver | null = null;
 
     async function init() {
       try {
@@ -102,6 +142,7 @@ export function GrapesEditor({
           return;
         }
 
+        setPages(data.pages);
         updatedAtRef.current = data.updatedAt;
         publishedRef.current = new Map(
           data.pages.filter((page) => page.publishedInBuilder).map((page) => [String(page.id), page.slug]),
@@ -112,7 +153,13 @@ export function GrapesEditor({
           height: "100%",
           width: "auto",
           fromElement: false,
-          storageManager: false,
+          // Pas "false" : GrapesJS garderait son enregistrement auto, qui remet le compteur de modifications à zéro.
+          storageManager: { autosave: false, autoload: false },
+          panels: { defaults: [] },
+          blockManager: { appendTo: blocksRef.current ?? undefined },
+          layerManager: { appendTo: layersRef.current ?? undefined },
+          styleManager: { appendTo: stylesRef.current ?? undefined, sectors: GRAPES_STYLE_SECTORS },
+          traitManager: { appendTo: traitsRef.current ?? undefined },
           plugins: [
             postcssParser,
             (instance) => basicBlocks(instance, BASIC_BLOCKS_OPTIONS),
@@ -121,14 +168,8 @@ export function GrapesEditor({
           ],
           canvasCss: "body { background-color: var(--background) !important; }",
           i18n: { locale: "fr", detectLocale: false, messages: { fr } },
-          colorPicker: { showPalette: true, palette: [themePalette()] },
-          deviceManager: {
-            devices: [
-              { id: "desktop", name: "Ordinateur", width: "" },
-              { id: "tablet", name: "Tablette", width: "768px", widthMedia: "1023px" },
-              { id: "mobile", name: "Téléphone", width: "375px", widthMedia: "767px" },
-            ],
-          },
+          colorPicker: { appendTo: "body", showPalette: true, palette: [themePalette()] },
+          deviceManager: { devices: GRAPES_DEVICES },
           assetManager: {
             assets: media.map((item) => ({ src: item.path, name: item.originalName })),
             uploadFile: async (event: DragEvent | Event) => {
@@ -143,7 +184,13 @@ export function GrapesEditor({
 
         registerGrapesBlocks(editor);
         editor.on("canvas:frame:load:body", ({ window: canvas }: { window: Window }) => copySiteStyles(canvas));
-        editor.on("component:selected", (component: Component) => setSelected(component));
+        editor.on("component:selected", (component: Component) => {
+          setSelected(component);
+          // Le diaporama se règle par un bouton : il doit être visible dès la sélection.
+          if (component.getTraits().some((trait) => trait.get("type") === "button")) {
+            setRightTab("traits");
+          }
+        });
         editor.on("component:deselected", () => setSelected(null));
         editor.Commands.add("hm:edit-slides", (instance: Editor) => setSlidesTarget(instance.getSelected() ?? null));
 
@@ -154,7 +201,16 @@ export function GrapesEditor({
         ensureBlockStyles(editor);
         refreshSharedBlocks(editor);
 
+        selectorsRef.current?.replaceChildren(editor.Selectors.render([]));
+        editor.runCommand(OUTLINE_COMMAND);
+        editor.UndoManager.clear();
+        editor.clearDirtyCount();
+
         editorRef.current = editor;
+        editor.on("update run:core:undo run:core:redo", syncHistory);
+        resizeObserver = new ResizeObserver(() => editorRef.current?.refresh());
+        resizeObserver.observe(containerRef.current);
+        syncHistory();
         setIsReady(true);
       } catch {
         if (!cancelled) {
@@ -167,10 +223,11 @@ export function GrapesEditor({
 
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
       editor?.destroy();
       editorRef.current = null;
     };
-  }, [pageId, token]);
+  }, [pageId, syncHistory, token]);
 
   useEffect(() => {
     function warnIfDirty(event: BeforeUnloadEvent) {
@@ -217,6 +274,7 @@ export function GrapesEditor({
         updatedAtRef.current = result.updatedAt;
         publishedRef.current = published;
         editor.clearDirtyCount();
+        syncHistory();
         setIsPublished(published.has(String(pageId)));
         await Promise.all(result.slugs.map((slug) => revalidateFrontend(getPublicPagePath(slug))));
         setSuccess(publishCurrentPage ? "Page publiée sur le site." : "Modifications enregistrées.");
@@ -226,8 +284,59 @@ export function GrapesEditor({
         setIsSaving(false);
       }
     },
-    [pageId, pageSlug, token],
+    [pageId, pageSlug, syncHistory, token],
   );
+
+  function confirmLeave(event: MouseEvent) {
+    if (editorRef.current?.getDirtyCount() && !window.confirm(LEAVE_MESSAGE)) {
+      event.preventDefault();
+    }
+  }
+
+  function selectDevice(next: GrapesDevice) {
+    editorRef.current?.setDevice(next);
+    setDevice(next);
+  }
+
+  function toggleOutlines() {
+    const editor = editorRef.current;
+    if (editor) {
+      if (outlines) {
+        editor.stopCommand(OUTLINE_COMMAND);
+      } else {
+        selectorsRef.current?.replaceChildren(editor.Selectors.render([]));
+        editor.runCommand(OUTLINE_COMMAND);
+      }
+      setOutlines(!outlines);
+    }
+  }
+
+  function togglePreview() {
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+
+    if (previewing) {
+      editor.stopCommand(PREVIEW_COMMAND);
+    } else {
+      editor.runCommand(PREVIEW_COMMAND);
+    }
+    setPreviewing(!previewing);
+  }
+
+  function filterBlocks(query: string) {
+    setBlockQuery(query);
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+
+    const search = normalizeSearch(query.trim());
+    const matches = editor.Blocks.getAll().filter((block: Block) => normalizeSearch(block.getLabel()).includes(search));
+    editor.Blocks.render(matches);
+    setNoBlockMatch(matches.length === 0);
+  }
 
   function shareSelected() {
     const editor = editorRef.current;
@@ -262,49 +371,72 @@ export function GrapesEditor({
   const isShared = Boolean(selected && editorRef.current?.Components.getSymbolInfo(selected).isSymbol);
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="mr-auto text-lg font-semibold text-stone-800">{pageTitle}</h1>
-        {onBack && (
-          <Button variant="ghost" size="sm" onClick={onBack}>
-            Revenir à l&apos;ancien éditeur
-          </Button>
-        )}
-        <Button variant="secondary" size="sm" onClick={() => setShowDetails(true)}>
-          Titre et URL
-        </Button>
-        {selected && !isShared && (
-          <Button variant="secondary" size="sm" onClick={shareSelected}>
-            Partager ce bloc
-          </Button>
-        )}
-        {isShared && (
-          <Button variant="secondary" size="sm" onClick={detachSelected}>
-            Détacher
-          </Button>
-        )}
-        {isPublished ? (
-          <Button size="sm" loading={isSaving} disabled={!isReady} onClick={() => void save(false)}>
-            Enregistrer et publier
-          </Button>
-        ) : (
-          <>
-            <Button variant="secondary" size="sm" loading={isSaving} disabled={!isReady} onClick={() => void save(false)}>
-              Enregistrer le brouillon
-            </Button>
-            <Button size="sm" loading={isSaving} disabled={!isReady} onClick={() => void save(true)}>
-              Publier cette page
-            </Button>
-          </>
-        )}
-      </div>
+    <div className="hm-grapes fixed inset-0 z-50 flex flex-col bg-stone-900 text-stone-200">
+      <GrapesToolbar
+        pageTitle={pageTitle}
+        device={device}
+        previewing={previewing}
+        outlines={outlines}
+        rightPanelOpen={rightPanelOpen}
+        canUndo={history.canUndo}
+        canRedo={history.canRedo}
+        isDirty={history.isDirty}
+        isReady={isReady}
+        isSaving={isSaving}
+        isPublished={isPublished}
+        canShare={Boolean(selected) && !isShared}
+        isShared={isShared}
+        onLeave={confirmLeave}
+        onBackToOldEditor={onBack}
+        onDevice={selectDevice}
+        onUndo={() => editorRef.current?.runCommand("core:undo")}
+        onRedo={() => editorRef.current?.runCommand("core:redo")}
+        onToggleOutlines={toggleOutlines}
+        onTogglePreview={togglePreview}
+        onToggleRightPanel={() => setRightPanelOpen((open) => !open)}
+        onDetails={() => setShowDetails(true)}
+        onShare={shareSelected}
+        onDetach={detachSelected}
+        onSave={(publishCurrentPage) => void save(publishCurrentPage)}
+      />
 
       {error && <Alert variant="error" onClose={() => setError(null)}>{error}</Alert>}
       {success && <Alert variant="success" onClose={() => setSuccess(null)}>{success}</Alert>}
       {isShared && <Alert variant="warning">Composant partagé : vos modifications s&apos;appliquent à toutes les pages qui l&apos;utilisent.</Alert>}
 
-      <div className="min-h-0 flex-1 overflow-hidden rounded-lg border border-stone-200">
-        <div ref={containerRef} className="h-full" />
+      <div className="relative flex min-h-0 flex-1">
+        <GrapesLeftPanel
+          tab={leftTab}
+          hidden={previewing}
+          pages={pages}
+          currentPageId={pageId}
+          blockQuery={blockQuery}
+          noBlockMatch={noBlockMatch}
+          blocksRef={blocksRef}
+          layersRef={layersRef}
+          onTab={setLeftTab}
+          onBlockQuery={filterBlocks}
+          onLeave={confirmLeave}
+        />
+
+        <div className="relative min-w-0 flex-1">
+          <div ref={containerRef} className="h-full" />
+          {!isReady && !error && (
+            <div className="absolute inset-0 flex items-center justify-center bg-stone-950">
+              <Spinner size="lg" />
+            </div>
+          )}
+        </div>
+
+        <GrapesRightPanel
+          tab={rightTab}
+          open={rightPanelOpen && !previewing}
+          hasSelection={Boolean(selected)}
+          selectorsRef={selectorsRef}
+          stylesRef={stylesRef}
+          traitsRef={traitsRef}
+          onTab={setRightTab}
+        />
       </div>
 
       {slidesTarget && (
