@@ -1,7 +1,8 @@
 export type GrapesDevice = "desktop" | "tablet" | "mobile";
 
-export const GRAPES_DEVICES: { id: GrapesDevice; name: string; width: string; widthMedia?: string }[] = [
-  { id: "desktop", name: "Ordinateur", width: "" },
+// Largeur du contenu du site sur un écran courant : plus étroit, le canvas afficherait la mise en page tablette.
+export const GRAPES_DEVICES: { id: GrapesDevice; name: string; width: string; widthMedia: string }[] = [
+  { id: "desktop", name: "Ordinateur", width: "1280px", widthMedia: "" },
   { id: "tablet", name: "Tablette", width: "768px", widthMedia: "1023px" },
   { id: "mobile", name: "Téléphone", width: "375px", widthMedia: "767px" },
 ];

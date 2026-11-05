@@ -173,6 +173,7 @@ export default function PageEditorPage() {
         pageSlug={page.slug}
         slugEditable={page.slugEditable !== false}
         initiallyPublished={page.publishedInBuilder === true}
+        sections={page.sections}
         onBack={page.publishedInBuilder ? undefined : () => setUseGrapes(false)}
         onUpdatePageDetails={handleUpdatePageDetails}
       />
@@ -183,7 +184,7 @@ export default function PageEditorPage() {
     <>
       <div className="mb-4 flex justify-end">
         <Button variant="secondary" size="sm" onClick={() => setUseGrapes(true)}>
-          Recréer dans GrapesJS
+          Passer à GrapesJS
         </Button>
       </div>
       <PageBuilder

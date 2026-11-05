@@ -1,5 +1,6 @@
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
-import { ServiceCard, type ServicePrice } from "@/components/shared/ServiceCard";
+import { ServiceCard } from "@/components/shared/ServiceCard";
+import { parsePrice } from "@/lib/servicePrice";
 import type { TarifsContent } from "@/types";
 import { RichText } from "@/components/dynamic/RichText";
 import { hasRichText } from "@/lib/richText";
@@ -8,25 +9,6 @@ import { getBlockLayout, getCardGrid, type GridColumnCount } from "@/components/
 interface TarifsProps {
   content: TarifsContent;
   bookingUrl?: string;
-}
-
-function parsePrice(raw: string): ServicePrice {
-  const normalized = raw.replace(/\s+/g, " ").trim();
-  const priceMatch = normalized.match(/(\d+(?:[.,]\d+)?)\s*(?:EUR|EUROS?|€)\b/i);
-
-  if (!priceMatch) {
-    return { label: normalized };
-  }
-
-  const value = Number.parseFloat(priceMatch[1].replace(",", "."));
-  const beforePrice = normalized.slice(0, priceMatch.index).replace(/[·\-–—\s]+$/g, "").trim();
-  const afterPrice = normalized.slice((priceMatch.index ?? 0) + priceMatch[0].length).replace(/^[·\-–—\s]+/g, "").trim();
-
-  return {
-    label: beforePrice || "Seance",
-    price: Number.isNaN(value) ? undefined : value,
-    unit: afterPrice || undefined,
-  };
 }
 
 export function Tarifs({ content, bookingUrl = "/reservation" }: TarifsProps) {
