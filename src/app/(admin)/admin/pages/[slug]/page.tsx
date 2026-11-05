@@ -166,6 +166,7 @@ export default function PageEditorPage() {
   if (page.publishedInBuilder || useGrapes) {
     return (
       <GrapesEditor
+        key={page.id}
         token={token}
         pageId={page.id}
         pageTitle={page.title}

@@ -1,0 +1,156 @@
+/*
+ * Exception à la règle "Tailwind uniquement" : GrapesJS génère lui-même le DOM de ses panneaux.
+ * html:root passe devant le :root de grapes.min.css, quel que soit l'ordre de chargement.
+ * Les variables restent globales car le sélecteur de couleurs est rattaché à <body>.
+ */
+html:root {
+  --gjs-primary-color: #1c1917;
+  --gjs-secondary-color: #e7e5e4;
+  --gjs-tertiary-color: #b45309;
+  --gjs-quaternary-color: #fbbf24;
+  --gjs-main-color: #1c1917;
+  --gjs-font-color: #e7e5e4;
+  --gjs-font-color-active: #ffffff;
+  --gjs-main-dark-color: rgba(0, 0, 0, 0.25);
+  --gjs-secondary-dark-color: rgba(0, 0, 0, 0.15);
+  --gjs-main-light-color: rgba(255, 255, 255, 0.08);
+  --gjs-light-border: rgba(255, 255, 255, 0.1);
+  --gjs-arrow-color: #a8a29e;
+  --gjs-main-font: system-ui, sans-serif;
+  --gjs-color-blue: #f59e0b;
+  --gjs-color-highlight: #fbbf24;
+  --gjs-canvas-top: 0px;
+}
+
+/* Le canvas occupe toute sa colonne : les panneaux vivent en dehors de l'éditeur. */
+.hm-grapes .gjs-editor {
+  background-color: #0c0a09;
+}
+
+.hm-grapes .gjs-cv-canvas {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0c0a09;
+}
+
+/* Remplacé par le bouton Aperçu de la barre du haut. */
+.hm-grapes .gjs-off-prv {
+  display: none !important;
+}
+
+/* Les fenêtres GrapesJS couvrent tout l'écran, pas seulement la colonne du canvas. */
+.hm-grapes .gjs-mdl-container {
+  position: fixed;
+  z-index: 50;
+}
+
+.sp-container {
+  z-index: 60;
+}
+
+/* Blocs : deux colonnes de cartes. */
+.hm-grapes .gjs-blocks-c {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+/* Catégories vidées par la traduction des blocs ou par la recherche. */
+.hm-grapes .gjs-block-category:not(:has(.gjs-block)) {
+  display: none;
+}
+
+.hm-grapes .gjs-block {
+  width: auto;
+  min-height: 5rem;
+  margin: 0;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid #44403c;
+  border-radius: 0.5rem;
+  background-color: #292524;
+  box-shadow: none;
+  color: #e7e5e4;
+}
+
+.hm-grapes .gjs-block:hover {
+  border-color: #f59e0b;
+  color: #ffffff;
+}
+
+.hm-grapes .gjs-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.hm-grapes .gjs-block-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+/* Les plugins fournissent des icônes de tailles différentes, ou aucune. */
+.hm-grapes .gjs-block__media {
+  width: 1.75rem;
+  margin: 0;
+}
+
+.hm-grapes .gjs-block svg {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.hm-grapes .gjs-block:not(:has(svg))::before {
+  content: "";
+  width: 1.75rem;
+  height: 1.75rem;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M10 10v10'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.hm-grapes .gjs-block-category .gjs-title,
+.hm-grapes .gjs-sm-sector .gjs-sm-sector-title,
+.hm-grapes .gjs-trait-category .gjs-title {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #44403c;
+  background-color: transparent;
+  color: #e7e5e4;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* Champs des styles et réglages. */
+.hm-grapes .gjs-field {
+  border: 1px solid #44403c;
+  border-radius: 0.375rem;
+  background-color: #292524;
+}
+
+/* GrapesJS impose font-weight: lighter, illisible en petit sur fond sombre. */
+.hm-grapes [class*="gjs-"] {
+  font-weight: 400;
+}
+
+.hm-grapes .gjs-sm-label:not(.gjs-four-color),
+.hm-grapes .gjs-label {
+  color: #d6d3d1;
+}
+
+.hm-grapes .gjs-clm-tags {
+  padding: 0.75rem;
+  border-bottom: 1px solid #44403c;
+}
+
+.hm-grapes .gjs-layer-title {
+  padding: 0.5rem;
+  background-color: transparent;
+}
